@@ -53,4 +53,8 @@ public class Timer {
     public String getTime(Player player) {
         return new DecimalFormat("0.000").format(playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05);
     }
+
+    public boolean isPlayerInTimer(Player player) {
+        return runningTasks.containsKey(player.getUniqueId());
+    }
 }

@@ -1,0 +1,11 @@
+it\minusone\fastbuilder\command\fastbuilder.class
+it\minusone\fastbuilder\scoreboard\ScoreboardManager.class
+it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.class
+it\minusone\fastbuilder\listeners\onBlockPlace.class
+it\minusone\fastbuilder\timer\Timer$1.class
+it\minusone\fastbuilder\listeners\onPlateUse.class
+it\minusone\fastbuilder\timer\Timer.class
+it\minusone\fastbuilder\config\ConfigManager.class
+it\minusone\fastbuilder\listeners\onPlayerJoinQuit.class
+it\minusone\fastbuilder\listeners\voidFallListener.class
+it\minusone\fastbuilder\Main.class

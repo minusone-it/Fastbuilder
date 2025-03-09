@@ -28,9 +28,9 @@ public class ScoreboardManager {
         player.setScoreboard(scoreboard);
     }
 
-    public void updateTimer(Player player, double currentTime, double bestTime, String mode) {
-        setLine(player, "§eTime: §b" + new DecimalFormat("0.000").format(currentTime), 1);
-        setLine(player, "§eBest: §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime): "N/A"), 2);
+    public void updateTimer(Player player, String currentTime, double bestTime, String mode) {
+        setLine(player, "§eTime: §b" + currentTime, 1);
+        setLine(player, "§eBest: §a" + (bestTime > 0 ? bestTime : "N/A"), 2);
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {

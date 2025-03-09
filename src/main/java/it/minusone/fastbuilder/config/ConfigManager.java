@@ -55,6 +55,6 @@ public class ConfigManager {
     }
 
     public boolean modeExists(String mode) {
-        return getModes().contains(mode);
+        return !getModes().contains(mode);
     }
 }

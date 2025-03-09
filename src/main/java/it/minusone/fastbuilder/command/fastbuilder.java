@@ -30,6 +30,17 @@ public class fastbuilder implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "addmode":
+            case "removemode":
+            case "set":
+                if (!player.hasPermission("fastbuilder.admin")) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
+                    return true;
+                }
+                break;
+        }
+
+        switch (args[0].toLowerCase()) {
+            case "addmode":
                 if (args.length < 2) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addmode <mode>");
                     return true;
@@ -45,7 +56,7 @@ public class fastbuilder implements CommandExecutor {
                     return true;
                 }
                 String modeToRemove = args[1];
-                if (!configManager.modeExists(modeToRemove)) {
+                if (configManager.modeExists(modeToRemove)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
                     return true;
                 }
@@ -62,7 +73,7 @@ public class fastbuilder implements CommandExecutor {
                 String mode = args[1];
                 String island = args[2];
 
-                if (!configManager.modeExists(mode)) {
+                if (configManager.modeExists(mode)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
                     return true;
                 }
@@ -83,7 +94,7 @@ public class fastbuilder implements CommandExecutor {
                 String joinMode = args[1];
                 String joinIsland = args[2];
 
-                if (!configManager.modeExists(joinMode)) {
+                if (configManager.modeExists(joinMode)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
                     return true;
                 }
@@ -95,8 +106,9 @@ public class fastbuilder implements CommandExecutor {
                 }
 
                 player.teleport(joinLocation);
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined" + joinMode + " - " + joinIsland);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + joinMode + " - " + joinIsland);
                 Main.getInstance().modesWherePlayerIn.put(player, joinMode);
+                Main.getInstance().islandWherePlayerIn.put(player, joinIsland);
                 break;
 
             default:
