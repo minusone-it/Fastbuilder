@@ -43,7 +43,9 @@ public final class Main extends JavaPlugin {
         this.placedBlocks = new HashMap<>();
         this.loadListeners();
         this.loadCommands();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+p.addPotionEffect(PotionEffectType.SATURATION, 9999, 255);
+} Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             for (Player player: Bukkit.getOnlinePlayers()) {
                 String currentTime = timer.getTime(player);
                 //double bestTime = getConfig().getDouble("best-times." + player.getUniqueId() + "." + modesWherePlayerIn.get(player), 0.0);
