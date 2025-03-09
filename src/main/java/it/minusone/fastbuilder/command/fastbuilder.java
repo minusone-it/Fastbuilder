@@ -1,22 +1,108 @@
 package it.minusone.fastbuilder.command;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.config.ConfigManager;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class fastbuilder implements CommandExecutor {
+    private final ConfigManager configManager;
+
+    public fastbuilder() {
+        this.configManager = new ConfigManager(Main.getInstance());
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player player) {
-            if (args.length == 0)
-                player.sendMessage(Main.getInstance().PREFIX + "This server is running Fastbuilder by MinusOne.");
-            else if (args.length == 1) {
-
-            }
-        } else
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(Main.getInstance().PREFIX + "§cYou must be a player to execute this command.");
-        return false;
+            return true;
+        }
+
+        if (args.length == 0) {
+            player.sendMessage(Main.getInstance().PREFIX + "This server is running Fastbuilder by MinusOne.");
+            return true;
+        }
+
+        switch (args[0].toLowerCase()) {
+            case "addmode":
+                if (args.length < 2) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addmode <mode>");
+                    return true;
+                }
+                String modeToAdd = args[1];
+                configManager.addMode(modeToAdd);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode added: " + modeToAdd);
+                break;
+
+            case "removemode":
+                if (args.length < 2) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder removemode <mode>");
+                    return true;
+                }
+                String modeToRemove = args[1];
+                if (!configManager.modeExists(modeToRemove)) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
+                    return true;
+                }
+                configManager.removeMode(modeToRemove);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode removed: " + modeToRemove);
+                break;
+
+            case "set":
+                if (args.length < 3) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder set <mode> <island>");
+                    return true;
+                }
+
+                String mode = args[1];
+                String island = args[2];
+
+                if (!configManager.modeExists(mode)) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
+                    return true;
+                }
+
+                Location spawnLocation = player.getLocation();
+                Main.getInstance().getConfig().set("spawns." + mode + "." + island, spawnLocation.serialize());
+                Main.getInstance().saveConfig();
+
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + mode + " - " + island);
+                break;
+
+            case "join":
+                if (args.length < 3) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder join <mode> <island>");
+                    return true;
+                }
+
+                String joinMode = args[1];
+                String joinIsland = args[2];
+
+                if (!configManager.modeExists(joinMode)) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
+                    return true;
+                }
+
+                Location joinLocation = configManager.getSpawnLocation(joinMode, joinIsland);
+                if (joinLocation == null) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "No spawn set for this mode and island!");
+                    return true;
+                }
+
+                player.teleport(joinLocation);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined" + joinMode + " - " + joinIsland);
+                Main.getInstance().modesWherePlayerIn.put(player, joinMode);
+                break;
+
+            default:
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Unknown command! Use /fastbuilder <addmode|removemode|set|join>");
+                break;
+        }
+        return true;
     }
 }

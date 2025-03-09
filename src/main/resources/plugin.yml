@@ -4,3 +4,6 @@ main: it.minusone.fastbuilder.Main
 api-version: '1.18'
 authors: [ MinusOne ]
 description: Made with <3 by MinusOne
+permissions:
+  fastbuilder.admin:
+    default: op
