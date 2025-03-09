@@ -11,6 +11,7 @@ public class onPlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().PREFIX);
+e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 9999, 255));
     }
 
     @EventHandler
