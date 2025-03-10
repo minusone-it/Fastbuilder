@@ -17,14 +17,14 @@ import java.util.UUID;
 
 public final class Main extends JavaPlugin {
 
-    public String PREFIX;
     private static Main INSTANCE;
+    public String PREFIX;
     public ScoreboardManager scoreboardManager;
     public HashMap<Player, String> modesWherePlayerIn;
     public HashMap<Player, String> islandWherePlayerIn;
     public HashMap<UUID, List<Location>> placedBlocks;
     public Timer timer;
-    private ConfigManager configManager;
+    public ConfigManager configManager;
 
     @Override
     public void onEnable() {

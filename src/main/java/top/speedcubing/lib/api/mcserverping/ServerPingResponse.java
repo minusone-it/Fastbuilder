@@ -1,7 +1,8 @@
 package top.speedcubing.lib.api.mcserverping;
 
-import java.util.List;
 import top.speedcubing.lib.utils.internet.dnsrecords.DNSRecord;
+
+import java.util.List;
 
 public class ServerPingResponse {
     private final String SRVHostname;

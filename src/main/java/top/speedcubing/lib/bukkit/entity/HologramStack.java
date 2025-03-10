@@ -1,12 +1,13 @@
 package top.speedcubing.lib.bukkit.entity;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import top.speedcubing.lib.bukkit.events.entity.ClickEvent;
 
 public class HologramStack {
     private final int count;

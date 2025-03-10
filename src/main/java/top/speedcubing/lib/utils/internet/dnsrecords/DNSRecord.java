@@ -1,10 +1,10 @@
 package top.speedcubing.lib.utils.internet.dnsrecords;
 
-import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.InitialDirContext;
+import java.util.Properties;
 
 public abstract class DNSRecord {
     private static InitialDirContext context;

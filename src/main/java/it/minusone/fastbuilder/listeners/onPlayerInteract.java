@@ -1,16 +1,20 @@
 package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.gui.islandSelectorGui;
-import it.minusone.fastbuilder.items.IslandSelector;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import it.minusone.fastbuilder.gui.IslandSelectorGUI;
+import it.minusone.fastbuilder.gui.SettingsGUI;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class onPlayerInteract implements Listener {
@@ -24,10 +28,46 @@ public class onPlayerInteract implements Listener {
                 double time = Main.getInstance().timer.getTime(player);
                 if (!timeFormatted.equalsIgnoreCase("0,000")) {
                     Main.getInstance().timer.stopTimer(player);
-                    player.sendTitle("You scored a time of " + timeFormatted, "+10 coins!");
+                    player.sendTitle(ChatColor.YELLOW + "Time: " + ChatColor.GREEN + timeFormatted, "+" + ChatColor.YELLOW + "10 coins!");
+                    double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+                    boolean equalTime = PB == time;
+                    boolean newPB = time < PB;
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 1);
+                    player.sendMessage("§8----------------------------------");
+                    if (newPB) {
+                        player.sendMessage("§b§lNEW PERSONAL BEST!");
+                        player.sendMessage("");
+                        World world = player.getWorld();
+                        Location loc = player.getLocation();
+
+                        Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                            Firework firework = (Firework) world.spawnEntity(loc, EntityType.FIREWORK);
+                            FireworkMeta meta = firework.getFireworkMeta();
+                            FireworkEffect effect = FireworkEffect.builder()
+                                    .flicker(false)
+                                    .trail(true)
+                                    .withColor(Color.RED)
+                                    .withFade(Color.ORANGE)
+                                    .with(FireworkEffect.Type.BALL)
+                                    .build();
+                            meta.addEffect(effect);
+                            meta.setPower(1);
+                            firework.setFireworkMeta(meta);
+                        });
+                    }
+                    player.sendMessage("§7You've finished the course!");
+                    player.sendMessage("");
+                    player.sendMessage("§aPB: §e§l" + this.getFormat().format(PB) + " §8| " + (equalTime ? "§7§l+" : newPB ? "§b§l" :"§e§l+") + this.getFormat().format(time - PB));
+                    player.sendMessage("§aTime: §e§l" + this.getFormat().format(time));
+                    player.sendMessage("§8----------------------------------");
                     Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().modesWherePlayerIn.get(player), time);
                     Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000));
-                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+                        }
+                    }, 40L);
                 }
                 List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                 if (playerBlocks != null) {
@@ -39,8 +79,13 @@ public class onPlayerInteract implements Listener {
                 }
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getItem() != null && event.getItem().getItemMeta() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
-                event.getPlayer().openInventory(new islandSelectorGui(event.getPlayer()).getInventory());
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
+                event.getPlayer().openInventory(new IslandSelectorGUI(event.getPlayer()).getInventory());
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
+                event.getPlayer().openInventory(new SettingsGUI(event.getPlayer()).getInventory());
         }
+    }
+    private DecimalFormat getFormat() {
+        return new DecimalFormat("0.000");
     }
 }

@@ -1,7 +1,6 @@
 package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -37,11 +36,9 @@ public class Timer {
 
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
 
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    double currentTime = getTime(player);
-                    double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
-                    Main.getInstance().scoreboardManager.updateTimer(p, new DecimalFormat("0.000").format(currentTime), bestTime);
-                }
+                double currentTime = getTime(player);
+                double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+                Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime), bestTime);
             }
         };
 

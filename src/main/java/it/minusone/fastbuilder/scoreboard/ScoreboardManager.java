@@ -30,7 +30,7 @@ public class ScoreboardManager {
 
     public void updateTimer(Player player, String currentTime, double bestTime) {
         setLine(player, "§eTime: §b" + currentTime, 1);
-        setLine(player, "§eBest: §a" + (new DecimalFormat("0.000").format(bestTime > 0 ? bestTime : "-.---")), 2);
+        setLine(player, "§eBest: §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime) : "-.---"), 2);
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {

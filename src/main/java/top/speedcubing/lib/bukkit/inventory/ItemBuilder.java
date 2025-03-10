@@ -3,10 +3,6 @@ package top.speedcubing.lib.bukkit.inventory;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -19,6 +15,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import top.speedcubing.lib.utils.ReflectionUtils;
+
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
 
 public class ItemBuilder {
 

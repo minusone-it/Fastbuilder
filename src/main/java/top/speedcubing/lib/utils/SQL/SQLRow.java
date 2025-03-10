@@ -1,5 +1,7 @@
 package top.speedcubing.lib.utils.SQL;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.ResultSet;
@@ -8,9 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.NotNull;
 
 public class SQLRow implements Iterable<SQLField> {
 

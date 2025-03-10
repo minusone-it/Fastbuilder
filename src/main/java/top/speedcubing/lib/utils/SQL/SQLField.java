@@ -1,9 +1,9 @@
 package top.speedcubing.lib.utils.SQL;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
-import javax.sql.rowset.serial.SerialBlob;
 
 public class SQLField {
     private final String columnName;

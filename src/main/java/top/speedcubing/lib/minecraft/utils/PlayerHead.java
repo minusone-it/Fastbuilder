@@ -1,12 +1,13 @@
 package top.speedcubing.lib.minecraft.utils;
 
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import javax.imageio.ImageIO;
 import org.bukkit.ChatColor;
 import top.speedcubing.lib.api.MojangAPI;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
 public class PlayerHead {
 

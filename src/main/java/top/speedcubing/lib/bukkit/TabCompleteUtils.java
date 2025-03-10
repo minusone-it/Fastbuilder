@@ -1,8 +1,9 @@
 package top.speedcubing.lib.bukkit;
 
-import java.util.Collections;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+
+import java.util.Collections;
 
 public class TabCompleteUtils {
 

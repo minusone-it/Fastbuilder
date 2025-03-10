@@ -1,17 +1,14 @@
 package top.speedcubing.lib.discord;
 
-import java.awt.Color;
+import javax.net.ssl.HttpsURLConnection;
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.net.ssl.HttpsURLConnection;
+import java.util.*;
 
 public class DiscordWebhook {
 

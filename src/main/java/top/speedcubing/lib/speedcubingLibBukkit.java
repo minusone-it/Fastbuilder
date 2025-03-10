@@ -1,9 +1,5 @@
 package top.speedcubing.lib;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -14,6 +10,11 @@ import top.speedcubing.lib.bukkit.inventory.Glow;
 import top.speedcubing.lib.bukkit.inventory.SignBuilder;
 import top.speedcubing.lib.bukkit.listeners.PlayerListener;
 import top.speedcubing.lib.utils.ReflectionUtils;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class speedcubingLibBukkit extends JavaPlugin {
     public static final boolean is1_8_8 = Bukkit.getVersion().contains("(MC: 1.8.8)");

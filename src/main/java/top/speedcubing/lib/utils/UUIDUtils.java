@@ -1,7 +1,8 @@
 package top.speedcubing.lib.utils;
 
-import java.util.UUID;
 import top.speedcubing.lib.utils.bytes.DataConversion;
+
+import java.util.UUID;
 
 public class UUIDUtils {
 

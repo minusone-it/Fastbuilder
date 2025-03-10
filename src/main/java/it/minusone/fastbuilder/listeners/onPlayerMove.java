@@ -2,6 +2,7 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,6 +30,7 @@ public class onPlayerMove implements Listener {
                 player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
                 player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                 player.getInventory().setItem(4, new IslandSelector());
+                player.getInventory().setItem(7, new SettingsItem());
                 List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                 if (playerBlocks != null) {
                     for (Location blockLocation : playerBlocks) {

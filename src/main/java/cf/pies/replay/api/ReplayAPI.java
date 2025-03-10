@@ -1,7 +1,6 @@
 package cf.pies.replay.api;
 
 import cf.pies.replay.api.data.SaveRecordable;
-import cf.pies.replay.api.recordable.Recordable;
 import cf.pies.replay.api.recordable.entity.*;
 import cf.pies.replay.api.recordable.world.BlockRecordable;
 import org.bukkit.event.Listener;

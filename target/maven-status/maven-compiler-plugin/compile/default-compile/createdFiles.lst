@@ -6,6 +6,7 @@ top\speedcubing\lib\discord\SimpleWebhook.class
 velocity-plugin.json
 top\speedcubing\lib\minecraft\text\VeloBuilder.class
 top\speedcubing\lib\utils\bytes\ByteBufUtils.class
+it\minusone\fastbuilder\items\ResetItem.class
 it\minusone\fastbuilder\config\ConfigManager.class
 cf\pies\replay\api\recordable\entity\DamageRecordable.class
 top\speedcubing\lib\minecraft\utils\PlayerHead.class
@@ -77,6 +78,7 @@ top\speedcubing\lib\eventbus\CubingEventManager.class
 top\speedcubing\lib\utils\SQL\SQLBuilder.class
 top\speedcubing\lib\bukkit\inventory\ItemUtils.class
 top\speedcubing\lib\utils\SQL\SQLField.class
+it\minusone\fastbuilder\gui\SettingsGUI.class
 cf\pies\replay\api\recordable\entity\EntityRemoveRecordable.class
 cf\pies\replay\api\data\SaveRecordable.class
 top\speedcubing\lib\discord\DiscordWebhook$EmbedObject$Thumbnail.class
@@ -107,6 +109,7 @@ top\speedcubing\lib\utils\internet\dnsrecords\ARecord.class
 top\speedcubing\lib\utils\SQL\SQLConnection.class
 top\speedcubing\lib\math\scMath.class
 top\speedcubing\lib\utils\bytes\ByteArrayBuffer.class
+it\minusone\fastbuilder\listeners\onPlayerInteract$1.class
 top\speedcubing\lib\bukkit\inventory\Glow.class
 cf\pies\replay\api\recordable\Recordable.class
 top\speedcubing\lib\minecraft\packet\HandshakePacket.class
@@ -145,12 +148,13 @@ top\speedcubing\lib\utils\bytes\DataConversion.class
 top\speedcubing\lib\bukkit\EntityPlayerUtils.class
 top\speedcubing\lib\bukkit\CubingLibPlayer.class
 top\speedcubing\lib\utils\bytes\IOUtils.class
-it\minusone\fastbuilder\gui\islandSelectorGui.class
+it\minusone\fastbuilder\gui\IslandSelectorGUI.class
 top\speedcubing\lib\math\matrix\SquareMatrix.class
 top\speedcubing\lib\eventbus\CubingEvent.class
 top\speedcubing\lib\bukkit\inventory\SignBuilder.class
 top\speedcubing\lib\minecraft\text\ComponentText.class
 top\speedcubing\lib\speedcubingLibVelocity.class
+it\minusone\fastbuilder\items\SettingsItem.class
 top\speedcubing\lib\bukkit\TabCompleteUtils.class
 top\speedcubing\lib\utils\Threads.class
 top\speedcubing\lib\bukkit\handler\PacketPlayInHandler.class

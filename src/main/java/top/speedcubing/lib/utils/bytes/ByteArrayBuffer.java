@@ -1,10 +1,11 @@
 package top.speedcubing.lib.utils.bytes;
 
+import top.speedcubing.lib.utils.Preconditions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import top.speedcubing.lib.utils.Preconditions;
 
 public class ByteArrayBuffer {
     private final OutputStream outputStream;

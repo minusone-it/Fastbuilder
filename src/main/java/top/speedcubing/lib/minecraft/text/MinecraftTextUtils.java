@@ -2,6 +2,7 @@ package top.speedcubing.lib.minecraft.text;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import java.util.regex.Pattern;
 
 public class MinecraftTextUtils {

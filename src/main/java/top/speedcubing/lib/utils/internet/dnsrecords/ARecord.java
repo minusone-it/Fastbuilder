@@ -1,15 +1,9 @@
 package top.speedcubing.lib.utils.internet.dnsrecords;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.InitialDirContext;
-import top.speedcubing.lib.api.mcserverping.ServerPingRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ARecord extends DNSRecord {
     private final String name;

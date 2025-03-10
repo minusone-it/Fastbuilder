@@ -1,0 +1,26 @@
+package it.minusone.fastbuilder.gui;
+
+import it.minusone.fastbuilder.items.ResetItem;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+
+public class SettingsGUI implements InventoryHolder {
+    public Inventory inventory;
+    private Player requestedPlayer;
+    public SettingsGUI(Player requestedPlayer) {
+        this.inventory = Bukkit.createInventory(this, 27, "Settings");
+        this.requestedPlayer = requestedPlayer;
+        this.addItems(this.getInventory());
+    }
+
+    private void addItems(Inventory inventory) {
+        inventory.setItem(15, new ResetItem());
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+}

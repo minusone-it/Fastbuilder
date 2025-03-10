@@ -3,13 +3,10 @@ package it.minusone.fastbuilder.config;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ConfigManager {
     private final Main plugin;

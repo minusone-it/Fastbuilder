@@ -1,7 +1,8 @@
 package top.speedcubing.lib.minecraft;
 
-import java.util.Arrays;
 import org.fusesource.jansi.Ansi;
+
+import java.util.Arrays;
 
 public class MinecraftConsole {
 

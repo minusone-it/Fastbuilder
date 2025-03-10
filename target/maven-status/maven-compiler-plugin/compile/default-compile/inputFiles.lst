@@ -30,9 +30,12 @@ C:\Users\leoco\IdeaProjects\FB\src\main\java\cf\pies\replay\plugin\BukkitMain.ja
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\command\fastbuilder.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\config\ConfigManager.java
-C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\gui\islandSelectorGui.java
+C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\gui\IslandSelectorGUI.java
+C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\gui\SettingsGUI.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\items\IslandSelector.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\items\ItemMap.java
+C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\items\ResetItem.java
+C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\items\SettingsItem.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\listeners\onBlockPlaceBreak.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\listeners\onInventoryClickEvent.java
 C:\Users\leoco\IdeaProjects\FB\src\main\java\it\minusone\fastbuilder\listeners\onPlayerInteract.java
