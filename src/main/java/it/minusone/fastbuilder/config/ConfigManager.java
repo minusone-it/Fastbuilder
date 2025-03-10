@@ -3,9 +3,13 @@ package it.minusone.fastbuilder.config;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
     private final Main plugin;
@@ -18,6 +22,13 @@ public class ConfigManager {
 
     public List<String> getModes() {
         return config.getStringList("modes");
+    }
+
+    public List<String> getIslandsOfMod(String mode) {
+        List<String> spawns = new ArrayList<>();
+        if (config.contains("spawns." + mode))
+            spawns.addAll(config.getConfigurationSection("spawns." + mode).getKeys(false));
+        return spawns;
     }
 
     public void addMode(String mode) {
@@ -55,6 +66,6 @@ public class ConfigManager {
     }
 
     public boolean modeExists(String mode) {
-        return !getModes().contains(mode);
+        return getModes().contains(mode);
     }
 }

@@ -12,6 +12,16 @@
       <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="velocitypowered-repo" />
+      <option name="name" value="velocitypowered-repo" />
+      <option name="url" value="https://repo.velocitypowered.com/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="velocity-powered-repo" />
+      <option name="name" value="velocity-powered-repo" />
+      <option name="url" value="https://nexus.velocitypowered.com/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="spigotmc-repo" />
       <option name="name" value="spigotmc-repo" />
       <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
@@ -22,9 +32,19 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="maven-repo" />
+      <option name="name" value="maven-repo" />
+      <option name="url" value="https://nexus.velocitypowered.com/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="elmakers-maven-repo" />
+      <option name="name" value="elmakers-maven-repo" />
+      <option name="url" value="https://maven.elmakers.com/repository/" />
     </remote-repository>
   </component>
 </project>

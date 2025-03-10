@@ -3,15 +3,11 @@ package it.minusone.fastbuilder;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
-import it.minusone.fastbuilder.listeners.onBlockPlace;
-import it.minusone.fastbuilder.listeners.onPlateUse;
-import it.minusone.fastbuilder.listeners.onPlayerJoinQuit;
-import it.minusone.fastbuilder.listeners.voidFallListener;
+import it.minusone.fastbuilder.listeners.*;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,9 +28,9 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.PREFIX = "§7[§3§lFastbuilder§r§7] §f";
         this.getLogger().info(this.PREFIX + "Starting...");
         INSTANCE = this;
-        this.PREFIX = "§7[§3§lFastbuilder§r§7] §f";
         this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager();
         this.configManager = new ConfigManager(this);
@@ -43,26 +39,23 @@ public final class Main extends JavaPlugin {
         this.placedBlocks = new HashMap<>();
         this.loadListeners();
         this.loadCommands();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            for (Player player: Bukkit.getOnlinePlayers()) {
-                String currentTime = timer.getTime(player);
-                //double bestTime = getConfig().getDouble("best-times." + player.getUniqueId() + "." + modesWherePlayerIn.get(player), 0.0);
-                scoreboardManager.updateTimer(player, currentTime, 0.000, modesWherePlayerIn.get(player));
-            }
-        }, 0L, 0L);
+        for (Player p : Bukkit.getOnlinePlayers())
+            this.scoreboardManager.createScoreboard(p, this.PREFIX);
         this.getLogger().info(this.PREFIX + "Started plugin!");
     }
 
     @Override
     public void onDisable() {
-
+        for (Player p : Bukkit.getOnlinePlayers())
+            scoreboardManager.removeScoreboard(p);
     }
 
     private void loadListeners() {
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerJoinQuit(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new onBlockPlace(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new voidFallListener(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new onPlateUse(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new onBlockPlaceBreak(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new onPlayerMove(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new onPlayerInteract(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new onInventoryClickEvent(), this);
     }
 
     private void loadCommands() {
@@ -72,6 +65,16 @@ public final class Main extends JavaPlugin {
 
     public static Main getInstance() {
         return INSTANCE;
+    }
+
+    public void saveBestTime(UUID playerId, String mode, double time) {
+        String path = "best-times." + playerId + "." + mode;
+        double currentBest = getConfig().getDouble(path, 0.0);
+
+        if (currentBest == 0.0 || time < currentBest) {
+            getConfig().set(path, time);
+            saveConfig();
+        }
     }
 
     public ConfigManager getConfigManager() {

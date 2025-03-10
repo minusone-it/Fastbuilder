@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -33,11 +34,18 @@ public class Timer {
                     runningTasks.remove(uuid);
                     return;
                 }
+
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
+
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    double currentTime = getTime(player);
+                    double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+                    Main.getInstance().scoreboardManager.updateTimer(p, new DecimalFormat("0.000").format(currentTime), bestTime);
+                }
             }
         };
 
-        task.runTaskTimer(Main.getInstance(), 1L, 1L);
+        task.runTaskTimer(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
     }
 
@@ -50,8 +58,12 @@ public class Timer {
         }
     }
 
-    public String getTime(Player player) {
-        return new DecimalFormat("0.000").format(playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05);
+    public String getTimeFormatted(Player player) {
+        return new DecimalFormat("0.000").format((playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05 != 0 ? 0.050 : 0));
+    }
+
+    public double getTime(Player player) {
+        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05 != 0 ? 0.050 : 0);
     }
 
     public boolean isPlayerInTimer(Player player) {

@@ -19,18 +19,18 @@ public class ScoreboardManager {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("fastbuilder", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(title);
+        objective.setDisplayName(title + " ");
 
         addScoreboardLine(objective, "§eTime: §b0.000", 1);
-        addScoreboardLine(objective, "§eBest: §aN/A", 2);
+        addScoreboardLine(objective, "§eBest: §a-.---", 2);
 
         scoreboards.put(player, scoreboard);
         player.setScoreboard(scoreboard);
     }
 
-    public void updateTimer(Player player, String currentTime, double bestTime, String mode) {
+    public void updateTimer(Player player, String currentTime, double bestTime) {
         setLine(player, "§eTime: §b" + currentTime, 1);
-        setLine(player, "§eBest: §a" + (bestTime > 0 ? bestTime : "N/A"), 2);
+        setLine(player, "§eBest: §a" + (new DecimalFormat("0.000").format(bestTime > 0 ? bestTime : "-.---")), 2);
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {

@@ -4,10 +4,14 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager;
@@ -56,7 +60,7 @@ public class fastbuilder implements CommandExecutor {
                     return true;
                 }
                 String modeToRemove = args[1];
-                if (configManager.modeExists(modeToRemove)) {
+                if (!configManager.modeExists(modeToRemove)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
                     return true;
                 }
@@ -73,7 +77,7 @@ public class fastbuilder implements CommandExecutor {
                 String mode = args[1];
                 String island = args[2];
 
-                if (configManager.modeExists(mode)) {
+                if (!configManager.modeExists(mode)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
                     return true;
                 }
@@ -94,21 +98,35 @@ public class fastbuilder implements CommandExecutor {
                 String joinMode = args[1];
                 String joinIsland = args[2];
 
-                if (configManager.modeExists(joinMode)) {
+                if (!configManager.modeExists(joinMode)) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
                     return true;
                 }
 
                 Location joinLocation = configManager.getSpawnLocation(joinMode, joinIsland);
                 if (joinLocation == null) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "No spawn set for this mode and island!");
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island does not exist!");
+                    return true;
+                }
+
+                if (Main.getInstance().modesWherePlayerIn.containsValue(joinMode) && Main.getInstance().islandWherePlayerIn.containsValue(joinIsland)) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Main.getInstance().islandWherePlayerIn.entrySet()
+                            .stream()
+                            .filter(entry -> entry.getValue().equals(joinIsland))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse(null) + "!");
                     return true;
                 }
 
                 player.teleport(joinLocation);
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + joinMode + " - " + joinIsland);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + joinMode + "-" + joinIsland + "!");
+                player.getInventory().setItem(0, new ItemStack(Material.SANDSTONE, 64));
+                player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
+                player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                 Main.getInstance().modesWherePlayerIn.put(player, joinMode);
                 Main.getInstance().islandWherePlayerIn.put(player, joinIsland);
+                Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + joinMode, 0.000));
                 break;
 
             default:
