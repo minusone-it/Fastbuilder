@@ -21,16 +21,20 @@ public class ScoreboardManager {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(title + " ");
 
-        addScoreboardLine(objective, "§eTime: §b0.000", 1);
-        addScoreboardLine(objective, "§eBest: §a-.---", 2);
+        addScoreboardLine(objective, "&a&8&l| §eBest: §a-.---", 4);
+        addScoreboardLine(objective, "&a&8&l| ", 3);
+        addScoreboardLine(objective, "&a&8&l| §eTime: §b0.000", 2);
+        addScoreboardLine(objective, "&a&8&l| ", 1);
 
         scoreboards.put(player, scoreboard);
         player.setScoreboard(scoreboard);
     }
 
     public void updateTimer(Player player, String currentTime, double bestTime) {
-        setLine(player, "§eTime: §b" + currentTime, 1);
         setLine(player, "§eBest: §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime) : "-.---"), 2);
+        setLine(player, "&a&8&l| ", 3);
+        setLine(player, "§eTime: §b" + currentTime, 2);
+        setLine(player, "&a&8&l| ", 1);
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {
