@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.command;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -130,6 +131,7 @@ public class fastbuilder implements CommandExecutor {
                 player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
                 player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                 player.getInventory().setItem(4, new IslandSelector());
+                player.getInventory().setItem(6, new ReplayItem());
                 player.getInventory().setItem(7, new SettingsItem());
                 Main.getInstance().modesWherePlayerIn.put(player, joinMode);
                 Main.getInstance().islandWherePlayerIn.put(player, joinIsland);

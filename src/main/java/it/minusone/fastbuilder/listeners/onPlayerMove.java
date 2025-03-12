@@ -1,7 +1,9 @@
 package it.minusone.fastbuilder.listeners;
 
+import cf.pies.replay.api.Replay;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,22 +16,24 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class onPlayerMove implements Listener {
+
     @EventHandler
-    public void onVoidFall(PlayerMoveEvent event) {
+    public void onPlayerMoveEvent(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        player.setNoDamageTicks(20);
         try {
-            Player player = event.getPlayer();
             String mode = Main.getInstance().modesWherePlayerIn.get(player);
             String island = Main.getInstance().islandWherePlayerIn.get(player);
             if ((int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4)
                 player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
             if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4)) {
-                player.setNoDamageTicks(20);
                 player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                 player.getInventory().clear();
                 player.getInventory().setItem(0, new ItemStack(Material.SANDSTONE, 64));
                 player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
                 player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                 player.getInventory().setItem(4, new IslandSelector());
+                player.getInventory().setItem(6, new ReplayItem());
                 player.getInventory().setItem(7, new SettingsItem());
                 List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                 if (playerBlocks != null) {

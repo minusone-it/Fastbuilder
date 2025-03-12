@@ -26,7 +26,6 @@ public class IslandSelectorGUI implements InventoryHolder {
         if (mode != null && Main.getInstance().getConfigManager().modeExists(mode)) {
             List<String> islands = Main.getInstance().getConfigManager().getIslandsOfMod(mode);
 
-            // Creiamo una mappa che associa ogni isola al giocatore corrispondente
             Map<String, Player> islandToPlayerMap = Main.getInstance().islandWherePlayerIn.entrySet().stream()
                     .filter(entry -> islands.contains(entry.getValue()))
                     .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));

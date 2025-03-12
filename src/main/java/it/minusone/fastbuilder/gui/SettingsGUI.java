@@ -8,10 +8,8 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class SettingsGUI implements InventoryHolder {
     public Inventory inventory;
-    private Player requestedPlayer;
-    public SettingsGUI(Player requestedPlayer) {
+    public SettingsGUI() {
         this.inventory = Bukkit.createInventory(this, 27, "Settings");
-        this.requestedPlayer = requestedPlayer;
         this.addItems(this.getInventory());
     }
 

@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.listeners;
 
+import cf.pies.replay.api.Replay;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,6 +16,8 @@ import java.util.List;
 public class onBlockPlaceBreak implements Listener {
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
+        if (event.getItemInHand() != null && event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getDisplayName() != null && event.getItemInHand().getItemMeta().getDisplayName().contains("Cancel"))
+            event.setCancelled(true);
         if (event.getBlock().getType().equals(Material.SANDSTONE)) {
             if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()))
                 Main.getInstance().timer.startTimer(event.getPlayer());

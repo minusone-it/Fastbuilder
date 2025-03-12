@@ -21,20 +21,19 @@ public class ScoreboardManager {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(title + " ");
 
-        addScoreboardLine(objective, "&a&8&l| §eBest: §a-.---", 4);
-        addScoreboardLine(objective, "&a&8&l| ", 3);
-        addScoreboardLine(objective, "&a&8&l| §eTime: §b0.000", 2);
-        addScoreboardLine(objective, "&a&8&l| ", 1);
-
         scoreboards.put(player, scoreboard);
         player.setScoreboard(scoreboard);
     }
 
     public void updateTimer(Player player, String currentTime, double bestTime) {
-        setLine(player, "§eBest: §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime) : "-.---"), 2);
-        setLine(player, "&a&8&l| ", 3);
-        setLine(player, "§eTime: §b" + currentTime, 2);
-        setLine(player, "&a&8&l| ", 1);
+        setLine(player, "&a&8&l| " + ChatColor.GREEN, 8);
+        setLine(player, "&a&8&l| §ePersonal Best:", 7);
+        setLine(player, "&a&8&l| §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime).replace(",", ".") : "-.---"), 6);
+        setLine(player, "&a&8&l| " +  ChatColor.RESET, 5);
+        setLine(player, "&a&8&l| §eTime:", 4);
+        setLine(player, "&a&8&l| §b" + currentTime, 3);
+        setLine(player, "&a&8&l| ", 2);
+        setLine(player, "&a&8&l| &o- &6&o&8&l&o-", 1);
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {
