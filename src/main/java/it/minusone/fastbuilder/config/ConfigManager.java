@@ -16,6 +16,7 @@ public class ConfigManager {
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
+        this.plugin.saveDefaultConfig();
         this.config = plugin.getConfig();
     }
 

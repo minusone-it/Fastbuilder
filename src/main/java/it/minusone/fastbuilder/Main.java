@@ -31,6 +31,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         this.PREFIX = getConfig().getString("prefix");
         this.getLogger().info(this.PREFIX + "Starting...");
+        //TODO: LICENSE SYSTEM
         long startTime = System.currentTimeMillis();
         INSTANCE = this;
         this.timer = new Timer();
@@ -47,8 +48,10 @@ public final class Main extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Player p : Bukkit.getOnlinePlayers())
-                    scoreboardManager.updateTopThree(p, modesWherePlayerIn.get(p));
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (modesWherePlayerIn.containsKey(p))
+                        scoreboardManager.updateTopThree(p, modesWherePlayerIn.get(p));
+                }
             }
         }.runTaskTimer(this, 0L, 0L);
         this.getLogger().info(this.PREFIX + "Started plugin in " + (System.currentTimeMillis() - startTime) + "ms!");
@@ -92,10 +95,8 @@ public final class Main extends JavaPlugin {
     }
 
     public void updateLeaderboard(Player player, String mode, double time) {
-        // Ottieni la lista dei top tempi per la modalità specifica
         List<HashMap<Double, Player>> topList = tops.getOrDefault(mode, new ArrayList<>());
 
-        // Controlla se il giocatore ha già un tempo registrato e lo rimuove
         HashMap<Double, Player> previousEntry = null;
         double previousTime = Double.MAX_VALUE;
 
@@ -110,50 +111,40 @@ public final class Main extends JavaPlugin {
             if (previousEntry != null) break;
         }
 
-        // Se il nuovo tempo è maggiore o uguale al precedente, non fare nulla
         if (previousEntry != null && time >= previousTime) return;
 
-        // Rimuovi il vecchio tempo del giocatore se esiste
         if (previousEntry != null) {
             topList.remove(previousEntry);
         }
 
-        // Aggiungi il nuovo tempo
         HashMap<Double, Player> newEntry = new HashMap<>();
         newEntry.put(time, player);
         topList.add(newEntry);
 
-        // Ordina la lista per tempi più bassi
         topList.sort(Comparator.comparingDouble(map -> map.keySet().iterator().next()));
 
-        // Mantieni solo i migliori 10
         while (topList.size() > 10) {
             topList.remove(topList.size() - 1);
         }
 
-        // Salva la lista aggiornata nella hashmap
         tops.put(mode, topList);
     }
     public void removePlayerFromLeaderboard(Player player, String mode) {
-        // Ottieni la lista dei top tempi per la modalità specifica
         List<HashMap<Double, Player>> topList = tops.get(mode);
 
-        // Se non ci sono dati per la modalità, esci
         if (topList == null) return;
 
-        // Itera e rimuove l'entry del giocatore
         Iterator<HashMap<Double, Player>> iterator = topList.iterator();
         while (iterator.hasNext()) {
             HashMap<Double, Player> entry = iterator.next();
             for (Map.Entry<Double, Player> mapEntry : entry.entrySet()) {
                 if (mapEntry.getValue().equals(player)) {
-                    iterator.remove(); // Rimuove l'entry dalla lista
+                    iterator.remove();
                     break;
                 }
             }
         }
 
-        // Aggiorna la mappa
         tops.put(mode, topList);
     }
 
