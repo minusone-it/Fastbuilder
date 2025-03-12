@@ -1,35 +1,27 @@
 package it.minusone.fastbuilder;
 
-import cf.pies.replay.api.Replay;
-
-import cf.pies.replay.api.ReplayPlayback;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class Main extends JavaPlugin {
 
-    public static HashMap<UUID, List<Replay>> replays;
-    public static HashMap<UUID, List<File>> replaysFiles;
-    public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
     public String PREFIX;
     public ScoreboardManager scoreboardManager;
     public HashMap<Player, String> modesWherePlayerIn;
     public HashMap<Player, String> islandWherePlayerIn;
+    public HashMap<String, List<HashMap<Double, Player>>> tops;
     public HashMap<UUID, List<Location>> placedBlocks;
     public Timer timer;
     public ConfigManager configManager;
@@ -37,30 +29,29 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.PREFIX = "§7[§3§lFastbuilder§r§7] §f";
+        this.PREFIX = getConfig().getString("prefix");
         this.getLogger().info(this.PREFIX + "Starting...");
+        long startTime = System.currentTimeMillis();
         INSTANCE = this;
-        replays = new HashMap<>();
-        replaysFiles = new HashMap<>();
-        currentPlayerReplay = new HashMap<>();
         this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager();
         this.configManager = new ConfigManager(this);
         this.modesWherePlayerIn = new HashMap<>();
         this.islandWherePlayerIn = new HashMap<>();
         this.placedBlocks = new HashMap<>();
+        this.tops = new HashMap<>();
         this.loadListeners();
         this.loadCommands();
         for (Player p : Bukkit.getOnlinePlayers())
             this.scoreboardManager.createScoreboard(p, this.PREFIX);
-        /*BukkitRunnable task = new BukkitRunnable() {
+        new BukkitRunnable() {
             @Override
             public void run() {
-                onTickEvent.onTickEvent();
+                for (Player p : Bukkit.getOnlinePlayers())
+                    scoreboardManager.updateTopThree(p, modesWherePlayerIn.get(p));
             }
-        };
-        task.runTaskTimer(this, 0L, 0L);*/
-        this.getLogger().info(this.PREFIX + "Started plugin!");
+        }.runTaskTimer(this, 0L, 0L);
+        this.getLogger().info(this.PREFIX + "Started plugin in " + (System.currentTimeMillis() - startTime) + "ms!");
     }
 
     @Override
@@ -99,4 +90,73 @@ public final class Main extends JavaPlugin {
     public ConfigManager getConfigManager() {
         return configManager;
     }
+
+    public void updateLeaderboard(Player player, String mode, double time) {
+        // Ottieni la lista dei top tempi per la modalità specifica
+        List<HashMap<Double, Player>> topList = tops.getOrDefault(mode, new ArrayList<>());
+
+        // Controlla se il giocatore ha già un tempo registrato e lo rimuove
+        HashMap<Double, Player> previousEntry = null;
+        double previousTime = Double.MAX_VALUE;
+
+        for (HashMap<Double, Player> entry : topList) {
+            for (Map.Entry<Double, Player> mapEntry : entry.entrySet()) {
+                if (mapEntry.getValue().equals(player)) {
+                    previousEntry = entry;
+                    previousTime = mapEntry.getKey();
+                    break;
+                }
+            }
+            if (previousEntry != null) break;
+        }
+
+        // Se il nuovo tempo è maggiore o uguale al precedente, non fare nulla
+        if (previousEntry != null && time >= previousTime) return;
+
+        // Rimuovi il vecchio tempo del giocatore se esiste
+        if (previousEntry != null) {
+            topList.remove(previousEntry);
+        }
+
+        // Aggiungi il nuovo tempo
+        HashMap<Double, Player> newEntry = new HashMap<>();
+        newEntry.put(time, player);
+        topList.add(newEntry);
+
+        // Ordina la lista per tempi più bassi
+        topList.sort(Comparator.comparingDouble(map -> map.keySet().iterator().next()));
+
+        // Mantieni solo i migliori 10
+        while (topList.size() > 10) {
+            topList.remove(topList.size() - 1);
+        }
+
+        // Salva la lista aggiornata nella hashmap
+        tops.put(mode, topList);
+    }
+    public void removePlayerFromLeaderboard(Player player, String mode) {
+        // Ottieni la lista dei top tempi per la modalità specifica
+        List<HashMap<Double, Player>> topList = tops.get(mode);
+
+        // Se non ci sono dati per la modalità, esci
+        if (topList == null) return;
+
+        // Itera e rimuove l'entry del giocatore
+        Iterator<HashMap<Double, Player>> iterator = topList.iterator();
+        while (iterator.hasNext()) {
+            HashMap<Double, Player> entry = iterator.next();
+            for (Map.Entry<Double, Player> mapEntry : entry.entrySet()) {
+                if (mapEntry.getValue().equals(player)) {
+                    iterator.remove(); // Rimuove l'entry dalla lista
+                    break;
+                }
+            }
+        }
+
+        // Aggiorna la mappa
+        tops.put(mode, topList);
+    }
+
+
+
 }

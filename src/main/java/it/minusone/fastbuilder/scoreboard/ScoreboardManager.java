@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.scoreboard;
 
+import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -9,7 +10,9 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ScoreboardManager {
@@ -26,14 +29,44 @@ public class ScoreboardManager {
     }
 
     public void updateTimer(Player player, String currentTime, double bestTime) {
-        setLine(player, "&a&8&l| " + ChatColor.GREEN, 8);
-        setLine(player, "&a&8&l| §ePersonal Best:", 7);
-        setLine(player, "&a&8&l| §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime).replace(",", ".") : "-.---"), 6);
-        setLine(player, "&a&8&l| " +  ChatColor.RESET, 5);
-        setLine(player, "&a&8&l| §eTime:", 4);
+        setLine(player, "&a&8&l| " + ChatColor.GREEN, 16);
+        setLine(player, "&a&8&l| §e§lPersonal Best:    ", 15);
+        setLine(player, "&a&8&l| §a" + (bestTime > 0 ? new DecimalFormat("0.000").format(bestTime).replace(",", ".") : "-.---"), 14);
+        setLine(player, "&a&8&l| ", 13);
+        setLine(player, "&a&8&l| §e§lSession-Top:" +  ChatColor.RESET, 12);
+        setLine(player, "&a&8&l| §e§l" +  ChatColor.RESET, 8);
+        setLine(player, "&a&8&l| §e§lCoins:", 7);
+        setLine(player, "&a&8&l| §e" + Main.getInstance().getConfigManager().getCoinsOfPlayer(player), 6);
+        setLine(player, "&a&8&l| " + ChatColor.BLACK, 5);
+        setLine(player, "&a&8&l| §e§lTime:", 4);
         setLine(player, "&a&8&l| §b" + currentTime, 3);
-        setLine(player, "&a&8&l| ", 2);
-        setLine(player, "&a&8&l| &o- &6&o&8&l&o-", 1);
+        setLine(player, "&a&8&l| §b", 2);
+        setLine(player, "&a&8&l| &6&o&7&o" + Main.getInstance().getConfigManager().getServerIP(), 1);
+    }
+
+    public void updateTopThree(Player player, String mode) {
+        if (!Main.getInstance().tops.containsKey(mode)) {
+            for (int i = 0; i < 3; i++) {
+                setLine(player, "&a&8&l| §7-.---§" + i, 11 - i);
+            }
+        }
+
+        List<HashMap<Double, Player>> topList = Main.getInstance().tops.get(mode);
+        if (topList == null || topList.isEmpty()) return;
+
+        // Ordinare i tempi migliori
+        List<Map.Entry<Double, Player>> sortedTops = new ArrayList<>();
+        for (HashMap<Double, Player> map : topList) {
+            sortedTops.addAll(map.entrySet());
+        }
+        sortedTops.sort(Map.Entry.comparingByKey());
+
+        // Aggiornare la scoreboard con i primi tre
+        for (int i = 0; i < Math.min(3, sortedTops.size()); i++) {
+            Map.Entry<Double, Player> entry = sortedTops.get(i);
+            String formattedTime = new DecimalFormat("0.000").format(entry.getKey()).replace(",", ".");
+            setLine(player, "&a&8&l| §6"  + entry.getValue().getName() + " §7- §b" + formattedTime, 11 - i);
+        }
     }
 
     private void addScoreboardLine(Objective objective, String text, int line) {

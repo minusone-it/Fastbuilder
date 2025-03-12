@@ -18,10 +18,6 @@ public class ReplayGUI implements InventoryHolder {
 
     public ReplayGUI(UUID playerUUID) {
         this.inventory = Bukkit.createInventory(this, 45, "Replays");
-        List<File> replayFiles = Main.replaysFiles.get(playerUUID);
-        if (replayFiles != null) {
-            this.addItems(replayFiles);
-        }
     }
 
     private void addItems(List<File> replayFiles) {

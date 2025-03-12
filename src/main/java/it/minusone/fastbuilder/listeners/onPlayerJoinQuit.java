@@ -1,8 +1,6 @@
 package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.items.IslandSelector;
-import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -19,6 +17,8 @@ public class onPlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().PREFIX);
+        if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
+            Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
         e.getPlayer().removePotionEffect(PotionEffectType.SATURATION);
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99999, 255, false, false));
     }
@@ -26,6 +26,7 @@ public class onPlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent e) {
         Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());
+        Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().modesWherePlayerIn.get(e.getPlayer()));
         Main.getInstance().modesWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().islandWherePlayerIn.remove(e.getPlayer());
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId());

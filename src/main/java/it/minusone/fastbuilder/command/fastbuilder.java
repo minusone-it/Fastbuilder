@@ -3,7 +3,6 @@ package it.minusone.fastbuilder.command;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.items.IslandSelector;
-import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,10 +25,12 @@ public class fastbuilder implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(Main.getInstance().PREFIX + "§cYou must be a player to execute this command.");
             return true;
         }
+
+        Player player = (Player) sender;
 
         if (args.length == 0) {
             player.sendMessage(Main.getInstance().PREFIX + "This server is running Fastbuilder by MinusOne.");
@@ -131,7 +132,7 @@ public class fastbuilder implements CommandExecutor {
                 player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
                 player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                 player.getInventory().setItem(4, new IslandSelector());
-                player.getInventory().setItem(6, new ReplayItem());
+                //player.getInventory().setItem(6, new ReplayItem());
                 player.getInventory().setItem(7, new SettingsItem());
                 Main.getInstance().modesWherePlayerIn.put(player, joinMode);
                 Main.getInstance().islandWherePlayerIn.put(player, joinIsland);

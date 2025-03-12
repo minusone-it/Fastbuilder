@@ -2,7 +2,6 @@ package it.minusone.fastbuilder.gui;
 
 import it.minusone.fastbuilder.items.ResetItem;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 

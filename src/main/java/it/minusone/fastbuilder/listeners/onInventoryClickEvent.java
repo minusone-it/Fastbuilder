@@ -4,7 +4,6 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
 import it.minusone.fastbuilder.gui.SettingsGUI;
-import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,7 +54,6 @@ public class onInventoryClickEvent implements Listener {
                     File replayFile = new File("plugins/Fastbuilder/replay", clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
                     if (replayFile.exists()) {
                         player.closeInventory();
-                        ReplayManager.playReplay((Player) event.getWhoClicked(), replayFile.getAbsoluteFile());
                         player.getInventory().clear();
                         ItemStack cancel = new ItemStack(Material.BARRIER, 1);
                         ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);

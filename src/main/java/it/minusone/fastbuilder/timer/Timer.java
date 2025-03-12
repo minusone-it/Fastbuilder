@@ -1,21 +1,12 @@
 package it.minusone.fastbuilder.timer;
 
-import cf.pies.replay.api.Replay;
-import cf.pies.replay.api.data.stream.ReplayOutputStream;
 import it.minusone.fastbuilder.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
-
-import static it.minusone.fastbuilder.Main.replays;
-import static it.minusone.fastbuilder.Main.replaysFiles;
 
 public class Timer {
 
@@ -24,12 +15,6 @@ public class Timer {
 
     public void startTimer(Player player) {
         UUID uuid = player.getUniqueId();
-        Replay replay = new Replay(player.getLocation());
-        replay.addPlayer(player);
-        replay.addRecording();
-        replay.start();
-
-        replays.computeIfAbsent(uuid, k -> new java.util.ArrayList<>()).add(replay);
 
         if (runningTasks.containsKey(uuid)) {
             runningTasks.get(uuid).cancel();
@@ -53,10 +38,11 @@ public class Timer {
                 double currentTime = getTime(player);
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
                 Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
+                Main.getInstance().scoreboardManager.updateTopThree(player, Main.getInstance().modesWherePlayerIn.get(player));
             }
         };
 
-        task.runTaskTimer(Main.getInstance(), 0L, 1L);
+        task.runTaskTimer(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
     }
 
@@ -66,25 +52,6 @@ public class Timer {
         if (runningTasks.containsKey(uuid)) {
             runningTasks.get(uuid).cancel();
             runningTasks.remove(uuid);
-        }
-
-        List<Replay> playerReplays = replays.get(uuid);
-        if (playerReplays == null || playerReplays.isEmpty()) return;
-
-        Replay replay = playerReplays.get(playerReplays.size() - 1);
-        replay.removeRecording();
-        replay.end();
-
-        File replayDir = new File(Main.getInstance().getDataFolder(), "replay");
-        if (!replayDir.exists()) replayDir.mkdirs();
-
-        File replayFile = new File(replayDir, uuid + "_" + System.currentTimeMillis() + ".replay");
-        try {
-            ReplayOutputStream replayOutputStream = new ReplayOutputStream(new FileOutputStream(replayFile));
-            replayOutputStream.writeReplay(replay);
-            replaysFiles.computeIfAbsent(uuid, k -> new java.util.ArrayList<>()).add(replayFile);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

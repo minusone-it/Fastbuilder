@@ -4,6 +4,7 @@ import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,5 +97,29 @@ public class ConfigManager {
 
     public String getServerIP() {
         return config.getString("server-ip");
+    }
+
+    public int getCoinsOfPlayer(Player player) {
+        String path = player.getUniqueId().toString();
+        return config.getInt(path + ".coins");
+    }
+
+    public void addCoinsToPlayer(Player player, int coinsToAdd) {
+        String path = player.getUniqueId().toString();
+        coinsToAdd += getCoinsOfPlayer(player);
+        config.set(path + ".coins", coinsToAdd);
+        plugin.saveConfig();
+    }
+
+    public void setCoinsOfPlayer(Player player, int coins) {
+        String path = player.getUniqueId().toString();
+        if (config.get(path) == null)
+            config.createSection(path);
+        config.set(path + ".coins", coins);
+        plugin.saveConfig();
+    }
+
+    public boolean isJumpPlateEnabled() {
+        return config.getBoolean("jump-plate");
     }
 }

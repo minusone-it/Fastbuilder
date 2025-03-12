@@ -5,9 +5,7 @@ import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
 import it.minusone.fastbuilder.gui.SettingsGUI;
 import it.minusone.fastbuilder.items.IslandSelector;
-import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -33,9 +31,12 @@ public class onPlayerInteract implements Listener {
                 Player player = event.getPlayer();
                 String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
                 double time = Main.getInstance().timer.getTime(player);
-                if (!timeFormatted.equalsIgnoreCase("0.000")) {
+                List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
                     Main.getInstance().timer.stopTimer(player);
-                    player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + "10 coins!");
+                    int coins = (int) (playerBlocks.size() * time / 15);
+                    player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
+                    Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
                     double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
                     boolean equalTime = PB == time;
                     boolean newPB = time < PB;
@@ -75,8 +76,8 @@ public class onPlayerInteract implements Listener {
                             player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
                         }
                     }, 40L);
+                    Main.getInstance().updateLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player), time);
                 }
-                List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                 if (playerBlocks != null) {
                     for (Location blockLocation : playerBlocks) {
                         if (blockLocation.getBlock().getType() == Material.SANDSTONE)
@@ -90,7 +91,9 @@ public class onPlayerInteract implements Listener {
                 event.getPlayer().openInventory(new IslandSelectorGUI(event.getPlayer()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
                 event.getPlayer().openInventory(new SettingsGUI().getInventory());
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
+            /**
+             * TODO: DO REPLAY HERE
+             * if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
                 event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
@@ -100,7 +103,7 @@ public class onPlayerInteract implements Listener {
                     event.getPlayer().getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
                     event.getPlayer().getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                     event.getPlayer().getInventory().setItem(4, new IslandSelector());
-                    event.getPlayer().getInventory().setItem(6, new ReplayItem());
+                    //event.getPlayer().getInventory().setItem(6, new ReplayItem());
                     event.getPlayer().getInventory().setItem(7, new SettingsItem());
                 }
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Stopped")) {
@@ -117,11 +120,12 @@ public class onPlayerInteract implements Listener {
                 start_stop.setItemMeta(meta);
                 event.getPlayer().getInventory().setItem(4, start_stop);
                 ReplayManager.pauseReplay(event.getPlayer());
-            }
+            }*/
         }
     }
 
     private DecimalFormat getFormat() {
         return new DecimalFormat("0.000");
     }
+
 }
