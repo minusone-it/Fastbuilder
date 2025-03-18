@@ -13,7 +13,7 @@ public class ResetItem extends ItemStack {
         super(Material.DIAMOND_PICKAXE);
         ItemMeta itemMeta = this.getItemMeta();
         itemMeta.setDisplayName("§3Reset Stats");
-        itemMeta.setLore(Arrays.asList(ChatColor.GRAY + "Reset your stats on all modes!", ChatColor.YELLOW + "Cost: " + Main.getInstance().getConfigManager().getCoinsForResetStats() + " Coins.", ChatColor.RED + "IF YOU CLICK, YOU INSTANTLY RESET STATS!"));
+        itemMeta.setLore(Arrays.asList(ChatColor.GRAY + "Reset your stats on all modes!", Main.getInstance().getConfigManager().getCoinsForResetStats() != 0 ? ChatColor.YELLOW + "Cost: " + Main.getInstance().getConfigManager().getCoinsForResetStats() + " Coins." : ChatColor.YELLOW + "Cost: §2No Cost!", ChatColor.RED + "IF YOU CLICK, YOU INSTANTLY RESET STATS!"));
         this.setItemMeta(itemMeta);
     }
 

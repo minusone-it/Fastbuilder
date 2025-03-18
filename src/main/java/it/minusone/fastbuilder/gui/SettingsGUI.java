@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.gui;
 
+import it.minusone.fastbuilder.items.BlockSelector;
 import it.minusone.fastbuilder.items.ResetItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,9 +22,9 @@ public class SettingsGUI implements InventoryHolder {
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.RED + "Coming soon...");
         item.setItemMeta(meta);
-        inventory.setItem(11, item/*new BlockSelector()*/);
+        inventory.setItem(11, new BlockSelector());
         inventory.setItem(13, new ResetItem());
-        inventory.setItem(15, item/*new BlockSelector()*/);
+        inventory.setItem(15, item);
     }
 
     @Override

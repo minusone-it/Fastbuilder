@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.config;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -135,4 +136,45 @@ public class ConfigManager {
     public boolean isJumpPlateEnabled() {
         return config.getBoolean("jump-plate");
     }
+    public void addBlockToPlayer(Material material, Player player) {
+        String path = player.getUniqueId().toString() + ".blocks";
+
+        if (!config.contains(path)) {
+            config.createSection(path);
+        }
+
+        List<String> ownedBlocks = config.getStringList(path);
+
+        if (!ownedBlocks.contains(material.toString())) {
+            ownedBlocks.add(material.toString());
+            config.set(path, ownedBlocks);
+            plugin.saveConfig();
+        }
+    }
+
+    public Material getCurrentPlayerBlock(Player player) {
+        String path = player.getUniqueId().toString() + ".current-block";
+        if (!config.contains(path)) {
+            config.createSection(path);
+        }
+        return Material.getMaterial(config.getString(path));
+    }
+
+    public void setCurrentPlayerBlock(Player player, Material block) {
+        String path = player.getUniqueId().toString() + ".current-block";
+        config.set(path, block.toString());
+        plugin.saveConfig();
+    }
+
+    public boolean hasPlayerGotBlock(Player player, Material material) {
+        String path = player.getUniqueId().toString() + ".blocks";
+
+        if (!config.contains(path)) {
+            return false;
+        }
+
+        List<String> ownedBlocks = config.getStringList(path);
+        return ownedBlocks.contains(material.toString());
+    }
+
 }

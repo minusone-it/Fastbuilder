@@ -18,6 +18,12 @@ public class onPlayerJoinQuit implements Listener {
         onPlayerClickEntity.injectPacketListener(e.getPlayer());
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
+        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(e.getPlayer(), Material.SANDSTONE)) {
+            Main.getInstance().getConfigManager().addBlockToPlayer(Material.SANDSTONE, e.getPlayer());
+            Main.getInstance().getConfigManager().addBlockToPlayer(Material.RED_SANDSTONE, e.getPlayer());
+        }
+        if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(e.getPlayer()) == null)
+            Main.getInstance().getConfigManager().setCurrentPlayerBlock(e.getPlayer(), Material.SANDSTONE);
     }
 
     @EventHandler

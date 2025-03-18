@@ -33,7 +33,7 @@ public class ScoreboardManager {
         setLine(player, "&a&8&l| §b§lPersonal Best:    ", 14);
         setLine(player, "&a&8&l| §e" + (bestTime > 0
                 ? new DecimalFormat("0.000").format(bestTime).replace(",", ".")
-                : "-.---"), 13);
+                : "§7-.---"), 13);
         setLine(player, "&a&8&l| ", 12);
         setLine(player, "&a&8&l| §e§lSession-Top:" + ChatColor.RESET, 11);
         setLine(player, "&a&8&l| §e§l" + ChatColor.RESET, 7);
@@ -65,7 +65,7 @@ public class ScoreboardManager {
                 Map.Entry<Double, Player> entry = sortedTops.get(i);
                 if (entry != null) {
                     String formattedTime = new DecimalFormat("0.000").format(entry.getKey()).replace(",", ".");
-                    setLine(player, "&a&8&l| §7" + entry.getValue().getName() + " §7: §b" + formattedTime, 10 - i);
+                    setLine(player, "&a&8&l| §7" + entry.getValue().getName() + " §7: §e" + formattedTime, 10 - i);
                 }
             }
         } catch (Exception ignored) {

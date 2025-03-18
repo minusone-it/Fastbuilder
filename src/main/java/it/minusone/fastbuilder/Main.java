@@ -10,6 +10,7 @@ import it.minusone.fastbuilder.utils.PressurePlateFinder;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -35,6 +36,7 @@ public final class Main extends JavaPlugin {
     public Timer timer;
     public ConfigManager configManager;
     public static List<Location> plateAboveLocations;
+    public static HashMap<Material, Integer> blocks;
     private static Main INSTANCE;
 
     @Override
@@ -66,6 +68,32 @@ public final class Main extends JavaPlugin {
             this.islandWherePlayerIn = new HashMap<>();
             this.placedBlocks = new HashMap<>();
             this.tops = new HashMap<>();
+            this.blocks = new HashMap<>();
+            this.blocks.put(Material.SANDSTONE, 0);
+            this.blocks.put(Material.RED_SANDSTONE, 0);
+            this.blocks.put(Material.WOOL, 100);
+            this.blocks.put(Material.STONE, 100);
+            this.blocks.put(Material.WOOD, 100);
+            this.blocks.put(Material.QUARTZ_BLOCK, 200);
+            this.blocks.put(Material.STAINED_CLAY, 300);
+            this.blocks.put(Material.CLAY, 500);
+            this.blocks.put(Material.HARD_CLAY, 500);
+            this.blocks.put(Material.COBBLESTONE, 500);
+            this.blocks.put(Material.COAL_BLOCK, 600);
+            this.blocks.put(Material.SNOW_BLOCK, 600);
+            this.blocks.put(Material.IRON_BLOCK, 700);
+            this.blocks.put(Material.HAY_BLOCK, 700);
+            this.blocks.put(Material.ENDER_STONE, 800);
+            this.blocks.put(Material.NETHER_BRICK, 800);
+            this.blocks.put(Material.LEAVES, 800);
+            this.blocks.put(Material.STAINED_GLASS, 800);
+            this.blocks.put(Material.MELON_BLOCK, 800);
+            this.blocks.put(Material.PRISMARINE, 800);
+            this.blocks.put(Material.REDSTONE_BLOCK, 900);
+            this.blocks.put(Material.OBSIDIAN, 900);
+            this.blocks.put(Material.EMERALD_BLOCK, 1000);
+            this.blocks.put(Material.GOLD_BLOCK, 1000);
+            this.blocks.put(Material.GOLD_ORE, 1000);
             this.loadListeners();
             this.loadCommands();
             for (Player p : Bukkit.getOnlinePlayers())

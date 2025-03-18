@@ -7,7 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class BlockSelector extends ItemStack {
     public BlockSelector() {
-        super(Material.DIAMOND_PICKAXE);
+        super(Material.SANDSTONE);
         ItemMeta itemMeta = this.getItemMeta();
         itemMeta.setDisplayName(ChatColor.YELLOW + "Block Selector");
         this.setItemMeta(itemMeta);

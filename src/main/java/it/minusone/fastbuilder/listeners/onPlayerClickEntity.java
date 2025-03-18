@@ -27,8 +27,10 @@ public class onPlayerClickEntity implements Listener {
                         Field field = packet.getClass().getDeclaredField("a");
                         field.setAccessible(true);
                         int entityId = (int) field.get(packet);
-                        if (entityId == NPCManager.getNPC(player).getNpc().getId())
-                            player.openInventory(new ModeChangerGUI().getInventory());
+                        if (NPCManager.getNPC(player) != null) {
+                            if (entityId == NPCManager.getNPC(player).getNpc().getId())
+                                player.openInventory(new ModeChangerGUI().getInventory());
+                        }
                     }
                 }
                 super.channelRead(ctx, msg);

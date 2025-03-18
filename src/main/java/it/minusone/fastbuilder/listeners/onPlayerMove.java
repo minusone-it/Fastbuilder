@@ -26,8 +26,8 @@ public class onPlayerMove implements Listener {
                 if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4) {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                     player.getInventory().clear();
-                    player.getInventory().setItem(0, new ItemStack(Material.SANDSTONE, 64));
-                    player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
+                    player.getInventory().setItem(0, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
+                    player.getInventory().setItem(1, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
                     player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                     player.getInventory().setItem(4, new IslandSelector());
                     //TODO player.getInventory().setItem(6, new ReplayItem());
@@ -35,9 +35,7 @@ public class onPlayerMove implements Listener {
                     List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                     if (playerBlocks != null) {
                         for (Location blockLocation : playerBlocks) {
-                            if (blockLocation.getBlock().getType() == Material.SANDSTONE) {
-                                blockLocation.getBlock().setType(Material.AIR);
-                            }
+                            blockLocation.getBlock().setType(Material.AIR);
                         }
                         Main.getInstance().placedBlocks.remove(player.getUniqueId());
                     }

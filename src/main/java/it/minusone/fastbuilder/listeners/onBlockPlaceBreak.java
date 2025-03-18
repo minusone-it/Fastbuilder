@@ -17,11 +17,10 @@ public class onBlockPlaceBreak implements Listener {
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         if (event.getItemInHand() != null && event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getDisplayName() != null && event.getItemInHand().getItemMeta().getDisplayName().contains("Cancel"))
             event.setCancelled(true);
-        else if (event.getBlock().getType().equals(Material.SANDSTONE)) {
-            if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()))
-                Main.getInstance().timer.startTimer(event.getPlayer());
-            Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
-        }
+        if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()) && Main.getInstance().modesWherePlayerIn.get(event.getPlayer()) != null)
+            Main.getInstance().timer.startTimer(event.getPlayer());
+        Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
+
     }
 
     @EventHandler

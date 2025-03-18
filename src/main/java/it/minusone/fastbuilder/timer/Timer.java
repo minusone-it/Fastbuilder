@@ -133,8 +133,8 @@ public class Timer {
                 @Override
                 public void run() {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
-                    player.getInventory().setItem(0, new ItemStack(Material.SANDSTONE, 64));
-                    player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
+                    player.getInventory().setItem(0, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
+                    player.getInventory().setItem(1, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
                     player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                     player.getInventory().setItem(4, new IslandSelector());
                     // TODO player.getInventory().setItem(6, new ReplayItem());
@@ -144,13 +144,12 @@ public class Timer {
             Main.getInstance().updateLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player), time);
         }
         if (playerBlocks != null) {
-            for (Location blockLocation : playerBlocks) {
-                if (blockLocation.getBlock().getType() == Material.SANDSTONE)
-                    blockLocation.getBlock().setType(Material.AIR);
-            }
+            for (Location blockLocation : playerBlocks)
+                blockLocation.getBlock().setType(Material.AIR);
             Main.getInstance().placedBlocks.remove(player.getUniqueId());
         }
     }
+
     private DecimalFormat getFormat() {
         return new DecimalFormat("0.000");
     }

@@ -23,6 +23,7 @@ it\minusone\fastbuilder\listeners\onPlayerClickEntity.class
 it\minusone\fastbuilder\gui\BlockSelectorGUI.class
 it\minusone\fastbuilder\npc\SkinFetcher.class
 it\minusone\fastbuilder\timer\Timer.class
+it\minusone\fastbuilder\items\BlockItem.class
 it\minusone\fastbuilder\scoreboard\ScoreboardManager.class
 it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.class
 it\minusone\fastbuilder\gui\SettingsGUI.class
