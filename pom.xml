@@ -63,14 +63,6 @@
             <id>elmakers-maven-repo</id>
             <url>https://maven.elmakers.com/repository/</url>
         </repository>
-        <repository>
-            <id>velocitypowered-repo</id>
-            <url>https://repo.velocitypowered.com/releases/</url>
-        </repository>
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/repository/public/</url>
-        </repository>
     </repositories>
 
     <dependencies>

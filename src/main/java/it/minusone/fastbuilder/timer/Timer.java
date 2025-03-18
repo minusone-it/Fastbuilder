@@ -1,11 +1,19 @@
 package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.SettingsItem;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class Timer {
@@ -38,7 +46,7 @@ public class Timer {
                 double currentTime = getTime(player);
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
                 Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
-                Main.getInstance().scoreboardManager.updateTopThree(player, Main.getInstance().modesWherePlayerIn.get(player));
+                //Main.getInstance().scoreboardManager.updateTopThree(player, Main.getInstance().modesWherePlayerIn.get(player));
             }
         };
 
@@ -65,5 +73,85 @@ public class Timer {
 
     public boolean isPlayerInTimer(Player player) {
         return runningTasks.containsKey(player.getUniqueId());
+    }
+    public void scoreTime(Player player) {
+        String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
+        double time = Main.getInstance().timer.getTime(player);
+        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+        if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
+            Main.getInstance().timer.stopTimer(player);
+            int coins = (int) (playerBlocks.size() * time / 5);
+            player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
+            Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
+            double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+            boolean equalTime = PB == time;
+            boolean newPB = time < PB;
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 1);
+            if (newPB) {
+                World world = player.getWorld();
+                Location loc = player.getLocation();
+
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> {
+                    Firework firework = (Firework) world.spawnEntity(loc, EntityType.FIREWORK);
+                    FireworkMeta meta = firework.getFireworkMeta();
+                    FireworkEffect effect = FireworkEffect.builder()
+                            .flicker(false)
+                            .trail(true)
+                            .withColor(Color.RED)
+                            .withFade(Color.ORANGE)
+                            .with(FireworkEffect.Type.BALL)
+                            .build();
+                    meta.addEffect(effect);
+                    meta.setPower(1);
+                    firework.setFireworkMeta(meta);
+                });
+            }
+            List<String> timeMessages = Main.getInstance().getConfigManager().getTimeMessage();
+            List<String> pbMessages = Main.getInstance().getConfigManager().getPersonalBestMessage();
+            DecimalFormat format = this.getFormat();
+
+            if (newPB) {
+                for (String msg : pbMessages)
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg
+                            .replace("%pb%", format.format(PB))
+                            .replace("%difference%", (equalTime ? "+" : "") + format.format(time - PB))
+                            .replace("%time%", timeFormatted)
+                    ));
+            } else {
+                for (String msg : timeMessages)
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg
+                            .replace("%pb%", format.format(PB))
+                            .replace("%difference%", "+" + format.format(time - PB))
+                            .replace("%time%", timeFormatted)
+                    ));
+            }
+
+            Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().modesWherePlayerIn.get(player), time);
+            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000));
+            player.getInventory().clear();
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
+                @Override
+                public void run() {
+                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+                    player.getInventory().setItem(0, new ItemStack(Material.SANDSTONE, 64));
+                    player.getInventory().setItem(1, new ItemStack(Material.SANDSTONE, 64));
+                    player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+                    player.getInventory().setItem(4, new IslandSelector());
+                    // TODO player.getInventory().setItem(6, new ReplayItem());
+                    player.getInventory().setItem(7, new SettingsItem());
+                }
+            }, 40L);
+            Main.getInstance().updateLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player), time);
+        }
+        if (playerBlocks != null) {
+            for (Location blockLocation : playerBlocks) {
+                if (blockLocation.getBlock().getType() == Material.SANDSTONE)
+                    blockLocation.getBlock().setType(Material.AIR);
+            }
+            Main.getInstance().placedBlocks.remove(player.getUniqueId());
+        }
+    }
+    private DecimalFormat getFormat() {
+        return new DecimalFormat("0.000");
     }
 }

@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
@@ -17,10 +15,9 @@ public class onPlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().PREFIX);
+        onPlayerClickEntity.injectPacketListener(e.getPlayer());
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
-        e.getPlayer().removePotionEffect(PotionEffectType.SATURATION);
-        e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 99999, 255, false, false));
     }
 
     @EventHandler

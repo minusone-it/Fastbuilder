@@ -34,7 +34,6 @@ public class IslandSelectorGUI implements InventoryHolder {
             for (String island : islands) {
                 Player islandPlayer = islandToPlayerMap.get(island);
                 boolean isOccupied = islandPlayer != null && Main.getInstance().modesWherePlayerIn.containsKey(islandPlayer);
-
                 ItemMap mapItem = new ItemMap(island, islandPlayer != null ? islandPlayer.getName() : "", islandPlayer, isOccupied);
                 inventory.addItem(mapItem);
             }

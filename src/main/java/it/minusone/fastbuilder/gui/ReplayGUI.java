@@ -1,6 +1,5 @@
 package it.minusone.fastbuilder.gui;
 
-import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;

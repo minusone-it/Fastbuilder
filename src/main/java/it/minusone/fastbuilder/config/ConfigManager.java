@@ -44,6 +44,15 @@ public class ConfigManager {
         }
     }
 
+    public List<String> getTimeMessage() {
+        return config.getStringList("messages.time");
+    }
+
+    public List<String> getPersonalBestMessage() {
+        return config.getStringList("messages.personal-best");
+    }
+
+
     public void removeMode(String mode) {
         List<String> modes = getModes();
         if (modes.contains(mode)) {
@@ -57,7 +66,6 @@ public class ConfigManager {
         if (!config.contains(path)) return null;
 
         String worldName = config.getString(path + ".world");
-        if (worldName == null) return null;
 
         double x = config.getDouble(path + ".x");
         double y = config.getDouble(path + ".y");
@@ -118,6 +126,10 @@ public class ConfigManager {
             config.createSection(path);
         config.set(path + ".coins", coins);
         plugin.saveConfig();
+    }
+
+    public int getCoinsForResetStats() {
+        return config.getInt("reset-stats-cost");
     }
 
     public boolean isJumpPlateEnabled() {

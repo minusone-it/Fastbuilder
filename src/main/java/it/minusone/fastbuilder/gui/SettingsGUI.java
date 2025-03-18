@@ -2,8 +2,12 @@ package it.minusone.fastbuilder.gui;
 
 import it.minusone.fastbuilder.items.ResetItem;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class SettingsGUI implements InventoryHolder {
     public Inventory inventory;
@@ -13,7 +17,13 @@ public class SettingsGUI implements InventoryHolder {
     }
 
     private void addItems(Inventory inventory) {
-        inventory.setItem(15, new ResetItem());
+        ItemStack item = new ItemStack(Material.BARRIER);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.RED + "Coming soon...");
+        item.setItemMeta(meta);
+        inventory.setItem(11, item/*new BlockSelector()*/);
+        inventory.setItem(13, new ResetItem());
+        inventory.setItem(15, item/*new BlockSelector()*/);
     }
 
     @Override

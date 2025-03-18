@@ -1,3 +1,26 @@
-jump-plate: false
+# The plugin prefix, called everywhere, on the scoreboard too.
+prefix: "§7[§3§lFastbuilder§r§7] §7"
+# Shown on scoreboard. For colors, you need to use §, & will not work.
 server-ip: example.net
-prefix: "§7[§3§lFastbuilder§r§7] §f"
+# You can make it 0 to "disable" it.
+reset-stats-cost: 100
+# Placeholders: %time%: Time of the course; %pb% Personal Best; %difference% Difference between the time and the pb.
+messages:
+  time:
+    - "&8----------------------------------"
+    - "&7You've finished the course!"
+    - ""
+    - "&aTime: &e&l%time%"
+    - "&aPB: &e&l%pb% &8| &e&l%difference%"
+    - "&8----------------------------------"
+  personal-best:
+    - "&8----------------------------------"
+    - "&b&lNEW PERSONAL BEST!"
+    - ""
+    - "&7You've finished the course!"
+    - ""
+    - "&aTime: &e&l%time%"
+    - "&aPB: &e&l%pb% &8| &e&l%difference%"
+    - "&8----------------------------------"
+
+license: none
