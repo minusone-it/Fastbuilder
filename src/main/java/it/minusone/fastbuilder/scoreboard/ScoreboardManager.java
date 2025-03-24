@@ -42,7 +42,7 @@ public class ScoreboardManager {
         setLine(player, "&a&8&l| " + ChatColor.BLACK, 4);
         setLine(player, "&a&8&l| §a§lTime:", 3);
         setLine(player, "&a&8&l| §e" + currentTime, 2);
-        setLine(player, "&a&8&l|  &7&o" + Main.getInstance().getConfigManager().getServerIP(), 1);
+        setLine(player, "&a&8&l|   &7&o" + Main.getInstance().getConfigManager().getServerIP(), 1);
     }
 
     public void updateTopThree(Player player, String mode) {

@@ -2,6 +2,7 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.*;
+import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -59,10 +60,12 @@ public class onInventoryClick implements Listener {
             } else if (clickedInventory.getHolder() instanceof ReplayGUI) {
                 event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
-                    File replayFile = new File("plugins/Fastbuilder/replay", clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
+                    File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId(), clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
                     if (replayFile.exists()) {
                         player.closeInventory();
                         player.getInventory().clear();
+                        ReplayManager.playReplay(player, replayFile);
+
                         ItemStack cancel = new ItemStack(Material.BARRIER, 1);
                         ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
                         ItemMeta meta = start_stop.getItemMeta();
@@ -89,20 +92,20 @@ public class onInventoryClick implements Listener {
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
                     int cost = Integer.parseInt(clickedItem.getItemMeta().getLore().get(0).replace(ChatColor.YELLOW + "Cost:", "").replace("coins", "").replace(" ", ""));
                     if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) > cost) {
-                        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")))) {
+                        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
                             player.closeInventory();
                             short damageValue = clickedItem.getDurability();
                             Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - cost);
-                            Main.getInstance().getConfigManager().addBlockToPlayer(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), player);
-                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")));
+                            Main.getInstance().getConfigManager().addBlockToPlayer(clickedItem, player);
+                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
                             ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);
                             block.setDurability(damageValue);
                             player.getInventory().setItem(0, block);
                             player.getInventory().setItem(1, block);
                             player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You successfully bought the block.");
                         } else {
-                            if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")))) {
-                                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")));
+                            if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
+                                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
                                 player.closeInventory();
                                 short damageValue = clickedItem.getDurability();
                                 ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);
@@ -113,8 +116,8 @@ public class onInventoryClick implements Listener {
                             }
                         }
                     } else {
-                        if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")))) {
-                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")));
+                        if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
+                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
                             player.closeInventory();
                             short damageValue = clickedItem.getDurability();
                             ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);

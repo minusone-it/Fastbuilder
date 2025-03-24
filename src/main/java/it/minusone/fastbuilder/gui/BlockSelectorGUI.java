@@ -44,8 +44,6 @@ public class BlockSelectorGUI implements InventoryHolder {
         }
     }
 
-
-
     @Override
     public Inventory getInventory() {
         return inventory;

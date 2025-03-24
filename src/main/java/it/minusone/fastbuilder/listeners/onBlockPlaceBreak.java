@@ -15,8 +15,10 @@ import java.util.List;
 public class onBlockPlaceBreak implements Listener {
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        if (event.getItemInHand() != null && event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getDisplayName() != null && event.getItemInHand().getItemMeta().getDisplayName().contains("Cancel"))
-            event.setCancelled(true);
+        if (event.getItemInHand() != null && event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getDisplayName() != null) {
+            if (event.getItemInHand().getItemMeta().getDisplayName().contains("Cancel"))
+                event.setCancelled(true);
+        }
         if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()) && Main.getInstance().modesWherePlayerIn.get(event.getPlayer()) != null)
             Main.getInstance().timer.startTimer(event.getPlayer());
         Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());

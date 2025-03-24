@@ -14,7 +14,7 @@ public class BlockItem extends ItemStack {
         super(block);
         ItemMeta itemMeta = this.getItemMeta();
         itemMeta.setDisplayName(ChatColor.YELLOW + "" + block);
-        itemMeta.setLore(Arrays.asList(ChatColor.YELLOW + "Cost: " + cost + " coins", Main.getInstance().getConfigManager().hasPlayerGotBlock(player, block) ? ChatColor.GREEN + "You already own this block!" : ChatColor.RED + "You don't own this block yet!"));
+        itemMeta.setLore(Arrays.asList(ChatColor.YELLOW + "Cost: " + cost + " coins", Main.getInstance().getConfigManager().hasPlayerGotBlock(player, new ItemStack(block)) ? ChatColor.GREEN + "You already own this block!" : ChatColor.RED + "You don't own this block yet!"));
         this.setItemMeta(itemMeta);
     }
 
@@ -22,7 +22,7 @@ public class BlockItem extends ItemStack {
         super(block, 1, (short) color);
         ItemMeta itemMeta = this.getItemMeta();
         itemMeta.setDisplayName(ChatColor.YELLOW + "" + block);
-        itemMeta.setLore(Arrays.asList(ChatColor.YELLOW + "Cost: " + cost + " coins", Main.getInstance().getConfigManager().hasPlayerGotBlock(player, block) ? ChatColor.GREEN + "You already own this block!" : ChatColor.RED + "You don't own this block yet!"));
+        itemMeta.setLore(Arrays.asList(ChatColor.YELLOW + "Cost: " + cost + " coins", Main.getInstance().getConfigManager().hasPlayerGotBlock(player, this) ? ChatColor.GREEN + "You already own this block!" : ChatColor.RED + "You don't own this block yet!"));
         this.setItemMeta(itemMeta);
     }
 

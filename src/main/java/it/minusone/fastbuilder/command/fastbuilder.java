@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.command;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
 import it.minusone.fastbuilder.npc.NPCManager;
@@ -69,6 +70,7 @@ public class fastbuilder implements CommandExecutor {
                 Main.getInstance().getConfigManager().setCoinsOfPlayer(Bukkit.getPlayer(args[1]), Main.getInstance().getConfigManager().getCoinsOfPlayer(player) + Integer.parseInt(args[2]));
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Added " + args[2] + " coins to " + args[1] + ".");
                 break;
+
             case "setcoins":
                 if (args.length < 3) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder setcoins <player> <coins>");
@@ -120,11 +122,20 @@ public class fastbuilder implements CommandExecutor {
                 Main.getInstance().getConfigManager().setSpawnLocation(mode, island, spawnLocation);
 
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + mode + " - " + island);
-                Main.getInstance().configManager = null;
-                Main.getInstance().configManager = new ConfigManager(Main.getInstance());
                 break;
             case "join":
+                if (args.length < 2) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder join <mode> <island_number>");
+                    return true;
+                }
+
                 String joinMode = args[1];
+
+                // Se il giocatore è già in una modalità, lo rimuoviamo prima
+                if (Main.getInstance().modesWherePlayerIn.containsKey(player)) {
+                    leaveMode(player);
+                }
+
                 if (args.length < 3) {
                     if (!configManager.modeExists(joinMode)) {
                         player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
@@ -181,7 +192,6 @@ public class fastbuilder implements CommandExecutor {
         return null; // No available island found
     }
 
-
     private void teleportPlayerToIsland(Player player, String mode, String island, Location location) {
         if (Main.getInstance().modesWherePlayerIn.containsValue(mode) && Main.getInstance().islandWherePlayerIn.containsValue(island)) {
             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Objects.requireNonNull(Main.getInstance().islandWherePlayerIn.entrySet()
@@ -195,10 +205,13 @@ public class fastbuilder implements CommandExecutor {
 
         player.teleport(location);
         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "-" + island + "!");
-        player.getInventory().setItem(0, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
-        player.getInventory().setItem(1, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
+        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+        block.setAmount(64);
+        player.getInventory().setItem(0, block);
+        player.getInventory().setItem(1, block);
         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
         player.getInventory().setItem(4, new IslandSelector());
+        player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
         Main.getInstance().modesWherePlayerIn.put(player, mode);
         Main.getInstance().islandWherePlayerIn.put(player, island);
@@ -210,5 +223,29 @@ public class fastbuilder implements CommandExecutor {
         NPCManager.setNPC(modeSelector, player);
         Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
     }
+
+    private void leaveMode(Player player) {
+        String currentMode = Main.getInstance().modesWherePlayerIn.get(player);
+        String currentIsland = Main.getInstance().islandWherePlayerIn.get(player);
+
+        if (currentMode != null && currentIsland != null) {
+
+            Main.getInstance().modesWherePlayerIn.remove(player);
+            Main.getInstance().islandWherePlayerIn.remove(player);
+            Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+            if (NPCManager.getNPC(player) != null) {
+                NPCManager.removeNPC(NPCManager.getNPC(player), player);
+            }
+
+            player.getInventory().clear();
+            Location spawn = Main.getInstance().getConfigManager().getSpawnLocation(currentMode, currentIsland);
+            if (spawn != null) {
+                player.teleport(spawn);
+            }
+
+            player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You have left " + currentMode + "-" + currentIsland + "!");
+        }
+    }
+
 
 }

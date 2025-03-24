@@ -2,6 +2,9 @@ package it.minusone.fastbuilder.npc;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
 import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -37,13 +40,25 @@ public class NPC {
     public void spawn(Player player) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 
+        Channel channel = connection.networkManager.channel;
+        if (channel.pipeline().get("packet_handler_suppressor") == null) {
+            channel.pipeline().addBefore("packet_handler", "packet_handler_suppressor", new ChannelDuplexHandler() {
+                @Override
+                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+                    if (cause instanceof CancelledPacketHandleException) {
+                        return;
+                    }
+                    ctx.fireExceptionCaught(cause);
+                }
+            });
+        }
+
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc));
         connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) ((npc.yaw * 256) / 360)));
 
-        // **Attiva mantelli, occhiali e dettagli della skin**
         DataWatcher dataWatcher = npc.getDataWatcher();
-        dataWatcher.watch(10, (byte) 127); // 127 = Attiva tutte le parti della skin
+        dataWatcher.watch(10, (byte) 127);
 
         connection.sendPacket(new PacketPlayOutEntityMetadata(npc.getId(), dataWatcher, true));
 
@@ -51,6 +66,7 @@ public class NPC {
             connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
         }, 20L);
     }
+
 
     public void despawn(Player player) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;

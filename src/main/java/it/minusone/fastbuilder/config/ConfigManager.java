@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,45 +137,45 @@ public class ConfigManager {
     public boolean isJumpPlateEnabled() {
         return config.getBoolean("jump-plate");
     }
-    public void addBlockToPlayer(Material material, Player player) {
+
+    public void addBlockToPlayer(ItemStack block, Player player) {
         String path = player.getUniqueId().toString() + ".blocks";
-
-        if (!config.contains(path)) {
-            config.createSection(path);
-        }
-
         List<String> ownedBlocks = config.getStringList(path);
+        String blockData = block.getType().name() + ":" + block.getDurability();
 
-        if (!ownedBlocks.contains(material.toString())) {
-            ownedBlocks.add(material.toString());
+        if (!ownedBlocks.contains(blockData)) {
+            ownedBlocks.add(blockData);
             config.set(path, ownedBlocks);
             plugin.saveConfig();
         }
     }
 
-    public Material getCurrentPlayerBlock(Player player) {
-        String path = player.getUniqueId().toString() + ".current-block";
-        if (!config.contains(path)) {
-            config.createSection(path);
-        }
-        return Material.getMaterial(config.getString(path));
+    public boolean hasPlayerGotBlock(Player player, ItemStack block) {
+        String path = player.getUniqueId().toString() + ".blocks";
+        List<String> ownedBlocks = config.getStringList(path);
+        String blockData = block.getType().name() + ":" + block.getDurability();
+        return ownedBlocks.contains(blockData);
     }
 
-    public void setCurrentPlayerBlock(Player player, Material block) {
+    public ItemStack getCurrentPlayerBlock(Player player) {
         String path = player.getUniqueId().toString() + ".current-block";
-        config.set(path, block.toString());
+        String blockData = config.getString(path, "WOOL:0");
+
+        String[] parts = blockData.split(":");
+        Material material = Material.matchMaterial(parts[0]);
+        short durability = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
+
+        if (material == null) {
+            material = Material.WOOL;
+        }
+
+        return new ItemStack(material, 1, durability);
+    }
+
+    public void setCurrentPlayerBlock(Player player, ItemStack block) {
+        String path = player.getUniqueId().toString() + ".current-block";
+        String blockData = block.getType().name() + ":" + block.getDurability();
+        config.set(path, blockData);
         plugin.saveConfig();
     }
-
-    public boolean hasPlayerGotBlock(Player player, Material material) {
-        String path = player.getUniqueId().toString() + ".blocks";
-
-        if (!config.contains(path)) {
-            return false;
-        }
-
-        List<String> ownedBlocks = config.getStringList(path);
-        return ownedBlocks.contains(material.toString());
-    }
-
 }

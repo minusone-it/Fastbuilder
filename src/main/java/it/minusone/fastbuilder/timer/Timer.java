@@ -2,7 +2,10 @@ package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
+import it.minusone.fastbuilder.replay.Replay;
+import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -11,6 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -46,12 +52,16 @@ public class Timer {
                 double currentTime = getTime(player);
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
                 Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
-                //Main.getInstance().scoreboardManager.updateTopThree(player, Main.getInstance().modesWherePlayerIn.get(player));
             }
         };
 
         task.runTaskTimer(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
+        Replay replay = new Replay(player.getLocation());
+        replay.addPlayer(player);
+        replay.addRecording();
+        replay.start();
+        Main.getInstance().replays.put(uuid, replay);
     }
 
     public void stopTimer(Player player) {
@@ -61,6 +71,16 @@ public class Timer {
             runningTasks.get(uuid).cancel();
             runningTasks.remove(uuid);
         }
+        Replay replay = Main.getInstance().replays.get(uuid);
+        replay.removeRecording();
+        replay.end();
+        try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() +".replay").toPath()));) {
+            replayOutputStream.writeReplay(replay);
+        } catch (Exception e) {
+            e.printStackTrace();
+            player.sendMessage(ChatColor.RED + "An error occurred while saving the replay!");
+        }
+        //Main.getInstance().replays.remove(uuid, replay);
     }
 
     public String getTimeFormatted(Player player) {
@@ -74,6 +94,7 @@ public class Timer {
     public boolean isPlayerInTimer(Player player) {
         return runningTasks.containsKey(player.getUniqueId());
     }
+
     public void scoreTime(Player player) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
         double time = Main.getInstance().timer.getTime(player);
@@ -133,11 +154,13 @@ public class Timer {
                 @Override
                 public void run() {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
-                    player.getInventory().setItem(0, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
-                    player.getInventory().setItem(1, new ItemStack(Main.getInstance().getConfigManager().getCurrentPlayerBlock(player), 64));
+                    ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+                    block.setAmount(64);
+                    player.getInventory().setItem(0, block);
+                    player.getInventory().setItem(1, block);
                     player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                     player.getInventory().setItem(4, new IslandSelector());
-                    // TODO player.getInventory().setItem(6, new ReplayItem());
+                    player.getInventory().setItem(6, new ReplayItem());
                     player.getInventory().setItem(7, new SettingsItem());
                 }
             }, 40L);

@@ -4,6 +4,8 @@ import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
+import it.minusone.fastbuilder.replay.Replay;
+import it.minusone.fastbuilder.replay.ReplayPlayback;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
 import it.minusone.fastbuilder.utils.PressurePlateFinder;
@@ -35,6 +37,8 @@ public final class Main extends JavaPlugin {
     public HashMap<UUID, List<Location>> placedBlocks;
     public Timer timer;
     public ConfigManager configManager;
+    public HashMap<UUID, Replay> replays;
+    public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
     public static List<Location> plateAboveLocations;
     public static HashMap<Material, Integer> blocks;
     private static Main INSTANCE;
@@ -68,6 +72,8 @@ public final class Main extends JavaPlugin {
             this.islandWherePlayerIn = new HashMap<>();
             this.placedBlocks = new HashMap<>();
             this.tops = new HashMap<>();
+            this.replays = new HashMap<>();
+            this.currentPlayerReplay = new HashMap<>();
             this.blocks = new HashMap<>();
             this.blocks.put(Material.SANDSTONE, 0);
             this.blocks.put(Material.RED_SANDSTONE, 0);
@@ -120,7 +126,8 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            scoreboardManager.removeScoreboard(p);
+            if (scoreboardManager != null)
+                scoreboardManager.removeScoreboard(p);
             PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
             for (Entity entity : Bukkit.getServer().getWorlds().get(1).getEntities()) {
                 connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
