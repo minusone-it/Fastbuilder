@@ -45,6 +45,7 @@ public class ConfigManager {
             setModes(modes);
             createModeWithDefaultNPCSpawn(mode);
         }
+        plugin.saveConfig();
     }
 
     public List<String> getTimeMessage() {
@@ -55,13 +56,13 @@ public class ConfigManager {
         return config.getStringList("messages.personal-best");
     }
 
-
     public void removeMode(String mode) {
         List<String> modes = getModes();
         if (modes.contains(mode)) {
             modes.remove(mode);
             setModes(modes);
         }
+        plugin.saveConfig();
     }
 
     public Location getSpawnLocation(String mode, String island) {
@@ -108,7 +109,7 @@ public class ConfigManager {
     }
 
     public void createModeWithDefaultNPCSpawn(String mode) {
-        String basePath = "modes." + mode;
+        String basePath = "npcs." + mode;
 
         if (config.contains(basePath))
             return;
@@ -120,6 +121,10 @@ public class ConfigManager {
         config.set(basePath + ".npc-offset.pitch", 0);
 
         plugin.saveConfig();
+    }
+
+    public String getScoreboardPrefix() {
+        return config.getString("scoreboard-prefix");
     }
 
     public String getServerIP() {
@@ -196,12 +201,12 @@ public class ConfigManager {
     }
 
     public Location getNPCOffset(String mode) {
-        if (!config.contains("modes." + mode + ".npc-offset")) return null;
-        double x = config.getDouble("modes." + mode + ".npc-offset.x");
-        double y = config.getDouble("modes." + mode + ".npc-offset.y");
-        double z = config.getDouble("modes." + mode + ".npc-offset.z");
-        float yaw = (float) config.getDouble("modes." + mode + ".npc-offset.yaw");
-        float pitch = (float) config.getDouble("modes." + mode + ".npc-offset.pitch");
+        if (!config.contains("npcs." + mode + ".npc-offset")) return null;
+        int x = config.getInt("npcs." + mode + ".npc-offset.x");
+        int y = config.getInt("npcs." + mode + ".npc-offset.y");
+        int z = config.getInt("npcs." + mode + ".npc-offset.z");
+        float yaw = (float) config.getInt("modes." + mode + ".npc-offset.yaw");
+        float pitch = (float) config.getInt("modes." + mode + ".npc-offset.pitch");
         return new Location(null, x, y, z, yaw, pitch);
     }
 

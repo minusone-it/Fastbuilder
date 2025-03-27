@@ -28,16 +28,9 @@ public class Timer {
     private final HashMap<UUID, BukkitRunnable> runningTasks = new HashMap<>();
     private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
 
-    public boolean isAlreadyTeleported(Player player) {
-        return alreadyTeleported.getOrDefault(player.getUniqueId(), false);
-    }
-
-    public void setAlreadyTeleported(Player player, boolean state) {
-        alreadyTeleported.put(player.getUniqueId(), state);
-    }
-
     public void startTimer(Player player) {
         UUID uuid = player.getUniqueId();
+        setAlreadyTeleported(player, false);
 
         if (runningTasks.containsKey(uuid)) {
             runningTasks.get(uuid).cancel();
@@ -72,7 +65,6 @@ public class Timer {
         replay.start();
         Main.getInstance().replays.put(uuid, replay);
         Main.getInstance().lastReplay.put(uuid, replay);
-        setAlreadyTeleported(player, false);
     }
 
     public void stopTimer(Player player, boolean saveReplay) {
@@ -85,12 +77,14 @@ public class Timer {
         Replay replay = Main.getInstance().replays.get(uuid);
         replay.removeRecording();
         replay.end();
-        if (saveReplay) {
-            try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() + ".replay").toPath()));) {
-                replayOutputStream.writeReplay(replay);
-            } catch (Exception e) {
-                e.printStackTrace();
-                player.sendMessage(ChatColor.RED + "An error occurred while saving the replay!");
+        if (!isAlreadyTeleported(player)) {
+            if (saveReplay) {
+                try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() + ".replay").toPath()));) {
+                    replayOutputStream.writeReplay(replay);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    player.sendMessage(ChatColor.RED + "An error occurred while saving the replay!");
+                }
             }
         }
         Main.getInstance().replays.remove(uuid, replay);
@@ -108,6 +102,15 @@ public class Timer {
     public boolean isPlayerInTimer(Player player) {
         return runningTasks.containsKey(player.getUniqueId());
     }
+
+    public boolean isAlreadyTeleported(Player player) {
+        return alreadyTeleported.getOrDefault(player.getUniqueId(), false);
+    }
+
+    public void setAlreadyTeleported(Player player, boolean state) {
+        alreadyTeleported.put(player.getUniqueId(), state);
+    }
+
 
     public void scoreTime(Player player) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);

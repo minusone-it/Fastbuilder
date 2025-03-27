@@ -15,7 +15,7 @@ public class onPlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
-        Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().PREFIX);
+        Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().getConfigManager().getScoreboardPrefix());
         onPlayerClickEntity.injectPacketListener(e.getPlayer());
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);

@@ -66,33 +66,11 @@ public class onInventoryClick implements Listener {
                             player.closeInventory();
                             player.getInventory().clear();
                             ReplayManager.playReplay(player, replayFile);
-
-                            ItemStack cancel = new ItemStack(Material.BARRIER, 1);
-                            ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
-                            ItemMeta meta = start_stop.getItemMeta();
-                            meta.setDisplayName("§cStopped §7(Right-Click to use)");
-                            start_stop.setItemMeta(meta);
-                            ItemMeta meta1 = cancel.getItemMeta();
-                            meta1.setDisplayName("§cCancel §7(Right-Click to use)");
-                            cancel.setItemMeta(meta1);
-                            player.getInventory().setItem(8, cancel);
-                            player.getInventory().setItem(4, start_stop);
                         }
                     } else {
                         player.closeInventory();
                         player.getInventory().clear();
                         ReplayManager.playReplay(player, Main.getInstance().lastReplay.get(player.getUniqueId()));
-
-                        ItemStack cancel = new ItemStack(Material.BARRIER, 1);
-                        ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
-                        ItemMeta meta = start_stop.getItemMeta();
-                        meta.setDisplayName("§cStopped §7(Right-Click to use)");
-                        start_stop.setItemMeta(meta);
-                        ItemMeta meta1 = cancel.getItemMeta();
-                        meta1.setDisplayName("§cCancel §7(Right-Click to use)");
-                        cancel.setItemMeta(meta1);
-                        player.getInventory().setItem(8, cancel);
-                        player.getInventory().setItem(4, start_stop);
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof ModeChangerGUI) {

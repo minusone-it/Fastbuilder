@@ -1,5 +1,7 @@
 package it.minusone.fastbuilder.listeners;
 
+import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.ReplayPlayback;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
@@ -36,6 +38,7 @@ public class onPlayerInteract implements Listener {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
                     ReplayManager.endReplay(event.getPlayer());
+                    event.getPlayer().teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(event.getPlayer()), Main.getInstance().islandWherePlayerIn.get(event.getPlayer())));
                     event.getPlayer().getInventory().clear();
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(event.getPlayer());
                     block.setAmount(64);
@@ -60,6 +63,12 @@ public class onPlayerInteract implements Listener {
                 start_stop.setItemMeta(meta);
                 event.getPlayer().getInventory().setItem(4, start_stop);
                 ReplayManager.pauseReplay(event.getPlayer());
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("+1 Tick")) {
+                ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
+                replay.nextTick();
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("-1 Tick")) {
+                ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
+                replay.lastTick();
             }
         }
     }

@@ -78,7 +78,6 @@ top\speedcubing\lib\bukkit\inventory\ItemUtils.class
 it\minusone\fastbuilder\gui\SettingsGUI.class
 cf\pies\replay\api\recordable\entity\EntityRemoveRecordable.class
 cf\pies\replay\api\data\SaveRecordable.class
-cf\pies\replay\plugin\BukkitMain.class
 top\speedcubing\lib\utils\CryptoUtils.class
 top\speedcubing\lib\utils\MorseCode.class
 it\minusone\fastbuilder\listeners\onPlayerClickEntity$1.class
