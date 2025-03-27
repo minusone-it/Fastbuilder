@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder;
 
 import cf.pies.replay.api.ReplayPlayback;
+import cf.pies.replay.api.npc.SpeedcubingNPC;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import top.speedcubing.lib.minecraft.MinecraftConsole;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         this.PREFIX = getConfig().getString("prefix");
-        this.getLogger().info(this.PREFIX + "Starting...");
+        MinecraftConsole.printlnColor(this.PREFIX + "Starting...");
         long startTime = System.currentTimeMillis();
         this.configManager = new ConfigManager(this);
         String licenseKey = this.getConfig().getString("license");
@@ -59,11 +61,11 @@ public final class Main extends JavaPlugin {
             out.println(licenseKey);
             isValid = Boolean.parseBoolean(in.readLine());
             if (!isValid) {
-                this.getLogger().severe("LICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT PLUGIN GET A LICENSE ON https://discord.gg/CnQGtfEdjj.");
+                MinecraftConsole.printlnColor("§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT PLUGIN GET A LICENSE ON https://discord.gg/CnQGtfEdjj.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
         } catch (IOException e) {
-            this.getLogger().severe("Error while trying to connect to the license server. Please contact support on discord.");
+            MinecraftConsole.printlnColor("Error while trying to connect to the license server. Please contact support on discord.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
         INSTANCE = this;
@@ -123,7 +125,7 @@ public final class Main extends JavaPlugin {
              *
                 plateAboveLocations = PressurePlateFinder.getAirAbovePlates(this, world.getName());
             */
-            this.getLogger().info(this.PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
+            MinecraftConsole.printlnColor(this.PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
         }
     }
 

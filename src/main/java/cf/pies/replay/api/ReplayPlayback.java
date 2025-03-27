@@ -9,10 +9,14 @@ import cf.pies.replay.api.npc.SpeedcubingNPC;
 import cf.pies.replay.api.recordable.Recordable;
 import cf.pies.replay.api.recordable.UndoRecordable;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -164,6 +168,56 @@ public class ReplayPlayback {
     /**
      * Ends the replay completely
      */
+
+    public void sendTickInfoToActionBar() {
+        // Ottieni il tick attuale e quello massimo del replay
+        int currentTick = getCurrentTick();
+        int maxTick = getReplay().getLength();   // assumendo ci sia un metodo getLength che restituisce i tick totali
+
+        // Conversione da tick a secondi (1 secondo = 20 tick)
+        double currentSeconds = currentTick / 20.0;
+        double maxSeconds = maxTick / 20.0;
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.000");
+
+        // Invio del messaggio in action bar a tutti i listeners
+        for (Player player : getListeners()) {
+            try {
+                sendActionBar(player, "§3" + decimalFormat.format(currentSeconds) + " / " + decimalFormat.format(maxSeconds));
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+    public void sendActionBar(Player player, String message) throws Exception {
+        String v = "v1_8_R3";
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        Class<?> c1 = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+        Object p = c1.cast(player);
+        Object ppoc;
+        Class<?> c4 = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat");
+        Class<?> c5 = Class.forName("net.minecraft.server." + v + ".Packet");
+
+        Class<?> c2 = Class.forName("net.minecraft.server." + v + ".ChatComponentText");
+        Class<?> c3 = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
+        Object o = c2.getConstructor(new Class<?>[]{String.class}).newInstance(message);
+        ppoc = c4.getConstructor(new Class<?>[]{c3, byte.class}).newInstance(o, (byte) 2);
+
+        Method getHandle = c1.getDeclaredMethod("getHandle");
+        Object handle = getHandle.invoke(p);
+
+        Field fieldConnection = handle.getClass().getDeclaredField("playerConnection");
+        Object playerConnection = fieldConnection.get(handle);
+
+        Method sendPacket = playerConnection.getClass().getDeclaredMethod("sendPacket", c5);
+        sendPacket.invoke(playerConnection, ppoc);
+    }
+
+    private Class<?> getNMSClass(String name) throws ClassNotFoundException {
+        return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
+    }
+
     public void end() {
         if (state == PlaybackState.PLAYING) {
             pause();
@@ -195,6 +249,7 @@ public class ReplayPlayback {
     public void nextTick() {
         currentTick++;
         playTick();
+        sendTickInfoToActionBar();
     }
 
     /**
@@ -232,6 +287,7 @@ public class ReplayPlayback {
                 recordable.play(this);
             }
         }
+        sendTickInfoToActionBar();
     }
 
     /**

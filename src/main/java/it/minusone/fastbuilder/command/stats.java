@@ -6,19 +6,24 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
+
 public class stats implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length < 2 || !(sender instanceof Player)) {
-            sender.sendMessage(Main.getInstance().PREFIX + "Usage: /stats <player> <mode>");
+        if (args.length < 1 || !(sender instanceof Player)) {
+            sender.sendMessage(Main.getInstance().PREFIX + "Usage: /stats <player>");
             return false;
         }
 
         Player player = (Player) sender;
-        if (Main.getInstance().getConfigManager().modeExists(args[1])) {
-            player.sendMessage(Main.getInstance().PREFIX + "Personal Best for " + args[0] + " in mode " + args[1] + ":" + Main.getInstance().getConfigManager().getPB(player.getUniqueId(), args[1]));
-        } else
-            player.sendMessage(Main.getInstance().PREFIX + "Mode " + args[1] + " doesn't exist!");
+        Player target = Main.getInstance().getServer().getPlayer(args[0]);
+        player.sendMessage(Main.getInstance().PREFIX + target.getName() + "'s stats:");
+        player.sendMessage(Main.getInstance().PREFIX + "     §eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
+        player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Bests:");
+        for (String mode : Main.getInstance().getConfigManager().getModes()) {
+            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", "."));
+        }
         return true;
     }
 }
