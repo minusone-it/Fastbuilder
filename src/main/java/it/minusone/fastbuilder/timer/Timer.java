@@ -26,6 +26,15 @@ public class Timer {
 
     private final HashMap<UUID, Integer> playerTimers = new HashMap<>();
     private final HashMap<UUID, BukkitRunnable> runningTasks = new HashMap<>();
+    private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
+
+    public boolean isAlreadyTeleported(Player player) {
+        return alreadyTeleported.getOrDefault(player.getUniqueId(), false);
+    }
+
+    public void setAlreadyTeleported(Player player, boolean state) {
+        alreadyTeleported.put(player.getUniqueId(), state);
+    }
 
     public void startTimer(Player player) {
         UUID uuid = player.getUniqueId();
@@ -63,6 +72,7 @@ public class Timer {
         replay.start();
         Main.getInstance().replays.put(uuid, replay);
         Main.getInstance().lastReplay.put(uuid, replay);
+        setAlreadyTeleported(player, false);
     }
 
     public void stopTimer(Player player, boolean saveReplay) {
@@ -84,6 +94,7 @@ public class Timer {
             }
         }
         Main.getInstance().replays.remove(uuid, replay);
+        setAlreadyTeleported(player, false);
     }
 
     public String getTimeFormatted(Player player) {
@@ -156,7 +167,8 @@ public class Timer {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
-                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+                    if (!isAlreadyTeleported(player))
+                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
                     block.setAmount(64);
                     player.getInventory().setItem(0, block);

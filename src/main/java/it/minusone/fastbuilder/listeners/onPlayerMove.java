@@ -25,6 +25,7 @@ public class onPlayerMove implements Listener {
                 String mode = Main.getInstance().modesWherePlayerIn.get(player);
                 String island = Main.getInstance().islandWherePlayerIn.get(player);
                 if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4) {
+                    Main.getInstance().timer.setAlreadyTeleported(player, true);
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                     if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
                         player.getInventory().clear();
