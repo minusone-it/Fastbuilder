@@ -2,6 +2,7 @@ package cf.pies.replay.api;
 
 import cf.pies.replay.api.data.stream.ReplayInputStream;
 import it.minusone.fastbuilder.Main;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,12 +14,14 @@ import java.nio.file.Files;
 public class ReplayManager {
 
     public static void playReplay(Player player, File replayFile) {
+        player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
         try (ReplayInputStream replayInputStream = new ReplayInputStream(Files.newInputStream(replayFile.toPath()))) {
             Replay replay = replayInputStream.readReplay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
             ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
             playback.addListener(player);
             playback.setup();
+            playback.lastTick();
             Main.currentPlayerReplay.put(player.getUniqueId(), playback);
             ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
             ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
@@ -46,10 +49,12 @@ public class ReplayManager {
     }
 
     public static void playReplay(Player player, Replay replay) {
+        player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
         ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
         playback.addListener(player);
         playback.setup();
+        playback.lastTick();
         Main.currentPlayerReplay.put(player.getUniqueId(), playback);
         ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
         ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
@@ -93,6 +98,7 @@ public class ReplayManager {
 
     public static void endReplay(Player player) {
         player.setAllowFlight(false);
+        player.setGameMode(GameMode.SURVIVAL);
         try {
             ReplayPlayback playback = Main.currentPlayerReplay.get(player.getUniqueId());
             playback.end();

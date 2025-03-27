@@ -10,6 +10,7 @@ it\minusone\fastbuilder\npc\NPC$1.class
 top\speedcubing\lib\minecraft\utils\PlayerHead.class
 cf\pies\replay\api\recordable\world\BlockRecordable.class
 it\minusone\fastbuilder\listeners\onInventoryClick.class
+it\minusone\fastbuilder\listeners\onPlayerSneak.class
 it\minusone\fastbuilder\timer\Timer$2.class
 top\speedcubing\lib\utils\internet\dnsrecords\SRVRecord.class
 top\speedcubing\lib\bukkit\pluginMessage\PluginMessageBuilder.class

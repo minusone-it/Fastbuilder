@@ -1,7 +1,6 @@
 package it.minusone.fastbuilder.gui;
 
 import it.minusone.fastbuilder.Main;
-import cf.pies.replay.api.ReplayManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -20,7 +19,7 @@ public class ReplayGUI implements InventoryHolder {
         this.inventory = Bukkit.createInventory(this, 45, "Replays");
 
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
-                "replays/" + playerUUID.toString());
+                "replays/" + playerUUID.toString() + "/" + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
 
         if (!replayFolder.exists()) replayFolder.mkdirs();
 
@@ -40,7 +39,7 @@ public class ReplayGUI implements InventoryHolder {
             ItemStack item = new ItemStack(Material.BOOK);
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName("Replay: " + replayFile.getName());
+                meta.setDisplayName("Replay: " + replayFile.getName().replace(".replay", ""));
                 item.setItemMeta(meta);
             }
             inventory.setItem(i, item);

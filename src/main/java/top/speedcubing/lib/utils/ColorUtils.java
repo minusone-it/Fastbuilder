@@ -1,7 +1,8 @@
 package top.speedcubing.lib.utils;
 
-import java.awt.Color;
 import top.speedcubing.lib.math.scMath;
+
+import java.awt.*;
 
 public class ColorUtils {
 

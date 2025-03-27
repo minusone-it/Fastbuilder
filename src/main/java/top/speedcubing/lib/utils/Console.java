@@ -1,6 +1,5 @@
 package top.speedcubing.lib.utils;
 
-import java.util.Arrays;
 import org.fusesource.jansi.Ansi;
 
 public class Console {

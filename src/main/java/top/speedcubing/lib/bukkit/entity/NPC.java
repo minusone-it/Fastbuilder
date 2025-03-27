@@ -3,28 +3,8 @@ package top.speedcubing.lib.bukkit.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.MathHelper;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntity;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityHeadRotation;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityStatus;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
-import net.minecraft.server.v1_8_R3.PlayerInteractManager;
-import net.minecraft.server.v1_8_R3.WorldServer;
+import it.minusone.fastbuilder.npc.NPCManager;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +22,13 @@ import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.lib.utils.collection.Sets;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 public class NPC {
     public static final Set<NPC> all = new java.util.HashSet<>();
     private Set<PlayerConnection> tracker = new java.util.HashSet<>();
@@ -50,18 +37,19 @@ public class NPC {
     public final boolean autoSpawn;
     public final boolean everyoneCanSee;
     public final EntityPlayer entityPlayer;
-
+    public final Player requestedPlayer;
     private boolean nameTagHidden;
     private boolean gravity;
     private float spawnBodyYaw;
     private ItemStack itemInHand;
     private final ItemStack[] armor = new ItemStack[4];
-    public int ms = 4000;
+    public int ms = 1;
 
     public NPC(String name, UUID uuid, boolean enableOuterLayerSkin, boolean everyoneCanSee, boolean autoSpawn) {
         this.everyoneCanSee = everyoneCanSee;
         this.autoSpawn = autoSpawn;
-        WorldServer world = ((CraftWorld) Bukkit.getWorlds().get(0)).getHandle();
+        this.requestedPlayer = Bukkit.getPlayer(name);
+        WorldServer world = ((CraftWorld) Bukkit.getServer().getPlayer(name).getLocation().getWorld()).getHandle();
         entityPlayer = new EntityPlayer(((CraftServer) Bukkit.getServer()).getServer(), world, new GameProfile(uuid == null ? UUID.randomUUID() : uuid, name), new PlayerInteractManager(world));
         if (enableOuterLayerSkin)
             entityPlayer.getDataWatcher().watch(10, (byte) 127);
@@ -183,9 +171,9 @@ public class NPC {
                 setArmor(i + 1, armor[i]);
         if (ms != -1)
             hideFromTab(ms);
+        NPCManager.setReplayNPC(this, requestedPlayer);
         return this;
     }
-
 
     public NPC animation(int animation) {
         PacketPlayOutAnimation packet = new PacketPlayOutAnimation();
@@ -194,7 +182,6 @@ public class NPC {
         tracker.forEach(a -> a.sendPacket(packet));
         return this;
     }
-
 
     public NPC status(int status) {
         PacketPlayOutEntityStatus packet = new PacketPlayOutEntityStatus();
@@ -212,7 +199,6 @@ public class NPC {
     public boolean isGravity() {
         return gravity;
     }
-
 
     public NPC setSneaking(boolean sneaking) {
         entityPlayer.setSneaking(sneaking);
@@ -297,6 +283,7 @@ public class NPC {
     public NPC despawn() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entityPlayer.getId());
         tracker.forEach(a -> a.sendPacket(packet));
+        NPCManager.removeReplayNPC(requestedPlayer);
         return this;
     }
 

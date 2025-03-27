@@ -1,11 +1,11 @@
 package it.minusone.fastbuilder.timer;
 
+import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.data.stream.ReplayOutputStream;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import cf.pies.replay.api.Replay;
-import cf.pies.replay.api.data.stream.ReplayOutputStream;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -79,7 +78,7 @@ public class Timer {
         replay.end();
         if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
-                try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() + ".replay").toPath()));) {
+                try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + '/' + Main.getInstance().modesWherePlayerIn.get(player) + '/' + System.currentTimeMillis() + ".replay").toPath()));) {
                     replayOutputStream.writeReplay(replay);
                 } catch (Exception e) {
                     e.printStackTrace();

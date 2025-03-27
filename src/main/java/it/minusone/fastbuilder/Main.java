@@ -1,14 +1,13 @@
 package it.minusone.fastbuilder;
 
+import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.ReplayAPI;
 import cf.pies.replay.api.ReplayPlayback;
-import cf.pies.replay.api.npc.SpeedcubingNPC;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
-import cf.pies.replay.api.Replay;
-import cf.pies.replay.api.ReplayAPI;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
 import net.minecraft.server.v1_8_R3.*;
@@ -152,6 +151,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new onInventoryClick(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new onEntityDamage(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerClickEntity(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new onPlayerSneak(), this);
     }
 
     private void loadCommands() {

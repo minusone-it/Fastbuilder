@@ -1,8 +1,8 @@
 package it.minusone.fastbuilder.listeners;
 
+import cf.pies.replay.api.ReplayManager;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.*;
-import cf.pies.replay.api.ReplayManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -61,7 +61,9 @@ public class onInventoryClick implements Listener {
                 event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
                     if (!clickedItem.getItemMeta().getDisplayName().contains("Last")) {
-                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId(), clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
+                        String a = clickedItem.getItemMeta().getDisplayName().replace("Replay: ", "");
+                        String b = a + ".replay";
+                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId() + "/" + Main.getInstance().modesWherePlayerIn.get(player), b);
                         if (replayFile.exists()) {
                             player.closeInventory();
                             player.getInventory().clear();

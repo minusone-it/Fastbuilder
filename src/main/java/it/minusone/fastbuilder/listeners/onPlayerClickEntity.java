@@ -6,8 +6,8 @@ import io.netty.channel.ChannelPipeline;
 import it.minusone.fastbuilder.gui.ModeChangerGUI;
 import it.minusone.fastbuilder.npc.NPCManager;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAttachEntity;
+import net.minecraft.server.v1_8_R3.PacketPlayOutCamera;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,10 +33,10 @@ public class onPlayerClickEntity implements Listener {
                         if (NPCManager.getNPC(player) != null) {
                             if (entityId == NPCManager.getNPC(player).getNpc().getId())
                                 player.openInventory(new ModeChangerGUI().getInventory());
-                        } else {
-                            Entity entity = packet.a(((CraftWorld) player.getLocation().getWorld()).getHandle()).getBukkitEntity();
-                            if (entity.getPassenger() == null)
-                                entity.setPassenger(player);
+                            else {
+                                if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId() && player.getItemInHand() == null)
+                                    onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                            }
                         }
                     }
                 }

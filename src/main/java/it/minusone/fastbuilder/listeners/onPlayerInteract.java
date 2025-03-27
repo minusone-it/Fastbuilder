@@ -1,6 +1,6 @@
 package it.minusone.fastbuilder.listeners;
 
-import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.ReplayManager;
 import cf.pies.replay.api.ReplayPlayback;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
@@ -9,7 +9,6 @@ import it.minusone.fastbuilder.gui.SettingsGUI;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import cf.pies.replay.api.ReplayManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -68,7 +67,8 @@ public class onPlayerInteract implements Listener {
                 replay.nextTick();
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("-1 Tick")) {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
-                replay.lastTick();
+                if (replay.getCurrentTick() >= 0)
+                    replay.lastTick();
             }
         }
     }

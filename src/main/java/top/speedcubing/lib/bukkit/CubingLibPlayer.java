@@ -1,9 +1,6 @@
 package top.speedcubing.lib.bukkit;
 
 import io.netty.channel.ChannelPipeline;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import org.bukkit.Bukkit;
@@ -13,6 +10,10 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.handler.PacketPlayInHandler;
 import top.speedcubing.lib.bukkit.handler.PacketPlayOutHandler;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CubingLibPlayer {
 
