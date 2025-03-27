@@ -9,6 +9,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
@@ -32,6 +33,10 @@ public class onPlayerClickEntity implements Listener {
                         if (NPCManager.getNPC(player) != null) {
                             if (entityId == NPCManager.getNPC(player).getNpc().getId())
                                 player.openInventory(new ModeChangerGUI().getInventory());
+                        } else {
+                            Entity entity = packet.a(((CraftWorld) player.getLocation().getWorld()).getHandle()).getBukkitEntity();
+                            if (entity.getPassenger() == null)
+                                entity.setPassenger(player);
                         }
                     }
                 }
