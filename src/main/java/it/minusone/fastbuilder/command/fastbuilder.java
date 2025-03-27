@@ -131,7 +131,6 @@ public class fastbuilder implements CommandExecutor {
 
                 String joinMode = args[1];
 
-                // Se il giocatore è già in una modalità, lo rimuoviamo prima
                 if (Main.getInstance().modesWherePlayerIn.containsKey(player)) {
                     leaveMode(player);
                 }
@@ -215,8 +214,12 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(7, new SettingsItem());
         Main.getInstance().modesWherePlayerIn.put(player, mode);
         Main.getInstance().islandWherePlayerIn.put(player, island);
-        location.setX(location.getX() - 1);
-        NPC modeSelector = new NPC(player, "Mode Changer", location);
+        Location offset = configManager.getNPCOffset(mode);
+        Location npcLocation = location.clone().add(offset.getX(), offset.getY(), offset.getZ());
+        npcLocation.setYaw(location.getYaw());
+        npcLocation.setPitch(location.getPitch());
+        npcLocation.setWorld(location.getWorld());
+        NPC modeSelector = new NPC(player, "Mode Changer", npcLocation);
         if (NPCManager.getNPC(player) != null)
             NPCManager.removeNPC(NPCManager.getNPC(player), player);
         modeSelector.spawn(player);

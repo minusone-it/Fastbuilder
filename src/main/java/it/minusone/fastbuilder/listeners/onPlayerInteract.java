@@ -7,7 +7,7 @@ import it.minusone.fastbuilder.gui.SettingsGUI;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import it.minusone.fastbuilder.replay.ReplayManager;
+import cf.pies.replay.api.ReplayManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

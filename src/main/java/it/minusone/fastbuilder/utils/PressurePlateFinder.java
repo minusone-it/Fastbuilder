@@ -20,10 +20,9 @@ public class PressurePlateFinder {
         for (Chunk chunk : world.getLoadedChunks()) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < world.getMaxHeight() - 5; y++) { // -5 per evitare IndexOutOfBounds
+                    for (int y = 0; y < world.getMaxHeight() - 5; y++) {
                         Block block = chunk.getBlock(x, y, z);
                         if (isPressurePlate(block.getType())) {
-                            // Aggiungi le posizioni dei blocchi d'aria sopra
                             for (int i = 1; i <= 5; i++) {
                                 Block above = block.getRelative(0, i, 0);
                                 if (above.getType() == Material.AIR) {

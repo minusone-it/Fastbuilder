@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.gui;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.replay.ReplayManager;
+import cf.pies.replay.api.ReplayManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -19,7 +19,6 @@ public class ReplayGUI implements InventoryHolder {
     public ReplayGUI(UUID playerUUID) {
         this.inventory = Bukkit.createInventory(this, 45, "Replays");
 
-        // Ottieni il riferimento alla cartella specifica per il giocatore
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
                 "replays/" + playerUUID.toString());
 
@@ -30,9 +29,13 @@ public class ReplayGUI implements InventoryHolder {
         addItems(replayFiles);
     }
 
-
     private void addItems(List<File> replayFiles) {
-        for (int i = 0; i < replayFiles.size(); i++) {
+        ItemStack item1 = new ItemStack(Material.ENCHANTED_BOOK);
+        ItemMeta meta1 = item1.getItemMeta();
+        meta1.setDisplayName("Last Replay");
+        item1.setItemMeta(meta1);
+        this.inventory.addItem(item1);
+        for (int i = 1; i < replayFiles.size(); i++) {
             File replayFile = replayFiles.get(i);
             ItemStack item = new ItemStack(Material.BOOK);
             ItemMeta meta = item.getItemMeta();

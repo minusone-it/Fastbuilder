@@ -2,12 +2,19 @@ name: Fastbuilder
 version: '1.0'
 main: it.minusone.fastbuilder.Main
 api-version: '1.8'
-authors: [ MinusOne ]
-description: Made with <3 by MinusOne
+authors: [ _MinusOne_ ]
+description: Made with <3 by _MinusOne_. Buy it on https://builtbybit.com/resources/fastbuilder.62493/.
 commands:
   fastbuilder:
+    description:
+      Main command for the plugin.
     aliases:
       - fb
+  stats:
+    description:
+      Command to see stats of another player
+    aliases:
+      - statistics
 permissions:
   fastbuilder.admin:
     default: op

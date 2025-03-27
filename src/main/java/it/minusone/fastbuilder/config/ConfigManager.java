@@ -43,6 +43,7 @@ public class ConfigManager {
         if (!modes.contains(mode)) {
             modes.add(mode);
             setModes(modes);
+            createModeWithDefaultNPCSpawn(mode);
         }
     }
 
@@ -104,6 +105,21 @@ public class ConfigManager {
             config.set(path, time);
             plugin.saveConfig();
         }
+    }
+
+    public void createModeWithDefaultNPCSpawn(String mode) {
+        String basePath = "modes." + mode;
+
+        if (config.contains(basePath))
+            return;
+
+        config.set(basePath + ".npc-offset.x", 1);
+        config.set(basePath + ".npc-offset.y", 0);
+        config.set(basePath + ".npc-offset.z", 0);
+        config.set(basePath + ".npc-offset.yaw", 0);
+        config.set(basePath + ".npc-offset.pitch", 0);
+
+        plugin.saveConfig();
     }
 
     public String getServerIP() {
@@ -178,4 +194,15 @@ public class ConfigManager {
         config.set(path, blockData);
         plugin.saveConfig();
     }
+
+    public Location getNPCOffset(String mode) {
+        if (!config.contains("modes." + mode + ".npc-offset")) return null;
+        double x = config.getDouble("modes." + mode + ".npc-offset.x");
+        double y = config.getDouble("modes." + mode + ".npc-offset.y");
+        double z = config.getDouble("modes." + mode + ".npc-offset.z");
+        float yaw = (float) config.getDouble("modes." + mode + ".npc-offset.yaw");
+        float pitch = (float) config.getDouble("modes." + mode + ".npc-offset.pitch");
+        return new Location(null, x, y, z, yaw, pitch);
+    }
+
 }

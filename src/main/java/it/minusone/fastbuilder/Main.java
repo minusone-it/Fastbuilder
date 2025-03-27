@@ -1,14 +1,15 @@
 package it.minusone.fastbuilder;
 
+import cf.pies.replay.api.ReplayPlayback;
 import it.minusone.fastbuilder.command.fastbuilder;
+import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
-import it.minusone.fastbuilder.replay.Replay;
-import it.minusone.fastbuilder.replay.ReplayPlayback;
+import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.ReplayAPI;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
-import it.minusone.fastbuilder.utils.PressurePlateFinder;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -38,6 +39,7 @@ public final class Main extends JavaPlugin {
     public Timer timer;
     public ConfigManager configManager;
     public HashMap<UUID, Replay> replays;
+    public HashMap<UUID, Replay> lastReplay;
     public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
     public static List<Location> plateAboveLocations;
     public static HashMap<Material, Integer> blocks;
@@ -72,7 +74,9 @@ public final class Main extends JavaPlugin {
             this.islandWherePlayerIn = new HashMap<>();
             this.placedBlocks = new HashMap<>();
             this.tops = new HashMap<>();
+            this.lastReplay = new HashMap<>();
             this.replays = new HashMap<>();
+            ReplayAPI.getApi().initialize(this);
             this.currentPlayerReplay = new HashMap<>();
             this.blocks = new HashMap<>();
             this.blocks.put(Material.SANDSTONE, 0);
@@ -129,9 +133,11 @@ public final class Main extends JavaPlugin {
             if (scoreboardManager != null)
                 scoreboardManager.removeScoreboard(p);
             PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
-            for (Entity entity : Bukkit.getServer().getWorlds().get(1).getEntities()) {
-                connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
-                connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
+            for (World world : Bukkit.getServer().getWorlds()) {
+                for (Entity entity : world.getEntities()) {
+                    connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
+                    connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
+                }
             }
         }
     }
@@ -149,6 +155,7 @@ public final class Main extends JavaPlugin {
     private void loadCommands() {
         this.getCommand("fastbuilder").setExecutor(new fastbuilder());
         this.getCommand("fastbuilder").setTabCompleter(new fastbuilderTabCompleter());
+        this.getCommand("stats").setExecutor(new stats());
     }
 
     public static Main getInstance() {

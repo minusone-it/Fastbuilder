@@ -40,7 +40,7 @@ public class onPlayerJoinQuit implements Listener {
         Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().modesWherePlayerIn.get(e.getPlayer()));
         Main.getInstance().modesWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().islandWherePlayerIn.remove(e.getPlayer());
-        Main.getInstance().timer.stopTimer(e.getPlayer());
+        Main.getInstance().timer.stopTimer(e.getPlayer(), false);
     }
 
 }

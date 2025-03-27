@@ -2,7 +2,7 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.*;
-import it.minusone.fastbuilder.replay.ReplayManager;
+import cf.pies.replay.api.ReplayManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -60,11 +60,28 @@ public class onInventoryClick implements Listener {
             } else if (clickedInventory.getHolder() instanceof ReplayGUI) {
                 event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
-                    File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId(), clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
-                    if (replayFile.exists()) {
+                    if (!clickedItem.getItemMeta().getDisplayName().contains("Last")) {
+                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId(), clickedItem.getItemMeta().getDisplayName().replace("Replay: ", ""));
+                        if (replayFile.exists()) {
+                            player.closeInventory();
+                            player.getInventory().clear();
+                            ReplayManager.playReplay(player, replayFile);
+
+                            ItemStack cancel = new ItemStack(Material.BARRIER, 1);
+                            ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
+                            ItemMeta meta = start_stop.getItemMeta();
+                            meta.setDisplayName("§cStopped §7(Right-Click to use)");
+                            start_stop.setItemMeta(meta);
+                            ItemMeta meta1 = cancel.getItemMeta();
+                            meta1.setDisplayName("§cCancel §7(Right-Click to use)");
+                            cancel.setItemMeta(meta1);
+                            player.getInventory().setItem(8, cancel);
+                            player.getInventory().setItem(4, start_stop);
+                        }
+                    } else {
                         player.closeInventory();
                         player.getInventory().clear();
-                        ReplayManager.playReplay(player, replayFile);
+                        ReplayManager.playReplay(player, Main.getInstance().lastReplay.get(player.getUniqueId()));
 
                         ItemStack cancel = new ItemStack(Material.BARRIER, 1);
                         ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);

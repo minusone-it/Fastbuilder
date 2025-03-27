@@ -4,8 +4,8 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import it.minusone.fastbuilder.replay.Replay;
-import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
+import cf.pies.replay.api.Replay;
+import cf.pies.replay.api.data.stream.ReplayOutputStream;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -57,14 +57,15 @@ public class Timer {
 
         task.runTaskTimer(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
-        Replay replay = new Replay(player.getLocation());
+        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
         replay.addPlayer(player);
         replay.addRecording();
         replay.start();
         Main.getInstance().replays.put(uuid, replay);
+        Main.getInstance().lastReplay.put(uuid, replay);
     }
 
-    public void stopTimer(Player player) {
+    public void stopTimer(Player player, boolean saveReplay) {
         UUID uuid = player.getUniqueId();
         playerTimers.remove(uuid);
         if (runningTasks.containsKey(uuid)) {
@@ -74,13 +75,15 @@ public class Timer {
         Replay replay = Main.getInstance().replays.get(uuid);
         replay.removeRecording();
         replay.end();
-        try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() +".replay").toPath()));) {
-            replayOutputStream.writeReplay(replay);
-        } catch (Exception e) {
-            e.printStackTrace();
-            player.sendMessage(ChatColor.RED + "An error occurred while saving the replay!");
+        if (saveReplay) {
+            try (ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(new File(Main.getInstance().getDataFolder(), "replays/" + uuid + "/" + System.currentTimeMillis() + ".replay").toPath()));) {
+                replayOutputStream.writeReplay(replay);
+            } catch (Exception e) {
+                e.printStackTrace();
+                player.sendMessage(ChatColor.RED + "An error occurred while saving the replay!");
+            }
         }
-        //Main.getInstance().replays.remove(uuid, replay);
+        Main.getInstance().replays.remove(uuid, replay);
     }
 
     public String getTimeFormatted(Player player) {
@@ -100,7 +103,7 @@ public class Timer {
         double time = Main.getInstance().timer.getTime(player);
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
         if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
-            Main.getInstance().timer.stopTimer(player);
+            Main.getInstance().timer.stopTimer(player, true);
             int coins = (int) (playerBlocks.size() * time / 5);
             player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
             Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);

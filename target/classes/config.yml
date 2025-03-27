@@ -1,12 +1,17 @@
-# For colors, you need to use §, & will not work. & will work only on finish messages.
+# For color formatting, you have to use §, & will not work. & will work only on finish messages.
 
-# The plugin prefix, called everywhere, on the scoreboard too.
+# The plugin prefix, called in the commands. Leave a space after the last char.
 prefix: "§3§lFastbuilder§7>> "
+# The scoreboard prefix, called only in the scoreboard.
+scoreboard-prefix: "§3§lFastbuilder"
 # Shown on scoreboard.
 server-ip: example.net
 # You can make it 0 to disable it.
 reset-stats-cost: 100
-# Placeholders: %time%: Time of the course; %pb% Personal Best; %difference% Difference between the time and the pb.
+# Placeholders:
+# %time% - Time of the course;
+# %pb% - Personal Best;
+# %difference% - Difference between the time and the pb.
 messages:
   time:
     - "&8----------------------------------"
