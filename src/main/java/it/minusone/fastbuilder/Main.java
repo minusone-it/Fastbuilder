@@ -60,11 +60,12 @@ public final class Main extends JavaPlugin {
             out.println(licenseKey);
             isValid = Boolean.parseBoolean(in.readLine());
             if (!isValid) {
-                MinecraftConsole.printlnColor("§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT PLUGIN GET A LICENSE ON https://discord.gg/CnQGtfEdjj.");
+                MinecraftConsole.printlnColor(this.PREFIX + "§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT PLUGIN GET A LICENSE ON https://discord.gg/CnQGtfEdjj.");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
         } catch (IOException e) {
-            MinecraftConsole.printlnColor("Error while trying to connect to the license server. Please contact support on discord.");
+            MinecraftConsole.printlnColor(this.PREFIX +
+                    "Error while trying to connect to the license server. Please contact support on discord.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
         INSTANCE = this;
