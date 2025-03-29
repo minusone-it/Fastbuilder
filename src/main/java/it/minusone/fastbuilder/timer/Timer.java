@@ -6,6 +6,7 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -24,40 +25,14 @@ import java.util.UUID;
 public class Timer {
 
     private final HashMap<UUID, Integer> playerTimers = new HashMap<>();
-    private final HashMap<UUID, BukkitRunnable> runningTasks = new HashMap<>();
     private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
 
     public void startTimer(Player player) {
         UUID uuid = player.getUniqueId();
         setAlreadyTeleported(player, false);
 
-        if (runningTasks.containsKey(uuid)) {
-            runningTasks.get(uuid).cancel();
-            runningTasks.remove(uuid);
-            playerTimers.remove(uuid);
-        }
+        playerTimers.put(uuid, MinecraftServer.currentTick);
 
-        playerTimers.put(uuid, 0);
-
-        BukkitRunnable task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!playerTimers.containsKey(uuid)) {
-                    cancel();
-                    runningTasks.remove(uuid);
-                    return;
-                }
-
-                playerTimers.put(uuid, playerTimers.get(uuid) + 1);
-
-                double currentTime = getTime(player);
-                double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
-                Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
-            }
-        };
-
-        task.runTaskTimer(Main.getInstance(), 0L, 0L);
-        runningTasks.put(uuid, task);
         Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
         replay.addPlayer(player);
         replay.addRecording();
@@ -69,15 +44,13 @@ public class Timer {
     public void stopTimer(Player player, boolean saveReplay) {
         UUID uuid = player.getUniqueId();
         playerTimers.remove(uuid);
-        if (runningTasks.containsKey(uuid)) {
-            runningTasks.get(uuid).cancel();
-            runningTasks.remove(uuid);
-        }
+
         Replay replay = Main.getInstance().replays.get(uuid);
         if (replay != null) {
             replay.removeRecording();
             replay.end();
         }
+
         if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
                 try {
@@ -92,6 +65,7 @@ public class Timer {
                 }
             }
         }
+
         Main.getInstance().replays.remove(uuid, replay);
         setAlreadyTeleported(player, false);
     }
@@ -101,11 +75,13 @@ public class Timer {
     }
 
     public double getTime(Player player) {
-        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - 0.050;
+        int startTick = playerTimers.getOrDefault(player.getUniqueId(), 0);
+        int elapsedTicks = MinecraftServer.currentTick - startTick;
+        return (elapsedTicks * 0.05)/* - 0.050*/;
     }
 
     public boolean isPlayerInTimer(Player player) {
-        return runningTasks.containsKey(player.getUniqueId());
+        return playerTimers.containsKey(player.getUniqueId());
     }
 
     public boolean isAlreadyTeleported(Player player) {
@@ -115,7 +91,6 @@ public class Timer {
     public void setAlreadyTeleported(Player player, boolean state) {
         alreadyTeleported.put(player.getUniqueId(), state);
     }
-
 
     public void scoreTime(Player player) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);

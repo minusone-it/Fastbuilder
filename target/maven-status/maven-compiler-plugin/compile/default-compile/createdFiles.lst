@@ -14,7 +14,6 @@ it\minusone\fastbuilder\listeners\onInventoryClick.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard$ObjectiveMode.class
 it\minusone\fastbuilder\utils\math\item\Plane3D.class
 it\minusone\fastbuilder\listeners\onPlayerSneak.class
-it\minusone\fastbuilder\timer\Timer$2.class
 it\minusone\fastbuilder\utils\bukkit\events\inventory\ClickInventoryEvent.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\ProfileRespondEvent.class
 it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class

@@ -11,19 +11,19 @@ public class ConfirmGUI implements InventoryHolder {
     public Inventory inventory;
 
     public ConfirmGUI() {
-        this.inventory = Bukkit.createInventory(this, 45);
+        this.inventory = Bukkit.createInventory(this, 45, "Stats Reset");
         ItemStack confirm = new ItemStack(Material.WOOL);
-        confirm.setDurability((short) 4);
+        confirm.setDurability((byte) 5);
         ItemMeta a = confirm.getItemMeta();
         a.setDisplayName("§aConfirm");
         ItemStack cancel = new ItemStack(Material.WOOL);
-        confirm.setDurability((short) 14);
+        cancel.setDurability((byte) 14);
         ItemMeta b = cancel.getItemMeta();
         b.setDisplayName("§cCancel");
         confirm.setItemMeta(a);
         cancel.setItemMeta(b);
-        this.inventory.setItem(21, confirm);
-        this.inventory.setItem(19, cancel);
+        this.inventory.setItem(20, confirm);
+        this.inventory.setItem(24, cancel);
     }
 
     @Override
