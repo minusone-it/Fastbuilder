@@ -1,8 +1,8 @@
 package it.minusone.fastbuilder;
 
-import cf.pies.replay.api.Replay;
-import cf.pies.replay.api.ReplayAPI;
-import cf.pies.replay.api.ReplayPlayback;
+import it.minusone.fastbuilder.replay.Replay;
+import it.minusone.fastbuilder.replay.ReplayMain;
+import it.minusone.fastbuilder.replay.ReplayPlayback;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import it.minusone.fastbuilder.command.fastbuilder;
@@ -12,6 +12,7 @@ import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
+import it.minusone.fastbuilder.utils.jasfafs;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import top.speedcubing.lib.minecraft.MinecraftConsole;
+import it.minusone.fastbuilder.utils.minecraft.MinecraftConsole;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public final class Main extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         String licenseKey = this.getConfig().getString("license");
         boolean isValid;
-        try (Socket socket = new Socket("82.53.155.31", 5000);
+        try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             out.println(licenseKey);
@@ -86,7 +87,8 @@ public final class Main extends JavaPlugin {
             this.lastReplay = new HashMap<>();
             this.replays = new HashMap<>();
             this.protocolManager = ProtocolLibrary.getProtocolManager();
-            ReplayAPI.getApi().initialize(this);
+            plateAboveLocations = new ArrayList<>();
+            ReplayMain.getApi().initialize(this);
             this.currentPlayerReplay = new HashMap<>();
             this.blocks = new HashMap<>();
             this.blocks.put(Material.SANDSTONE, 0);
@@ -126,11 +128,10 @@ public final class Main extends JavaPlugin {
                     }
                 }
             }.runTaskTimer(this, 0L, 0L);
-            /**for (World world : Bukkit.getServer().getWorlds())
-             * TODO
-             *
-                plateAboveLocations = PressurePlateFinder.getAirAbovePlates(this, world.getName());
-            */
+            if (getConfigManager().isJumpPlateEnabled()) {
+                for (World world : Bukkit.getServer().getWorlds())
+                    jasfafs.scanLoadedChunksForPressurePlates(world);
+            }
             MinecraftConsole.printlnColor(this.PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
         }
     }

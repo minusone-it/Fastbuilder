@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.timer;
 
-import cf.pies.replay.api.Replay;
-import cf.pies.replay.api.data.stream.ReplayOutputStream;
+import it.minusone.fastbuilder.replay.Replay;
+import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.HashMap;

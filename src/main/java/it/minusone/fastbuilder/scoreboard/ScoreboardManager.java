@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.scoreboard;
 
-import fr.minuskube.netherboard.Netherboard;
-import fr.minuskube.netherboard.bukkit.BPlayerBoard;
+import it.minusone.fastbuilder.scoreboard.helpers.Netherboard;
+import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

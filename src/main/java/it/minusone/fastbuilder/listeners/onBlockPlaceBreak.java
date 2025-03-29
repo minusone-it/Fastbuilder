@@ -1,6 +1,6 @@
 package it.minusone.fastbuilder.listeners;
 
-import cf.pies.replay.api.ReplayManager;
+import it.minusone.fastbuilder.replay.ReplayManager;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
@@ -36,10 +36,11 @@ public class onBlockPlaceBreak implements Listener {
                 return;
             }
         }
-        if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()) && Main.getInstance().modesWherePlayerIn.get(event.getPlayer()) != null)
-            Main.getInstance().timer.startTimer(event.getPlayer());
-        Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
-
+        if (Main.getInstance().modesWherePlayerIn.containsKey(event.getPlayer())) {
+            Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
+            if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()))
+                Main.getInstance().timer.startTimer(event.getPlayer());
+        }
     }
 
     @EventHandler

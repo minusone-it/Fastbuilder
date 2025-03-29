@@ -8,6 +8,8 @@ scoreboard-prefix: "§3§lFastbuilder"
 server-ip: example.net
 # You can make it 0 to disable it.
 reset-stats-cost: 100
+# Jump Plate like the Bridger Land one.
+jump-plate: false
 # Placeholders:
 # %time% - Time of the course;
 # %pb% - Personal Best;

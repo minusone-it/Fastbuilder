@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class NPCManager {
     private static final HashMap<Player, NPC> npcs = new HashMap<>();
-    private static final Map<Player, top.speedcubing.lib.bukkit.entity.NPC> npcsReplay = new HashMap<>();
+    private static final Map<Player, it.minusone.fastbuilder.utils.bukkit.entity.NPC> npcsReplay = new HashMap<>();
 
     public static void setNPC(NPC npc, Player player) {
         npcs.put(player, npc);
@@ -29,11 +29,11 @@ public class NPCManager {
         return npcs.get(player);
     }
 
-    public static top.speedcubing.lib.bukkit.entity.NPC getReplayNPC(Player player) {
+    public static it.minusone.fastbuilder.utils.bukkit.entity.NPC getReplayNPC(Player player) {
         return npcsReplay.get(player);
     }
 
-    public static void setReplayNPC(top.speedcubing.lib.bukkit.entity.NPC npc, Player player) {
+    public static void setReplayNPC(it.minusone.fastbuilder.utils.bukkit.entity.NPC npc, Player player) {
         npcsReplay.put(player, npc);
     }
 

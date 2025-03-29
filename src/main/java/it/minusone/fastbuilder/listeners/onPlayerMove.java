@@ -4,6 +4,7 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
+import it.minusone.fastbuilder.timer.Timer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class onPlayerMove implements Listener {
@@ -47,12 +49,33 @@ public class onPlayerMove implements Listener {
                         Main.getInstance().timer.stopTimer(player, false);
                     }
                 }
-                /**
-                 * TODO
-                 * for (Location loc : Main.plateAboveLocations) {
-                    if (player.getLocation() == loc && Main.getInstance().getConfigManager().isJumpPlateEnabled())
-                        Main.getInstance().timer.scoreTime(player);
-                }*/
+                if (Main.getInstance().getConfigManager().isJumpPlateEnabled()) {
+                    List<Location> locs = new ArrayList<>();
+                    for (Location loc : Main.plateAboveLocations) {
+                        Location loc1 = loc.clone().add(0, 1, 0);
+                        Location loc2 = loc.clone().add(0, 2, 0);
+                        Location loc3 = loc.clone().add(0, 3, 0);
+
+                        locs.add(loc1);
+                        locs.add(loc2);
+                        locs.add(loc3);
+                    }
+                    Location playerLoc = player.getLocation();
+                    playerLoc.setX(Math.floor(playerLoc.getX()) + 0.5);
+                    playerLoc.setY(Math.floor(playerLoc.getY()));
+                    playerLoc.setZ(Math.floor(playerLoc.getZ()) + 0.5);
+                    playerLoc.setYaw(0);
+                    playerLoc.setPitch(0);
+
+                    for (Location loc : locs) {
+                        loc.setX(Math.floor(loc.getX()) + 0.5);
+                        loc.setY(Math.floor(loc.getY()));
+                        loc.setZ(Math.floor(loc.getZ()) + 0.5);
+                        if (playerLoc.equals(loc) && Main.getInstance().modesWherePlayerIn.containsKey(player)) {
+                            Main.getInstance().timer.scoreTime(player);
+                        }
+                    }
+                }
             } catch (Exception ignored) {
 
             }

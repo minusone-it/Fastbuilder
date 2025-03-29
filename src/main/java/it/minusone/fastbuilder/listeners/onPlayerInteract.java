@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.listeners;
 
-import cf.pies.replay.api.ReplayManager;
-import cf.pies.replay.api.ReplayPlayback;
+import it.minusone.fastbuilder.replay.ReplayManager;
+import it.minusone.fastbuilder.replay.ReplayPlayback;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
