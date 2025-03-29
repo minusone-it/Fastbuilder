@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.utils.bukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,7 +12,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutPlayerListHeaderFooter;
-import it.minusone.fastbuilder.utils.a;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ public class PlayerUtils {
     public static void entityCrash(Player player) {
         Location loc = player.getLocation();
         PlayerConnection c = getConnection(player);
-        Bukkit.getScheduler().runTaskAsynchronously(a.getPlugin(a.class), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(Main.class), () -> {
             for (int i = 0; i < 100000; i++) {
                 try {
                     EntityEnderDragon entityEnderDragon = new EntityEnderDragon(((CraftWorld) loc.getWorld()).getHandle());

@@ -2,7 +2,6 @@ package it.minusone.fastbuilder.scoreboard.helpers;
 
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +13,13 @@ import java.util.Map;
  * To create a board, get the instance using <code>Netherboard.instance()</code>
  * and call one of the <code>createBoard()</code> methods.
  */
-public class Netherboard {
+public class Scoreboard {
 
-    private static Netherboard instance;
+    private static Scoreboard instance;
 
     private final Map<Player, BPlayerBoard> boards = new HashMap<>();
 
-    private Netherboard() {}
+    private Scoreboard() {}
 
     /**
      * Creates a board to a player.
@@ -41,7 +40,7 @@ public class Netherboard {
      * @param name          the name of the board
      * @return              the newly created board
      */
-    public BPlayerBoard createBoard(Player player, Scoreboard scoreboard, String name) {
+    public BPlayerBoard createBoard(Player player, org.bukkit.scoreboard.Scoreboard scoreboard, String name) {
         deleteBoard(player);
 
         BPlayerBoard board = new BPlayerBoard(player, scoreboard, name);
@@ -106,9 +105,9 @@ public class Netherboard {
      *
      * @return the instance
      */
-    public static Netherboard instance() {
+    public static Scoreboard instance() {
         if(instance == null)
-            instance = new Netherboard();
+            instance = new Scoreboard();
 
         return instance;
     }

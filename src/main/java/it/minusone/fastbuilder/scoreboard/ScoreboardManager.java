@@ -1,6 +1,6 @@
 package it.minusone.fastbuilder.scoreboard;
 
-import it.minusone.fastbuilder.scoreboard.helpers.Netherboard;
+import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.ChatColor;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class ScoreboardManager {
 
     public void createScoreboard(Player player, String title) {
-        Netherboard.instance().createBoard(player, title);
+        Scoreboard.instance().createBoard(player, title);
     }
 
     public void updateTimer(Player player, String currentTime, double bestTime) {
@@ -37,25 +37,20 @@ public class ScoreboardManager {
 
     public void updateTopThree(Player player, String mode) {
         try {
-            List<HashMap<Double, Player>> topList = Main.getInstance().tops.get(mode);
+            List<Main.Entry> topList = Main.getInstance().tops.get(mode);
             if (topList == null || topList.isEmpty()) {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++)
                     setLine(player, "&a&8&l| §7-.---§" + i, 10 - i);
-                }
                 return;
             }
 
-            List<Map.Entry<Double, Player>> sortedTops = new ArrayList<>();
-            for (HashMap<Double, Player> map : topList) {
-                sortedTops.addAll(map.entrySet());
-            }
-            sortedTops.sort(Map.Entry.comparingByKey());
-
             for (int i = 0; i < 3; i++) {
-                Map.Entry<Double, Player> entry = sortedTops.get(i);
-                if (entry != null) {
-                    String formattedTime = new DecimalFormat("0.000").format(entry.getKey()).replace(",", ".");
-                    setLine(player, "&a&8&l| §7" + entry.getValue().getName() + " §7: §e" + formattedTime, 10 - i);
+                if (i < topList.size()) {
+                    Main.Entry entry = topList.get(i);
+                    String formattedTime = new DecimalFormat("0.000").format(entry.time).replace(",", ".");
+                    setLine(player, "&a&8&l| §7" + entry.player.getName() + " §7: §e" + formattedTime, 10 - i);
+                } else {
+                    setLine(player, "&a&8&l| §7-.---§" + i, 10 - i);
                 }
             }
         } catch (Exception ignored) {
@@ -64,12 +59,12 @@ public class ScoreboardManager {
     }
 
     public void setLine(Player player, String text, int line) {
-        BPlayerBoard board = Netherboard.instance().getBoard(player);
+        BPlayerBoard board = Scoreboard.instance().getBoard(player);
         board.set(text.replace("&", "§"), line);
     }
 
     public void removeScoreboard(Player player) {
-        BPlayerBoard board = Netherboard.instance().getBoard(player);
+        BPlayerBoard board = Scoreboard.instance().getBoard(player);
         board.delete();
     }
 }

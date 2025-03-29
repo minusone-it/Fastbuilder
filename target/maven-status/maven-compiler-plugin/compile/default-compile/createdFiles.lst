@@ -14,6 +14,8 @@ it\minusone\fastbuilder\listeners\onInventoryClick.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard$ObjectiveMode.class
 it\minusone\fastbuilder\utils\math\item\Plane3D.class
 it\minusone\fastbuilder\listeners\onPlayerSneak.class
+it\minusone\fastbuilder\scoreboard\helpers\Scoreboard.class
+it\minusone\fastbuilder\timer\Timer$2.class
 it\minusone\fastbuilder\utils\bukkit\events\inventory\ClickInventoryEvent.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\ProfileRespondEvent.class
 it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class
@@ -28,10 +30,10 @@ it\minusone\fastbuilder\utils\utils\Console.class
 it\minusone\fastbuilder\utils\api\mcserverping\ServerPingResponse.class
 it\minusone\fastbuilder\utils\utils\bytes\NumberConversion.class
 it\minusone\fastbuilder\utils\utils\internet\protocol\HAProxyProtocol.class
+it\minusone\fastbuilder\Main$Entry.class
 it\minusone\fastbuilder\utils\utils\UUIDUtils.class
 it\minusone\fastbuilder\utils\api\mojang\Profile.class
 it\minusone\fastbuilder\utils\bukkit\entity\NPC.class
-it\minusone\fastbuilder\replay\npc\SpeedcubingNPC.class
 it\minusone\fastbuilder\scoreboard\ScoreboardManager.class
 it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.class
 it\minusone\fastbuilder\utils\eventbus\CubingEvent.class
@@ -113,6 +115,7 @@ it\minusone\fastbuilder\utils\utils\bytes\IOUtils.class
 it\minusone\fastbuilder\utils\utils\image\ImageRotator.class
 it\minusone\fastbuilder\scoreboard\helpers\api\PlayerBoard.class
 it\minusone\fastbuilder\utils\utils\collection\Sets.class
+it\minusone\fastbuilder\replay\npc\ActualNPC.class
 it\minusone\fastbuilder\utils\bukkit\pluginMessage\BungeePluginMessage.class
 it\minusone\fastbuilder\utils\math\item\Coord.class
 it\minusone\fastbuilder\utils\utils\ArrayUtils.class
@@ -131,7 +134,6 @@ it\minusone\fastbuilder\utils\utils\RegexUtils.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\NetherboardPlugin.class
 it\minusone\fastbuilder\utils\utils\image\ImageRotator$1.class
-it\minusone\fastbuilder\scoreboard\helpers\Netherboard.class
 it\minusone\fastbuilder\listeners\onBlockPlaceBreak.class
 it\minusone\fastbuilder\replay\recordable\entity\MessageRecordable.class
 it\minusone\fastbuilder\utils\api\events\SignUpdateEvent.class
@@ -145,7 +147,6 @@ it\minusone\fastbuilder\listeners\onEntityDamage.class
 it\minusone\fastbuilder\listeners\onPlayerMove.class
 it\minusone\fastbuilder\utils\utils\internet\HostAndPort.class
 it\minusone\fastbuilder\replay\recordable\entity\LocationRecordable.class
-it\minusone\fastbuilder\utils\a.class
 it\minusone\fastbuilder\gui\ModeChangerGUI.class
 it\minusone\fastbuilder\utils\api\mcserverping\ServerPingJSONResponse$PlayerSample.class
 it\minusone\fastbuilder\utils\minecraft\packet\HandshakePacket.class

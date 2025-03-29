@@ -26,6 +26,9 @@ public class onPlayerInteract implements Listener {
             if (event.getClickedBlock().getType() == Material.GOLD_PLATE) {
                 Player player = event.getPlayer();
                 Main.getInstance().timer.scoreTime(player);
+                Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
+                Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
+                Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))

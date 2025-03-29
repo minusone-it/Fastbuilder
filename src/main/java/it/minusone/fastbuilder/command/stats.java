@@ -20,9 +20,11 @@ public class stats implements CommandExecutor {
         Player target = Main.getInstance().getServer().getPlayer(args[0]);
         player.sendMessage(Main.getInstance().PREFIX + target.getName() + "'s stats:");
         player.sendMessage(Main.getInstance().PREFIX + "     §eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
+        player.sendMessage(Main.getInstance().PREFIX + "     §7Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
+        player.sendMessage(Main.getInstance().PREFIX + "     §7Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
         player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Bests:");
         for (String mode : Main.getInstance().getConfigManager().getModes()) {
-            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", "."));
+            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + (new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000")));
         }
         return true;
     }

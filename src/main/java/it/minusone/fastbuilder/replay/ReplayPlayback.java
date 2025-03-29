@@ -5,7 +5,7 @@ import it.minusone.fastbuilder.replay.enums.PlaybackState;
 import it.minusone.fastbuilder.replay.event.PlaybackEndEvent;
 import it.minusone.fastbuilder.replay.event.PlaybackStateChangeEvent;
 import it.minusone.fastbuilder.replay.npc.ReplayNPC;
-import it.minusone.fastbuilder.replay.npc.SpeedcubingNPC;
+import it.minusone.fastbuilder.replay.npc.ActualNPC;
 import it.minusone.fastbuilder.replay.recordable.Recordable;
 import it.minusone.fastbuilder.replay.recordable.UndoRecordable;
 import org.bukkit.Bukkit;
@@ -77,7 +77,7 @@ public class ReplayPlayback {
      */
     public void spawnNpc(int entityId, EntityInfo info) {
         // Note: This can be changed for another npc library if needed, or native npc packets.
-        ReplayNPC npc = new SpeedcubingNPC(this, info.getName());
+        ReplayNPC npc = new ActualNPC(this, info.getName());
 
         for (Player listener : listeners) {
             npc.addListener(listener);

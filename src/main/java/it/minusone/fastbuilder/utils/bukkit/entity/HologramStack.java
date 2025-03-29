@@ -89,17 +89,16 @@ public class HologramStack {
         return this;
     }
 
-
     public HologramStack setLocation(double x, double y, double z, float yaw, float pitch) {
         for (int i = 0; i < count; i++) {
-            hologramList.get(i).setLocation(x, y + i * d, z, yaw, pitch);
+            hologramList.get(i).setLocation(x, y + d, z, yaw, pitch);
         }
         return this;
     }
 
     public HologramStack setLocation(Location location) {
         for (int i = 0; i < count; i++) {
-            location.setY(location.getY() + i * d);
+            location.setY(location.getY() + d);
             hologramList.get(i).setLocation(location);
         }
         return this;
@@ -118,7 +117,6 @@ public class HologramStack {
         }
         return this;
     }
-
 
     public HologramStack setName(int index, String name) {
         hologramList.get(index).setName(name);

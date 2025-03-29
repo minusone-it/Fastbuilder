@@ -44,7 +44,10 @@ public class onPlayerMove implements Listener {
                             for (Location blockLocation : playerBlocks) {
                                 blockLocation.getBlock().setType(Material.AIR);
                             }
+                            Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                            Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
+                            Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
                         }
                         Main.getInstance().timer.stopTimer(player, false);
                     }
@@ -73,6 +76,10 @@ public class onPlayerMove implements Listener {
                         loc.setZ(Math.floor(loc.getZ()) + 0.5);
                         if (playerLoc.equals(loc) && Main.getInstance().modesWherePlayerIn.containsKey(player)) {
                             Main.getInstance().timer.scoreTime(player);
+                            Main.getInstance().getConfigManager().addAttempt(player);
+                            Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
+                            Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
+                            Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
                         }
                     }
                 }

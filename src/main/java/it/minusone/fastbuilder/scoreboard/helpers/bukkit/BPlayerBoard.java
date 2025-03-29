@@ -1,12 +1,11 @@
 package it.minusone.fastbuilder.scoreboard.helpers.bukkit;
 
-import it.minusone.fastbuilder.scoreboard.helpers.Netherboard;
+import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.api.PlayerBoard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.util.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,7 @@ public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BPlayerBoard.class);
 
     private Player player;
-    private Scoreboard scoreboard;
+    private org.bukkit.scoreboard.Scoreboard scoreboard;
 
     private String name;
 
@@ -36,12 +35,12 @@ public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
         this(player, null, name);
     }
 
-    public BPlayerBoard(Player player, Scoreboard scoreboard, String name) {
+    public BPlayerBoard(Player player, org.bukkit.scoreboard.Scoreboard scoreboard, String name) {
         this.player = player;
         this.scoreboard = scoreboard;
 
         if(this.scoreboard == null) {
-            Scoreboard sb = player.getScoreboard();
+            org.bukkit.scoreboard.Scoreboard sb = player.getScoreboard();
 
             if(sb == null || sb == Bukkit.getScoreboardManager().getMainScoreboard())
                 sb = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -284,7 +283,7 @@ public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
         if(this.deleted)
             return;
 
-        Netherboard.instance().removeBoard(player);
+        Scoreboard.instance().removeBoard(player);
 
         sendObjective(this.objective, ObjectiveMode.REMOVE);
         sendObjective(this.buffer, ObjectiveMode.REMOVE);
@@ -331,7 +330,7 @@ public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
         return player;
     }
 
-    public Scoreboard getScoreboard() { return scoreboard; }
+    public org.bukkit.scoreboard.Scoreboard getScoreboard() { return scoreboard; }
 
 
     private enum ObjectiveMode { CREATE, REMOVE, UPDATE }

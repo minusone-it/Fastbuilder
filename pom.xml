@@ -6,7 +6,7 @@
 
     <groupId>it.minusone</groupId>
     <artifactId>fastbuilder</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>fastbuilder</name>

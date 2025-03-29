@@ -38,6 +38,9 @@ public class Hologram {
         armorStand.n(true);
         armorStand.setCustomName(name);
         all.add(this);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            addListener(p);
+        }
     }
 
     public void delete() {
@@ -55,6 +58,11 @@ public class Hologram {
     }
 
     Set<PlayerConnection> temp = new HashSet<>();
+
+    public void spawnFor(Player player) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(this.armorStand));
+    }
+
 
     public Hologram addListener(Player... players) {
         for (Player p : players) {

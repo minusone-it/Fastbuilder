@@ -7,6 +7,8 @@ import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
 import it.minusone.fastbuilder.npc.NPCManager;
+import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
+import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 import java.util.Objects;
 
@@ -125,7 +128,7 @@ public class fastbuilder implements CommandExecutor {
                 Location spawnLocation = player.getLocation();
                 Main.getInstance().getConfigManager().setSpawnLocation(mode, island, spawnLocation);
 
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + mode + " - " + island);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + mode + "-" + island);
                 break;
             case "reloadconfig":
                 player.sendMessage(Main.getInstance().PREFIX + "Reloading config...");
@@ -139,10 +142,6 @@ public class fastbuilder implements CommandExecutor {
                 }
 
                 String joinMode = args[1];
-
-                if (Main.getInstance().modesWherePlayerIn.containsKey(player)) {
-                    leaveMode(player);
-                }
 
                 if (args.length < 3) {
                     if (!configManager.modeExists(joinMode)) {
@@ -163,6 +162,10 @@ public class fastbuilder implements CommandExecutor {
                     }
 
                     Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+
+                    leaveMode(player);
+
+
                     teleportPlayerToIsland(player, joinMode, closestIsland);
                 } else {
                     String joinIsland = args[2];
@@ -179,6 +182,7 @@ public class fastbuilder implements CommandExecutor {
                     }
 
                     Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+                    leaveMode(player);
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
                 break;
@@ -192,7 +196,7 @@ public class fastbuilder implements CommandExecutor {
 
     private String findClosestIsland(String mode) {
         for (String island : Main.getInstance().getConfig().getConfigurationSection("spawns." + mode).getKeys(false)) {
-            if (Main.getInstance().islandWherePlayerIn.containsValue(island)) {
+            if (Main.getInstance().islandWherePlayerIn.containsValue(island) && Main.getInstance().modesWherePlayerIn.containsValue(mode)) {
                 continue; // Skip islands that are already occupied
             }
 
@@ -225,15 +229,33 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(7, new SettingsItem());
         Main.getInstance().modesWherePlayerIn.put(player, mode);
         Main.getInstance().islandWherePlayerIn.put(player, island);
-        Location baseLocation = location.clone();
-        Location offset = Main.getInstance().getConfigManager().getNPCOffset(mode);
-        baseLocation.setWorld(player.getWorld());
-        baseLocation.add(offset.getX(), offset.getY(), offset.getZ());
-        NPC modeSelector = new NPC(player, "Mode Changer", baseLocation);
+        Location baseLocationA = location.clone();
+        Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
+        baseLocationA.setWorld(player.getWorld());
+        baseLocationA.add(offsetA.getX(), offsetA.getY(), offsetA.getZ());
+        NPC modeSelector = new NPC(player, "Mode Changer", baseLocationA);
         if (NPCManager.getNPC(player) != null)
             NPCManager.removeNPC(NPCManager.getNPC(player), player);
         modeSelector.spawn(player);
         NPCManager.setNPC(modeSelector, player);
+        Location baseLocationB = location.clone();
+        Location offsetB = Main.getInstance().getConfigManager().getHoloOffset(mode, player.getLocation().getWorld());
+        baseLocationB.setWorld(player.getWorld());
+        baseLocationB.add(offsetB.getX(), offsetB.getY(), offsetB.getZ());
+        HologramStack stats = new HologramStack(4, 0.3, true, false,
+                "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player),
+                "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player),
+                "Personal Best: " + (!new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".") : "-.---"),
+                ChatColor.AQUA + player.getName() + "§r's stats:"
+        );
+        if (Main.getInstance().stats.containsKey(player)) {
+            Main.getInstance().stats.get(player).despawn();
+            Main.getInstance().stats.get(player).delete();
+            Main.getInstance().stats.remove(player);
+        }
+        stats.setLocation(baseLocationB);
+        stats.spawn();
+        Main.getInstance().stats.put(player, stats);
         Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
     }
 
@@ -255,7 +277,9 @@ public class fastbuilder implements CommandExecutor {
             if (spawn != null) {
                 player.teleport(spawn);
             }
-
+            Main.getInstance().stats.get(player).despawn();
+            Main.getInstance().stats.get(player).delete();
+            Main.getInstance().stats.remove(player);
             player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You have left " + currentMode + "-" + currentIsland + "!");
         }
     }

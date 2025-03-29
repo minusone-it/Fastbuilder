@@ -6,6 +6,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.gui.ModeChangerGUI;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,6 +47,7 @@ public class NPC {
                 @Override
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                     if (cause instanceof CancelledPacketHandleException) {
+                        player.openInventory(new ModeChangerGUI().getInventory());
                         return;
                     }
                     ctx.fireExceptionCaught(cause);
@@ -62,9 +64,7 @@ public class NPC {
 
         connection.sendPacket(new PacketPlayOutEntityMetadata(npc.getId(), dataWatcher, true));
 
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
-        }, 20L);
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc)), 20L);
     }
 
 

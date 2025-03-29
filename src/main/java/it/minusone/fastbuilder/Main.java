@@ -12,13 +12,21 @@ import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
+import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
+import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
+import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
+import it.minusone.fastbuilder.utils.bukkit.inventory.Glow;
+import it.minusone.fastbuilder.utils.bukkit.inventory.SignBuilder;
+import it.minusone.fastbuilder.utils.bukkit.listeners.PlayerListener;
 import it.minusone.fastbuilder.utils.jasfafs;
+import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,14 +39,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public final class Main extends JavaPlugin {
 
     public String PREFIX;
     public ScoreboardManager scoreboardManager;
+    public HashMap<Player, HologramStack> stats;
     public HashMap<Player, String> modesWherePlayerIn;
     public HashMap<Player, String> islandWherePlayerIn;
-    public HashMap<String, List<HashMap<Double, Player>>> tops;
+    public Map<String, List<Entry>> tops;
     public HashMap<UUID, List<Location>> placedBlocks;
     public Timer timer;
     public ConfigManager configManager;
@@ -49,6 +60,17 @@ public final class Main extends JavaPlugin {
     public static List<Location> plateAboveLocations;
     public static HashMap<Material, Integer> blocks;
     private static Main INSTANCE;
+    public static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
+
+    public static class Entry {
+        public double time;
+        public Player player;
+
+        public Entry(double time, Player player) {
+            this.time = time;
+            this.player = player;
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -87,6 +109,7 @@ public final class Main extends JavaPlugin {
             this.lastReplay = new HashMap<>();
             this.replays = new HashMap<>();
             this.protocolManager = ProtocolLibrary.getProtocolManager();
+            this.stats = new HashMap<>();
             plateAboveLocations = new ArrayList<>();
             ReplayMain.getApi().initialize(this);
             this.currentPlayerReplay = new HashMap<>();
@@ -116,6 +139,7 @@ public final class Main extends JavaPlugin {
             this.blocks.put(Material.EMERALD_BLOCK, 1000);
             this.blocks.put(Material.GOLD_BLOCK, 1000);
             this.blocks.put(Material.GOLD_ORE, 1000);
+
             this.loadListeners();
             this.loadCommands();
             new BukkitRunnable() {
@@ -125,9 +149,6 @@ public final class Main extends JavaPlugin {
                         p.setFoodLevel(20);
                         if (modesWherePlayerIn.containsKey(p))
                             scoreboardManager.updateTopThree(p, modesWherePlayerIn.get(p));
-                        if (timer.isPlayerInTimer(p) && modesWherePlayerIn.containsKey(p)) {
-                            scoreboardManager.updateTimer(p, timer.getTimeFormatted(p), getConfigManager().getPB(p.getUniqueId(), modesWherePlayerIn.get(p)));
-                        }
                     }
                 }
             }.runTaskTimer(this, 0L, 0L);
@@ -166,6 +187,44 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerClickEntity(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerSneak(), this);
         this.protocolManager.addPacketListener(new onPlayerReceivePacket());
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+            ReflectionUtils.setStaticField(org.bukkit.enchantments.Enchantment.class, "acceptingNew", true);
+            /*try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Glow.glow = new Glow(100);
+                Enchantment.registerEnchantment(Glow.glow);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+                try {
+                    for (it.minusone.fastbuilder.utils.bukkit.entity.NPC n : NPC.all) {
+                        if (n.isGravity()) {
+                            n.entityPlayer.g(0, 0);
+                            n.updateNpcLocation();
+                        }
+                    }
+
+                    for (Hologram h : Hologram.all) {
+                        if (h.followEntity != null) {
+                            h.setLocation(h.followEntity.getLocation().add(h.followOffset));
+                            h.tracker.forEach(p -> p.sendPacket(new PacketPlayOutEntityTeleport(h.armorStand)));
+                        }
+                    }
+
+                    Set<SignBuilder> toRemove = new HashSet<>();
+                    for (SignBuilder b : SignBuilder.signs) {
+                        if (System.currentTimeMillis() - b.getGeneratedTime() > b.getTimeout()) {
+                            toRemove.add(b);
+                        }
+                    }
+                    SignBuilder.signs.removeAll(toRemove);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 0, 1);
+
     }
 
     private void loadCommands() {
@@ -193,35 +252,26 @@ public final class Main extends JavaPlugin {
     }
 
     public void updateLeaderboard(Player player, String mode, double time) {
-        List<HashMap<Double, Player>> topList = tops.getOrDefault(mode, new ArrayList<>());
+        List<Entry> topList = tops.getOrDefault(mode, new ArrayList<>());
 
-        HashMap<Double, Player> previousEntry = null;
-        double previousTime = Double.MAX_VALUE;
+        Entry previousEntry = null;
 
-        for (HashMap<Double, Player> entry : topList) {
-            for (Map.Entry<Double, Player> mapEntry : entry.entrySet()) {
-                if (mapEntry.getValue().equals(player)) {
-                    previousEntry = entry;
-                    previousTime = mapEntry.getKey();
-                    break;
-                }
+        for (Entry entry : topList) {
+            if (entry.player.equals(player)) {
+                previousEntry = entry;
+                break;
             }
-            if (previousEntry != null) break;
         }
 
-        if (previousEntry != null && time >= previousTime) return;
+        if (previousEntry != null && time >= previousEntry.time) return;
 
-        if (previousEntry != null) {
-            topList.remove(previousEntry);
-        }
+        topList.remove(previousEntry);
 
-        HashMap<Double, Player> newEntry = new HashMap<>();
-        newEntry.put(time, player);
-        topList.add(newEntry);
+        topList.add(new Entry(time, player));
 
-        topList.sort(Comparator.comparingDouble(map -> map.keySet().iterator().next()));
+        topList.sort(Comparator.comparingDouble(e -> e.time));
 
-        while (topList.size() > 10) {
+        if (topList.size() > 10) {
             topList.remove(topList.size() - 1);
         }
 
@@ -229,21 +279,14 @@ public final class Main extends JavaPlugin {
     }
 
     public void removePlayerFromLeaderboard(Player player, String mode) {
-        List<HashMap<Double, Player>> topList = tops.get(mode);
-
+        List<Entry> topList = tops.get(mode);
         if (topList == null) return;
 
-        Iterator<HashMap<Double, Player>> iterator = topList.iterator();
-        while (iterator.hasNext()) {
-            HashMap<Double, Player> entry = iterator.next();
-            for (Map.Entry<Double, Player> mapEntry : entry.entrySet()) {
-                if (mapEntry.getValue().equals(player)) {
-                    iterator.remove();
-                    break;
-                }
-            }
+        boolean removed = topList.removeIf(entry -> entry.player.equals(player));
+
+        if (removed) {
+            tops.put(mode, topList);
         }
-        tops.put(mode, topList);
     }
 
 }

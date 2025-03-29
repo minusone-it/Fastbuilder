@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.utils.bukkit.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.npc.NPCManager;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -18,7 +19,6 @@ import it.minusone.fastbuilder.utils.api.MojangAPI;
 import it.minusone.fastbuilder.utils.api.mojang.ProfileSkin;
 import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
 import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutScoreboardTeam;
-import it.minusone.fastbuilder.utils.a;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import it.minusone.fastbuilder.utils.utils.collection.Sets;
 
@@ -241,7 +241,7 @@ public class NPC {
             return this;
         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
         Set<PlayerConnection> copy = new java.util.HashSet<>(tracker);
-        a.scheduledThreadPool.schedule(() ->
+        Main.scheduledThreadPool.schedule(() ->
                         copy.forEach(a -> a.sendPacket(packet))
                 , ms, TimeUnit.MILLISECONDS);
         return this;

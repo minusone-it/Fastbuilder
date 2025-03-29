@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.utils.bukkit.inventory;
 
+import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutOpenSignEditor;
 import net.minecraft.server.v1_8_R3.TileEntitySign;
@@ -11,7 +12,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import it.minusone.fastbuilder.utils.api.events.SignUpdateEvent;
-import it.minusone.fastbuilder.utils.a;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +58,7 @@ public class SignBuilder {
 
     SignBuilder(Player player, int x, int y, int z, String... lines) {
         this.player = player;
-        FixedMetadataValue metadataValue = new FixedMetadataValue(a.getPlugin(a.class), "");
+        FixedMetadataValue metadataValue = new FixedMetadataValue(Main.getPlugin(Main.class), "");
         World world = player.getWorld();
         world.getBlockAt(x, y, z).setType(Material.SIGN_POST);
         Sign sign = (Sign) world.getBlockAt(x, y, z).getState();

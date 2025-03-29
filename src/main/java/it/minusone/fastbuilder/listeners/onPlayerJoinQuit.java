@@ -1,8 +1,11 @@
 package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,6 +29,14 @@ public class onPlayerJoinQuit implements Listener {
         }
         if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(e.getPlayer()) == null)
             Main.getInstance().getConfigManager().setCurrentPlayerBlock(e.getPlayer(), new ItemStack(Material.SANDSTONE));
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (Main.getInstance().stats.get(p) != null) {
+                for (Hologram h : Hologram.all) {
+                    h.spawnFor(e.getPlayer());
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -41,6 +52,9 @@ public class onPlayerJoinQuit implements Listener {
         Main.getInstance().modesWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().islandWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().timer.stopTimer(e.getPlayer(), false);
+        Main.getInstance().stats.get(e.getPlayer()).despawn();
+        Main.getInstance().stats.get(e.getPlayer()).delete();
+        Main.getInstance().stats.remove(e.getPlayer());
     }
 
 }

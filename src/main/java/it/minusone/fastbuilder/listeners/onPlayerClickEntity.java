@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.listeners;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.ModeChangerGUI;
 import it.minusone.fastbuilder.npc.NPCManager;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
@@ -32,7 +33,7 @@ public class onPlayerClickEntity implements Listener {
                         field.setAccessible(true);
                         int entityId = (int) field.get(packet);
                         if (NPCManager.getNPC(player) != null) {
-                            if (entityId == NPCManager.getNPC(player).getNpc().getId())
+                            if (entityId == NPCManager.getNPC(player).getNpc().getId() && !Main.currentPlayerReplay.containsKey(player.getUniqueId()))
                                 player.openInventory(new ModeChangerGUI().getInventory());
                             else {
                                 if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {

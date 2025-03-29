@@ -4,6 +4,7 @@ import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +45,7 @@ public class ConfigManager {
             modes.add(mode);
             setModes(modes);
             createModeWithDefaultNPCSpawn(mode);
+            createModeWithDefaultHoloSpawn(mode);
         }
         plugin.saveConfig();
     }
@@ -112,21 +114,6 @@ public class ConfigManager {
             config.set(path, time);
             plugin.saveConfig();
         }
-    }
-
-    public void createModeWithDefaultNPCSpawn(String mode) {
-        String basePath = "npcs." + mode;
-
-        if (config.contains(basePath))
-            return;
-
-        config.set(basePath + ".npc-offset.x", 1);
-        config.set(basePath + ".npc-offset.y", 0);
-        config.set(basePath + ".npc-offset.z", 0);
-        config.set(basePath + ".npc-offset.yaw", 0);
-        config.set(basePath + ".npc-offset.pitch", 0);
-
-        plugin.saveConfig();
     }
 
     public String getScoreboardPrefix() {
@@ -214,6 +201,68 @@ public class ConfigManager {
         float yaw = (float) config.getInt("modes." + mode + ".npc-offset.yaw");
         float pitch = (float) config.getInt("modes." + mode + ".npc-offset.pitch");
         return new Location(null, x, y, z, yaw, pitch);
+    }
+
+    public void createModeWithDefaultNPCSpawn(String mode) {
+        String basePath = "npcs." + mode;
+
+        if (config.contains(basePath))
+            return;
+
+        config.set(basePath + ".npc-offset.x", 1);
+        config.set(basePath + ".npc-offset.y", 0);
+        config.set(basePath + ".npc-offset.z", -1);
+        config.set(basePath + ".npc-offset.yaw", 0);
+        config.set(basePath + ".npc-offset.pitch", 0);
+
+        plugin.saveConfig();
+    }
+
+    public void createModeWithDefaultHoloSpawn(String mode) {
+        String basePath = "holos." + mode;
+
+        if (config.contains(basePath))
+            return;
+
+        config.set(basePath + ".holo.x", -3);
+        config.set(basePath + ".holo.y", 1);
+        config.set(basePath + ".holo.z", 1);
+
+        plugin.saveConfig();
+    }
+
+    public Location getHoloOffset(String mode, World world) {
+        if (!config.contains("holos." + mode + ".holo")) return null;
+        int x = config.getInt("holos." + mode + ".holo.x");
+        int y = config.getInt("holos." + mode + ".holo.y");
+        int z = config.getInt("holos." + mode + ".holo.z");
+        return new Location(world, x, y, z, 0, 0);
+    }
+
+    public void addAttempt(Player player) {
+        String path = player.getUniqueId().toString() + ".attempts";
+        if (!config.contains(player.getUniqueId().toString())) return;
+
+        config.set(path, config.getInt(path) + 1);
+        plugin.saveConfig();
+    }
+
+    public void addSuccessfulAttempt(Player player) {
+        String path = player.getUniqueId().toString() + ".successfulattempts";
+        if (!config.contains(player.getUniqueId().toString())) return;
+
+        config.set(path, config.getInt(path) + 1);
+        plugin.saveConfig();
+    }
+
+    public long getAttempts(Player player) {
+        String path = player.getUniqueId().toString() + ".attempts";
+        return config.getLong(path);
+    }
+
+    public long getSuccessfulAttempts(Player player) {
+        String path = player.getUniqueId().toString() + ".successfulattempts";
+        return config.getLong(path);
     }
 
 }

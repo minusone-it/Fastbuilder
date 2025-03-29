@@ -4,7 +4,7 @@
   <groupId>it.minusone</groupId>
   <artifactId>fastbuilder</artifactId>
   <name>fastbuilder</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>

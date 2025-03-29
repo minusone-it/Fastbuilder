@@ -13,10 +13,10 @@ import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
 
 import java.util.UUID;
 
-public class SpeedcubingNPC implements ReplayNPC {
+public class ActualNPC implements ReplayNPC {
     private final ReplayPlayback playback;
     private final NPC npc;
-    public SpeedcubingNPC(ReplayPlayback playback, String name) {
+    public ActualNPC(ReplayPlayback playback, String name) {
         this.playback = playback;
         this.npc = new NPC(name, UUID.randomUUID(), true, false, false);
     }
