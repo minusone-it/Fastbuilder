@@ -35,7 +35,7 @@ public class onPlayerClickEntity implements Listener {
                             if (entityId == NPCManager.getNPC(player).getNpc().getId())
                                 player.openInventory(new ModeChangerGUI().getInventory());
                             else {
-                                if (NPCManager.getReplayNPC(player).entityPlayer != null) {
+                                if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
                                     if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId() && player.getItemInHand().getType() == Material.AIR)
                                         onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
                                 }

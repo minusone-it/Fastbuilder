@@ -30,11 +30,7 @@ public class onInventoryClick implements Listener {
                 if (clickedItem != null) {
                     if (clickedItem.getType() == Material.DIAMOND_PICKAXE) {
                         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) >= Main.getInstance().getConfigManager().getCoinsForResetStats()) {
-                            Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");
-                            Main.getInstance().saveConfig();
-                            Main.getInstance().scoreboardManager.updateTimer(player, "0.000", 0.000);
-                            Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - Main.getInstance().getConfigManager().getCoinsForResetStats());
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Successfully resetted stats!");
+                            player.openInventory(new ConfirmGUI().getInventory());
                         } else {
                             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough coins to reset stats");
                         }
@@ -126,6 +122,21 @@ public class onInventoryClick implements Listener {
                             player.closeInventory();
                             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough money to buy it!");
                         }
+                    }
+                }
+            } else if (event.getClickedInventory().getHolder() instanceof ConfirmGUI) {
+                event.setCancelled(true);
+                if (clickedItem != null) {
+                    if (clickedItem.getItemMeta().getDisplayName().contains("Confirm")) {
+                        Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");
+                        Main.getInstance().saveConfig();
+                        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", 0.000);
+                        Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - Main.getInstance().getConfigManager().getCoinsForResetStats());
+                        player.closeInventory();
+                        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Successfully resetted stats!");
+                    } else {
+                        player.closeInventory();
+                        player.openInventory(new SettingsGUI().getInventory());
                     }
                 }
             }

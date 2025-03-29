@@ -36,10 +36,12 @@ public class onBlockPlaceBreak implements Listener {
                 return;
             }
         }
-        if (Main.getInstance().modesWherePlayerIn.containsKey(event.getPlayer())) {
-            Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
-            if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()))
-                Main.getInstance().timer.startTimer(event.getPlayer());
+        if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            if (Main.getInstance().modesWherePlayerIn.containsKey(event.getPlayer())) {
+                Main.getInstance().placedBlocks.computeIfAbsent(event.getPlayer().getUniqueId(), k -> new ArrayList<>()).add(event.getBlock().getLocation());
+                if (!Main.getInstance().timer.isPlayerInTimer(event.getPlayer()))
+                    Main.getInstance().timer.startTimer(event.getPlayer());
+            }
         }
     }
 

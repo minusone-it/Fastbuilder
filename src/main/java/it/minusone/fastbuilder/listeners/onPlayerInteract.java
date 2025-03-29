@@ -64,7 +64,8 @@ public class onPlayerInteract implements Listener {
                 ReplayManager.pauseReplay(event.getPlayer());
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("+1 Tick")) {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
-                replay.nextTick();
+                if (replay.getCurrentTick() <= replay.getReplay().getLength())
+                    replay.nextTick();
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("-1 Tick")) {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
                 if (replay.getCurrentTick() >= 0)

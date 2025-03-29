@@ -36,6 +36,7 @@ it\minusone\fastbuilder\replay\npc\SpeedcubingNPC.class
 it\minusone\fastbuilder\scoreboard\ScoreboardManager.class
 it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.class
 it\minusone\fastbuilder\utils\eventbus\CubingEvent.class
+it\minusone\fastbuilder\gui\ConfirmGUI.class
 it\minusone\fastbuilder\utils\api\hypixel\HypixelLib.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\PlayOutEvent.class
 it\minusone\fastbuilder\utils\math\matrix\MatrixUtils.class
