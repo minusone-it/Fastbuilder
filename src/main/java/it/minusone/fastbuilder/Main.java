@@ -125,6 +125,9 @@ public final class Main extends JavaPlugin {
                         p.setFoodLevel(20);
                         if (modesWherePlayerIn.containsKey(p))
                             scoreboardManager.updateTopThree(p, modesWherePlayerIn.get(p));
+                        if (timer.isPlayerInTimer(p) && modesWherePlayerIn.containsKey(p)) {
+                            scoreboardManager.updateTimer(p, timer.getTimeFormatted(p), getConfigManager().getPB(p.getUniqueId(), modesWherePlayerIn.get(p)));
+                        }
                     }
                 }
             }.runTaskTimer(this, 0L, 0L);
