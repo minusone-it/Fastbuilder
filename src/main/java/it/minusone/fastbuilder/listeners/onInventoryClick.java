@@ -2,6 +2,7 @@ package it.minusone.fastbuilder.listeners;
 
 import cf.pies.replay.api.ReplayManager;
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.gui.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,7 +54,7 @@ public class onInventoryClick implements Listener {
                             : "N/A";
                     String mode = Main.getInstance().modesWherePlayerIn.get(player);
                     if (playerName.isEmpty())
-                        player.performCommand("fb join " + mode + " " + islandName);
+                        fastbuilder.teleportPlayerToIsland(player, mode, islandName);
                     else
                         player.sendMessage(Main.getInstance().PREFIX + "§cThe island " + islandName + " is occupied by " + playerName + "!");
                 }
@@ -71,7 +72,6 @@ public class onInventoryClick implements Listener {
                         }
                     } else {
                         player.closeInventory();
-                        player.getInventory().clear();
                         ReplayManager.playReplay(player, Main.getInstance().lastReplay.get(player.getUniqueId()));
                     }
                 }

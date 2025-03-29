@@ -19,7 +19,7 @@ public class ReplayGUI implements InventoryHolder {
         this.inventory = Bukkit.createInventory(this, 45, "Replays");
 
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
-                "replays/" + playerUUID.toString() + "/" + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
+                "\\replays\\" + playerUUID.toString() + "\\" + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
 
         if (!replayFolder.exists()) replayFolder.mkdirs();
 
@@ -34,7 +34,7 @@ public class ReplayGUI implements InventoryHolder {
         meta1.setDisplayName("Last Replay");
         item1.setItemMeta(meta1);
         this.inventory.addItem(item1);
-        for (int i = 1; i < replayFiles.size(); i++) {
+        for (int i = 0; i < replayFiles.size(); i++) {
             File replayFile = replayFiles.get(i);
             ItemStack item = new ItemStack(Material.BOOK);
             ItemMeta meta = item.getItemMeta();
@@ -42,7 +42,7 @@ public class ReplayGUI implements InventoryHolder {
                 meta.setDisplayName("Replay: " + replayFile.getName().replace(".replay", ""));
                 item.setItemMeta(meta);
             }
-            inventory.setItem(i, item);
+            inventory.setItem(i + 1, item);
         }
     }
 

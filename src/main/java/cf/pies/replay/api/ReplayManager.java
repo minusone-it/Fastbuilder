@@ -49,8 +49,13 @@ public class ReplayManager {
     }
 
     public static void playReplay(Player player, Replay replay) {
+        if (replay == null) {
+            player.sendMessage(Main.getInstance().PREFIX + "§cNo last replay found!");
+            return;
+        }
         player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
+        player.getInventory().clear();
         ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
         playback.addListener(player);
         playback.setup();

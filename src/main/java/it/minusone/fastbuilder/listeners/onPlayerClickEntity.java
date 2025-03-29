@@ -8,6 +8,7 @@ import it.minusone.fastbuilder.npc.NPCManager;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAttachEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutCamera;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,8 +35,10 @@ public class onPlayerClickEntity implements Listener {
                             if (entityId == NPCManager.getNPC(player).getNpc().getId())
                                 player.openInventory(new ModeChangerGUI().getInventory());
                             else {
-                                if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId() && player.getItemInHand() == null)
-                                    onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                                if (NPCManager.getReplayNPC(player).entityPlayer != null) {
+                                    if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId() && player.getItemInHand().getType() == Material.AIR)
+                                        onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                                }
                             }
                         }
                     }

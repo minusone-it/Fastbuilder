@@ -20,30 +20,31 @@ public class onPlayerSneak implements Listener {
 
     public static void spectateEntity(Player player, Entity entity) {
         spectating.put(player.getUniqueId(), entity);
-
         PacketPlayOutCamera packet = new PacketPlayOutCamera(((CraftPlayer) entity).getHandle());
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
+
 
     @EventHandler
     public void onPlayerSneakEvent(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
 
-        if (player.isSneaking() && spectating.containsKey(player.getUniqueId())) {
+        if (event.isSneaking() && spectating.containsKey(player.getUniqueId())) {
             Entity entity = spectating.get(player.getUniqueId());
             Location entityLocation = entity.getLocation();
-
-            Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                player.teleport(entityLocation);
-                resetCamera(player);
-            }, 0L);
+            player.teleport(entityLocation);
+            resetCamera(player);
 
             spectating.remove(player.getUniqueId());
         }
     }
 
     private void resetCamera(Player player) {
-        PacketPlayOutCamera reset = new PacketPlayOutCamera(((CraftPlayer) player).getHandle());
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(reset);
+        if (spectating.containsKey(player.getUniqueId())) {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
+                    new PacketPlayOutCamera(((CraftPlayer) player).getHandle())
+            );
+        }
     }
+
 }

@@ -65,6 +65,12 @@ public class ConfigManager {
         plugin.saveConfig();
     }
 
+    public void reloadConfig() {
+        Main.getInstance().configManager = null;
+        Main.getInstance().configManager = new ConfigManager(Main.getInstance());
+        this.plugin.reloadConfig();
+    }
+
     public Location getSpawnLocation(String mode, String island) {
         String path = "spawns." + mode + "." + island;
         if (!config.contains(path)) return null;

@@ -31,7 +31,7 @@ public class ReplayPlayback {
     private final Location origin;
     private final HashMap<Integer, ReplayNPC> npcs = new HashMap<>();
     private final Set<Player> listeners = new HashSet<>();
-    private int task = -1;
+    private int task = -2;
     private int currentTick = 0;
     private PlaybackState state = PlaybackState.NONE;
 
@@ -158,9 +158,9 @@ public class ReplayPlayback {
      * Pauses the replay at its current state
      */
     public void pause() {
-        if (task != -1) {
+        if (task != -2) {
             Bukkit.getScheduler().cancelTask(task);
-            task = -1;
+            task = -2;
         }
         setState(PlaybackState.PAUSED);
     }

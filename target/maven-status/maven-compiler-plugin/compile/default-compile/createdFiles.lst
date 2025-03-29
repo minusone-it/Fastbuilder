@@ -106,6 +106,7 @@ top\speedcubing\lib\bukkit\inventory\InventoryListener.class
 top\speedcubing\lib\api\mcserverping\ServerPingJSONResponse.class
 top\speedcubing\lib\utils\internet\dnsrecords\ARecord.class
 top\speedcubing\lib\math\scMath.class
+it\minusone\fastbuilder\listeners\onPlayerReceivePacket.class
 top\speedcubing\lib\utils\bytes\ByteArrayBuffer.class
 top\speedcubing\lib\bukkit\inventory\Glow.class
 cf\pies\replay\api\recordable\Recordable.class

@@ -3,6 +3,8 @@ package it.minusone.fastbuilder;
 import cf.pies.replay.api.Replay;
 import cf.pies.replay.api.ReplayAPI;
 import cf.pies.replay.api.ReplayPlayback;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
@@ -41,6 +43,7 @@ public final class Main extends JavaPlugin {
     public ConfigManager configManager;
     public HashMap<UUID, Replay> replays;
     public HashMap<UUID, Replay> lastReplay;
+    public ProtocolManager protocolManager;
     public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
     public static List<Location> plateAboveLocations;
     public static HashMap<Material, Integer> blocks;
@@ -54,7 +57,7 @@ public final class Main extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         String licenseKey = this.getConfig().getString("license");
         boolean isValid;
-        try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
+        try (Socket socket = new Socket("82.53.155.31", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             out.println(licenseKey);
@@ -66,10 +69,14 @@ public final class Main extends JavaPlugin {
         } catch (IOException e) {
             MinecraftConsole.printlnColor(this.PREFIX +
                     "Error while trying to connect to the license server. Please contact support on discord.");
+            MinecraftConsole.printlnColor(this.PREFIX +
+                    "Error: " + e.getMessage() + " (" + e.getClass().getSimpleName() + ")");
             Bukkit.getPluginManager().disablePlugin(this);
         }
         INSTANCE = this;
         if (Bukkit.getPluginManager().getPlugin("Fastbuilder").isEnabled()) {
+            for (Player p : Bukkit.getOnlinePlayers())
+                p.kickPlayer("Rejoin, please! Fastbuilder doesn't support reloads with players online.");
             this.timer = new Timer();
             this.scoreboardManager = new ScoreboardManager();
             this.modesWherePlayerIn = new HashMap<>();
@@ -78,6 +85,7 @@ public final class Main extends JavaPlugin {
             this.tops = new HashMap<>();
             this.lastReplay = new HashMap<>();
             this.replays = new HashMap<>();
+            this.protocolManager = ProtocolLibrary.getProtocolManager();
             ReplayAPI.getApi().initialize(this);
             this.currentPlayerReplay = new HashMap<>();
             this.blocks = new HashMap<>();
@@ -108,8 +116,6 @@ public final class Main extends JavaPlugin {
             this.blocks.put(Material.GOLD_ORE, 1000);
             this.loadListeners();
             this.loadCommands();
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.kickPlayer("Rejoin, please! Fastbuilder doesn't support reloads with players online.");
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -137,8 +143,10 @@ public final class Main extends JavaPlugin {
             PlayerConnection connection = ((CraftPlayer) p).getHandle().playerConnection;
             for (World world : Bukkit.getServer().getWorlds()) {
                 for (Entity entity : world.getEntities()) {
-                    connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
-                    connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
+                    try {
+                        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
+                        connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
+                    } catch (Exception ignored) {}
                 }
             }
         }
@@ -153,6 +161,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new onEntityDamage(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerClickEntity(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerSneak(), this);
+        this.protocolManager.addPacketListener(new onPlayerReceivePacket());
     }
 
     private void loadCommands() {

@@ -8,6 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayInArmAnimation;
+import net.minecraft.server.v1_8_R3.PacketPlayInBlockDig;
+import net.minecraft.server.v1_8_R3.PacketPlayInBlockPlace;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,14 +49,12 @@ public class ReplayEvents implements Listener {
 
     public void onPacket(Player player, Packet<?> packet) {
         if (packet instanceof PacketPlayInArmAnimation) {
-
             for (Replay replay : recordingReplays) {
                 if (!replay.isRecording()) continue;
                 if (replay.isRecordingPlayer(player)) {
                     replay.record(new SwingRecordable(player.getEntityId()));
                 }
             }
-
         }
     }
 

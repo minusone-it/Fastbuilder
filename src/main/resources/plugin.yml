@@ -4,6 +4,8 @@ main: it.minusone.fastbuilder.Main
 api-version: '1.8'
 authors: [ _MinusOne_ ]
 description: Made with <3 by _MinusOne_. Buy it on https://builtbybit.com/resources/fastbuilder.62493/.
+depend:
+  - ProtocolLib
 commands:
   fastbuilder:
     description:
