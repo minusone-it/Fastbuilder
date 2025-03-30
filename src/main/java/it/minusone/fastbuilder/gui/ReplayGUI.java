@@ -55,8 +55,8 @@ public class ReplayGUI implements InventoryHolder {
                 Instant instant = Instant.ofEpochSecond(Long.parseLong(replayName));
                 meta.setDisplayName("Replay: " + replayName);
                 List<String> lore = new ArrayList<>();
-                lore.add("Duration: " + ReplayManager.getDuration(replayFile));
-                lore.add("Created: " + utcFormatter.format(instant));
+                lore.add("§r§7Duration: " + ReplayManager.getDuration(replayFile));
+                lore.add("§r§7Created: " + utcFormatter.format(instant) + " UTC");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
             }
@@ -64,11 +64,11 @@ public class ReplayGUI implements InventoryHolder {
         }
 
         if (page > 0) {
-            inventory.setItem(45, createItem(Material.ARROW, "Previous Page"));
+            inventory.setItem(45, createItem(Material.ARROW, "§cPrevious Page"));
         }
 
         if (replayFiles.size() > (page + 1) * ITEMS_PER_PAGE) {
-            inventory.setItem(53, createItem(Material.ARROW, "Next Page"));
+            inventory.setItem(53, createItem(Material.ARROW, "§aNext Page"));
         }
     }
 
