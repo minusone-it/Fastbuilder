@@ -21,10 +21,10 @@ public class onInventoryClick implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory clickedInventory = event.getClickedInventory();
-
         if (clickedInventory != null) {
             Player player = (Player) event.getWhoClicked();
             ItemStack clickedItem = event.getCurrentItem();
+            ReplayGUI.handleNavigation(player, clickedItem, player.getUniqueId(), Main.getInstance().page.get(player.getUniqueId()));
             if (Main.getInstance().modesWherePlayerIn.containsKey(player)) event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
                 event.setCancelled(true);

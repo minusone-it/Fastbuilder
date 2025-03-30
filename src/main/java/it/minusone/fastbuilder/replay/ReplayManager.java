@@ -2,7 +2,9 @@ package it.minusone.fastbuilder.replay;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.replay.data.stream.ReplayInputStream;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 
 public class ReplayManager {
 
@@ -21,7 +24,6 @@ public class ReplayManager {
             ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
             playback.addListener(player);
             playback.setup();
-            playback.lastTick();
             Main.currentPlayerReplay.put(player.getUniqueId(), playback);
             ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
             ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
@@ -59,7 +61,6 @@ public class ReplayManager {
         ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
         playback.addListener(player);
         playback.setup();
-        playback.lastTick();
         Main.currentPlayerReplay.put(player.getUniqueId(), playback);
         ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
         ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
@@ -112,4 +113,12 @@ public class ReplayManager {
             e.printStackTrace();
         }
     }
+
+    public static String getDuration(File replayFile) {
+        try (ReplayInputStream replayInputStream = new ReplayInputStream(Files.newInputStream(replayFile.toPath()))) {
+            return new DecimalFormat("0.000").format(replayInputStream.readReplay(new Location(Bukkit.getWorld("world"), 1, 1, 1)).getLength() / 20.0).replace(",", ".");
+        } catch (Exception ignored) {}
+        return null;
+    }
+
 }

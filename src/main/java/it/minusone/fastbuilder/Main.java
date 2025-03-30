@@ -52,6 +52,7 @@ public final class Main extends JavaPlugin {
     public HashMap<Player, HologramStack> stats;
     public HashMap<Player, String> modesWherePlayerIn;
     public HashMap<Player, String> islandWherePlayerIn;
+    public HashMap<UUID, Integer> page;
     public Map<String, List<Entry>> tops;
     public HashMap<UUID, List<Location>> placedBlocks;
     public Timer timer;
@@ -102,6 +103,7 @@ public final class Main extends JavaPlugin {
             this.replays = new HashMap<>();
             this.protocolManager = ProtocolLibrary.getProtocolManager();
             this.stats = new HashMap<>();
+            this.page = new HashMap<>();
             plateAboveLocations = new ArrayList<>();
             ReplayMain.getApi().initialize(this);
             currentPlayerReplay = new HashMap<>();

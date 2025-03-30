@@ -22,6 +22,7 @@ it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class
 it\minusone\fastbuilder\utils\utils\URIUtils.class
 it\minusone\fastbuilder\utils\bukkit\TitleType.class
 it\minusone\fastbuilder\utils\utils\bytes\DataConversion.class
+it\minusone\fastbuilder\scoreboard\helpers\bukkit\PlayerBoard.class
 it\minusone\fastbuilder\replay\recordable\entity\ItemHeldRecordable.class
 it\minusone\fastbuilder\timer\Timer.class
 it\minusone\fastbuilder\items\BlockItem.class
@@ -113,7 +114,6 @@ it\minusone\fastbuilder\utils\eventbus\CubingEventManager.class
 it\minusone\fastbuilder\utils\utils\StringUtils.class
 it\minusone\fastbuilder\utils\utils\bytes\IOUtils.class
 it\minusone\fastbuilder\utils\utils\image\ImageRotator.class
-it\minusone\fastbuilder\scoreboard\helpers\api\PlayerBoard.class
 it\minusone\fastbuilder\utils\utils\collection\Sets.class
 it\minusone\fastbuilder\replay\npc\ActualNPC.class
 it\minusone\fastbuilder\utils\bukkit\pluginMessage\BungeePluginMessage.class
@@ -132,7 +132,6 @@ it\minusone\fastbuilder\npc\SkinFetcher.class
 it\minusone\fastbuilder\utils\math\exception\InvalidDimensionException.class
 it\minusone\fastbuilder\utils\utils\RegexUtils.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard.class
-it\minusone\fastbuilder\scoreboard\helpers\bukkit\NetherboardPlugin.class
 it\minusone\fastbuilder\utils\utils\image\ImageRotator$1.class
 it\minusone\fastbuilder\listeners\onBlockPlaceBreak.class
 it\minusone\fastbuilder\replay\recordable\entity\MessageRecordable.class

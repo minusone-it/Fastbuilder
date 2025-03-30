@@ -36,7 +36,7 @@ public class onPlayerInteract implements Listener {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
                 event.getPlayer().openInventory(new SettingsGUI().getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
-                event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId()).getInventory());
+                event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId(), 0).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
                     ReplayManager.endReplay(event.getPlayer());
