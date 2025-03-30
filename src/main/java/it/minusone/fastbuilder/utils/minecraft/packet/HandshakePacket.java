@@ -20,28 +20,28 @@ public class HandshakePacket {
         return protocolVersion;
     }
 
-    public String getServerAddress() {
-        return serverAddress;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public int getNextState() {
-        return nextState;
-    }
-
     public void setProtocolVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
+    }
+
+    public String getServerAddress() {
+        return serverAddress;
     }
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
 
+    public int getServerPort() {
+        return serverPort;
+    }
+
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
+    }
+
+    public int getNextState() {
+        return nextState;
     }
 
     public void setNextState(int nextState) {

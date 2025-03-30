@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.utils.bukkit.inventory;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 
 import java.util.Arrays;
 import java.util.Base64;

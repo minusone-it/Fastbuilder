@@ -24,6 +24,14 @@ public class ServerPingRequest {
     private boolean srvLookup = true;
     private int timeout = 1000;
 
+    public static void main(String[] args) {
+        try {
+            System.out.println(new ServerPingRequest().serverAddress("speedcubing.top").ping());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ServerPingRequest serverAddress(String hostname) {
         handshake.setServerAddress(hostname);
         return this;
@@ -43,7 +51,6 @@ public class ServerPingRequest {
         this.srvLookup = srvLookup;
         return this;
     }
-
 
     public ServerPingRequest dnsLookup(boolean dnsLookup) {
         this.dnsLookup = dnsLookup;
@@ -115,13 +122,5 @@ public class ServerPingRequest {
         long response = sokcetIn.readLong();
 
         return new ServerPingResponse(this.handshake.getServerAddress(), this.handshake.getServerPort(), srvHostname, srvPort, ping, srv, new ServerPingJSONResponse(jsonResponse), records);
-    }
-
-    public static void main(String[] args) {
-        try {
-            System.out.println(new ServerPingRequest().serverAddress("speedcubing.top").ping());
-        }catch (IOException e){
-            e.printStackTrace();
-        }
     }
 }

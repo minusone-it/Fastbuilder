@@ -18,6 +18,11 @@ public abstract class DNSRecord {
             e.printStackTrace();
         }
     }
+
+    static Attribute lookup(String address, String type) throws NamingException {
+        return context.getAttributes(address, new String[]{type}).get(type);
+    }
+
     public ARecord toA() {
         return (ARecord) this;
     }
@@ -28,9 +33,5 @@ public abstract class DNSRecord {
 
     public SRVRecord toSRV() {
         return (SRVRecord) this;
-    }
-
-    static Attribute lookup(String address, String type) throws NamingException {
-        return context.getAttributes(address, new String[]{type}).get(type);
     }
 }

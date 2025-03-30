@@ -10,33 +10,6 @@ public class BedwarsStats {
     private final int progress;
     private final int nextLevel;
     private final char displayChar;
-    public int getLevel() {
-        return level;
-    }
-
-    public int getProgress(){
-        return progress;
-    }
-
-    public int getNextLevel(){
-        return nextLevel;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public char getDisplayChar(){
-        return displayChar;
-    }
-
-    public JsonElement get(String s) {
-        return object.get(s);
-    }
-
-    public JsonObject getJson() {
-        return object;
-    }
 
     public BedwarsStats(JsonObject object) {
         this.object = object;
@@ -64,5 +37,33 @@ public class BedwarsStats {
         this.progress = progress;
         this.nextLevel = nextLevel;
         this.displayChar = level < 1100 ? '✫' : level < 2100 ? '✪' : '⚝';
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public int getNextLevel() {
+        return nextLevel;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public char getDisplayChar() {
+        return displayChar;
+    }
+
+    public JsonElement get(String s) {
+        return object.get(s);
+    }
+
+    public JsonObject getJson() {
+        return object;
     }
 }

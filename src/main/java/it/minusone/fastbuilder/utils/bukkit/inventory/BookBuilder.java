@@ -24,6 +24,18 @@ public class BookBuilder {
         this.author = author;
     }
 
+    public static void openBook(ItemStack book, Player player) {
+        int slot = player.getInventory().getHeldItemSlot();
+        ItemStack old = player.getInventory().getItem(slot);
+        player.getInventory().setItem(slot, book);
+
+        ByteBuf buf = Unpooled.buffer(256);
+        buf.setByte(0, (byte) 0);
+        buf.writerIndex(1);
+
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutCustomPayload("MC|BOpen", new PacketDataSerializer(buf)));
+        player.getInventory().setItem(slot, old);
+    }
 
     public BookBuilder addPage(BaseComponent... page) {
         pages.add(page);
@@ -40,18 +52,5 @@ public class BookBuilder {
         bookDescription.set("pages", bookPage);
         nmsBook.setTag(bookDescription);
         return CraftItemStack.asBukkitCopy(nmsBook);
-    }
-
-    public static void openBook(ItemStack book, Player player) {
-        int slot = player.getInventory().getHeldItemSlot();
-        ItemStack old = player.getInventory().getItem(slot);
-        player.getInventory().setItem(slot, book);
-
-        ByteBuf buf = Unpooled.buffer(256);
-        buf.setByte(0, (byte) 0);
-        buf.writerIndex(1);
-
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutCustomPayload("MC|BOpen", new PacketDataSerializer(buf)));
-        player.getInventory().setItem(slot, old);
     }
 }

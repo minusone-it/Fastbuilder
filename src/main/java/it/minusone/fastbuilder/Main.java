@@ -1,8 +1,5 @@
 package it.minusone.fastbuilder;
 
-import it.minusone.fastbuilder.replay.Replay;
-import it.minusone.fastbuilder.replay.ReplayMain;
-import it.minusone.fastbuilder.replay.ReplayPlayback;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import it.minusone.fastbuilder.command.fastbuilder;
@@ -10,15 +7,18 @@ import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.listeners.*;
+import it.minusone.fastbuilder.replay.Replay;
+import it.minusone.fastbuilder.replay.ReplayMain;
+import it.minusone.fastbuilder.replay.ReplayPlayback;
 import it.minusone.fastbuilder.scoreboard.ScoreboardManager;
 import it.minusone.fastbuilder.timer.Timer;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
-import it.minusone.fastbuilder.utils.bukkit.inventory.Glow;
 import it.minusone.fastbuilder.utils.bukkit.inventory.SignBuilder;
 import it.minusone.fastbuilder.utils.bukkit.listeners.PlayerListener;
 import it.minusone.fastbuilder.utils.jasfafs;
+import it.minusone.fastbuilder.utils.minecraft.MinecraftConsole;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -26,12 +26,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import it.minusone.fastbuilder.utils.minecraft.MinecraftConsole;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,6 +42,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public final class Main extends JavaPlugin {
 
+    public static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
+    public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
+    public static List<Location> plateAboveLocations;
+    public static HashMap<Material, Integer> blocks;
+    private static Main INSTANCE;
     public String PREFIX;
     public ScoreboardManager scoreboardManager;
     public HashMap<Player, HologramStack> stats;
@@ -56,20 +59,9 @@ public final class Main extends JavaPlugin {
     public HashMap<UUID, Replay> replays;
     public HashMap<UUID, Replay> lastReplay;
     public ProtocolManager protocolManager;
-    public static HashMap<UUID, ReplayPlayback> currentPlayerReplay;
-    public static List<Location> plateAboveLocations;
-    public static HashMap<Material, Integer> blocks;
-    private static Main INSTANCE;
-    public static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
-    public static class Entry {
-        public double time;
-        public Player player;
-
-        public Entry(double time, Player player) {
-            this.time = time;
-            this.player = player;
-        }
+    public static Main getInstance() {
+        return INSTANCE;
     }
 
     @Override
@@ -112,33 +104,33 @@ public final class Main extends JavaPlugin {
             this.stats = new HashMap<>();
             plateAboveLocations = new ArrayList<>();
             ReplayMain.getApi().initialize(this);
-            this.currentPlayerReplay = new HashMap<>();
-            this.blocks = new HashMap<>();
-            this.blocks.put(Material.SANDSTONE, 0);
-            this.blocks.put(Material.RED_SANDSTONE, 0);
-            this.blocks.put(Material.WOOL, 100);
-            this.blocks.put(Material.STONE, 100);
-            this.blocks.put(Material.WOOD, 100);
-            this.blocks.put(Material.QUARTZ_BLOCK, 200);
-            this.blocks.put(Material.STAINED_CLAY, 300);
-            this.blocks.put(Material.CLAY, 500);
-            this.blocks.put(Material.HARD_CLAY, 500);
-            this.blocks.put(Material.COBBLESTONE, 500);
-            this.blocks.put(Material.COAL_BLOCK, 600);
-            this.blocks.put(Material.SNOW_BLOCK, 600);
-            this.blocks.put(Material.IRON_BLOCK, 700);
-            this.blocks.put(Material.HAY_BLOCK, 700);
-            this.blocks.put(Material.ENDER_STONE, 800);
-            this.blocks.put(Material.NETHER_BRICK, 800);
-            this.blocks.put(Material.LEAVES, 800);
-            this.blocks.put(Material.STAINED_GLASS, 800);
-            this.blocks.put(Material.MELON_BLOCK, 800);
-            this.blocks.put(Material.PRISMARINE, 800);
-            this.blocks.put(Material.REDSTONE_BLOCK, 900);
-            this.blocks.put(Material.OBSIDIAN, 900);
-            this.blocks.put(Material.EMERALD_BLOCK, 1000);
-            this.blocks.put(Material.GOLD_BLOCK, 1000);
-            this.blocks.put(Material.GOLD_ORE, 1000);
+            currentPlayerReplay = new HashMap<>();
+            blocks = new HashMap<>();
+            blocks.put(Material.SANDSTONE, 0);
+            blocks.put(Material.RED_SANDSTONE, 0);
+            blocks.put(Material.WOOL, 100);
+            blocks.put(Material.STONE, 100);
+            blocks.put(Material.WOOD, 100);
+            blocks.put(Material.QUARTZ_BLOCK, 200);
+            blocks.put(Material.STAINED_CLAY, 300);
+            blocks.put(Material.CLAY, 500);
+            blocks.put(Material.HARD_CLAY, 500);
+            blocks.put(Material.COBBLESTONE, 500);
+            blocks.put(Material.COAL_BLOCK, 600);
+            blocks.put(Material.SNOW_BLOCK, 600);
+            blocks.put(Material.IRON_BLOCK, 700);
+            blocks.put(Material.HAY_BLOCK, 700);
+            blocks.put(Material.ENDER_STONE, 800);
+            blocks.put(Material.NETHER_BRICK, 800);
+            blocks.put(Material.LEAVES, 800);
+            blocks.put(Material.STAINED_GLASS, 800);
+            blocks.put(Material.MELON_BLOCK, 800);
+            blocks.put(Material.PRISMARINE, 800);
+            blocks.put(Material.REDSTONE_BLOCK, 900);
+            blocks.put(Material.OBSIDIAN, 900);
+            blocks.put(Material.EMERALD_BLOCK, 1000);
+            blocks.put(Material.GOLD_BLOCK, 1000);
+            blocks.put(Material.GOLD_ORE, 1000);
 
             this.loadListeners();
             this.loadCommands();
@@ -171,7 +163,8 @@ public final class Main extends JavaPlugin {
                     try {
                         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
                         connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
@@ -188,8 +181,8 @@ public final class Main extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new onPlayerSneak(), this);
         this.protocolManager.addPacketListener(new onPlayerReceivePacket());
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-            Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-            ReflectionUtils.setStaticField(org.bukkit.enchantments.Enchantment.class, "acceptingNew", true);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        ReflectionUtils.setStaticField(org.bukkit.enchantments.Enchantment.class, "acceptingNew", true);
             /*try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 Glow.glow = new Glow(100);
@@ -197,33 +190,33 @@ public final class Main extends JavaPlugin {
             } catch (Exception e) {
                 e.printStackTrace();
             }*/
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                try {
-                    for (it.minusone.fastbuilder.utils.bukkit.entity.NPC n : NPC.all) {
-                        if (n.isGravity()) {
-                            n.entityPlayer.g(0, 0);
-                            n.updateNpcLocation();
-                        }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            try {
+                for (it.minusone.fastbuilder.utils.bukkit.entity.NPC n : NPC.all) {
+                    if (n.isGravity()) {
+                        n.entityPlayer.g(0, 0);
+                        n.updateNpcLocation();
                     }
-
-                    for (Hologram h : Hologram.all) {
-                        if (h.followEntity != null) {
-                            h.setLocation(h.followEntity.getLocation().add(h.followOffset));
-                            h.tracker.forEach(p -> p.sendPacket(new PacketPlayOutEntityTeleport(h.armorStand)));
-                        }
-                    }
-
-                    Set<SignBuilder> toRemove = new HashSet<>();
-                    for (SignBuilder b : SignBuilder.signs) {
-                        if (System.currentTimeMillis() - b.getGeneratedTime() > b.getTimeout()) {
-                            toRemove.add(b);
-                        }
-                    }
-                    SignBuilder.signs.removeAll(toRemove);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }, 0, 1);
+
+                for (Hologram h : Hologram.all) {
+                    if (h.followEntity != null) {
+                        h.setLocation(h.followEntity.getLocation().add(h.followOffset));
+                        h.tracker.forEach(p -> p.sendPacket(new PacketPlayOutEntityTeleport(h.armorStand)));
+                    }
+                }
+
+                Set<SignBuilder> toRemove = new HashSet<>();
+                for (SignBuilder b : SignBuilder.signs) {
+                    if (System.currentTimeMillis() - b.getGeneratedTime() > b.getTimeout()) {
+                        toRemove.add(b);
+                    }
+                }
+                SignBuilder.signs.removeAll(toRemove);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 0, 1);
 
     }
 
@@ -231,10 +224,6 @@ public final class Main extends JavaPlugin {
         this.getCommand("fastbuilder").setExecutor(new fastbuilder());
         this.getCommand("fastbuilder").setTabCompleter(new fastbuilderTabCompleter());
         this.getCommand("stats").setExecutor(new stats());
-    }
-
-    public static Main getInstance() {
-        return INSTANCE;
     }
 
     public void saveBestTime(UUID playerId, String mode, double time) {
@@ -286,6 +275,16 @@ public final class Main extends JavaPlugin {
 
         if (removed) {
             tops.put(mode, topList);
+        }
+    }
+
+    public static class Entry {
+        public double time;
+        public Player player;
+
+        public Entry(double time, Player player) {
+            this.time = time;
+            this.player = player;
         }
     }
 

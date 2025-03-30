@@ -135,7 +135,7 @@ public class ReplayOutputStream extends DataOutputStream {
      * Writes out a {@link Material} to the stream.
      */
     @SuppressWarnings("deprecation")
-    public void writeMaterial(Material material)  throws IOException {
+    public void writeMaterial(Material material) throws IOException {
         writeInt(material.getId());
     }
 

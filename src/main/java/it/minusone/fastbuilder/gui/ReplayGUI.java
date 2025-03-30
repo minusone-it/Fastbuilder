@@ -13,7 +13,7 @@ import java.util.*;
 
 public class ReplayGUI implements InventoryHolder {
 
-    private Inventory inventory;
+    private final Inventory inventory;
 
     public ReplayGUI(UUID playerUUID) {
         this.inventory = Bukkit.createInventory(this, 45, "Replays");

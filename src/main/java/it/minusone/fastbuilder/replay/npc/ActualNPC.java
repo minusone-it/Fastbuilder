@@ -3,19 +3,20 @@ package it.minusone.fastbuilder.replay.npc;
 import it.minusone.fastbuilder.replay.ReplayPlayback;
 import it.minusone.fastbuilder.replay.entity.ReplaySkin;
 import it.minusone.fastbuilder.replay.utils.NMS;
+import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.WorldSettings;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
 
 import java.util.UUID;
 
 public class ActualNPC implements ReplayNPC {
     private final ReplayPlayback playback;
     private final NPC npc;
+
     public ActualNPC(ReplayPlayback playback, String name) {
         this.playback = playback;
         this.npc = new NPC(name, UUID.randomUUID(), true, false, false);
@@ -63,12 +64,6 @@ public class ActualNPC implements ReplayNPC {
     }
 
     @Override
-    public void setLocation(Location location) {
-        npc.setLocation(location);
-        npc.updateNpcLocation();
-    }
-
-    @Override
     public Location getLocation() {
         return new Location(
                 npc.entityPlayer.world.getWorld(),
@@ -78,6 +73,12 @@ public class ActualNPC implements ReplayNPC {
                 npc.entityPlayer.yaw,
                 npc.entityPlayer.pitch
         );
+    }
+
+    @Override
+    public void setLocation(Location location) {
+        npc.setLocation(location);
+        npc.updateNpcLocation();
     }
 
     @Override

@@ -5,6 +5,12 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.npc.NPCManager;
+import it.minusone.fastbuilder.utils.api.MojangAPI;
+import it.minusone.fastbuilder.utils.api.mojang.ProfileSkin;
+import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
+import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutScoreboardTeam;
+import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
+import it.minusone.fastbuilder.utils.utils.collection.Sets;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,12 +21,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import it.minusone.fastbuilder.utils.api.MojangAPI;
-import it.minusone.fastbuilder.utils.api.mojang.ProfileSkin;
-import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
-import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutScoreboardTeam;
-import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
-import it.minusone.fastbuilder.utils.utils.collection.Sets;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,19 +31,20 @@ import java.util.function.Consumer;
 
 public class NPC {
     public static final Set<NPC> all = new java.util.HashSet<>();
-    private Set<PlayerConnection> tracker = new java.util.HashSet<>();
     public final Set<String> world = new java.util.HashSet<>();
-    private Consumer<ClickEvent> event;
     public final boolean autoSpawn;
     public final boolean everyoneCanSee;
     public final EntityPlayer entityPlayer;
     public final Player requestedPlayer;
+    private final ItemStack[] armor = new ItemStack[4];
+    public int ms = 1;
+    Set<PlayerConnection> temp = new java.util.HashSet<>();
+    private Set<PlayerConnection> tracker = new java.util.HashSet<>();
+    private Consumer<ClickEvent> event;
     private boolean nameTagHidden;
     private boolean gravity;
     private float spawnBodyYaw;
     private ItemStack itemInHand;
-    private final ItemStack[] armor = new ItemStack[4];
-    public int ms = 1;
 
     public NPC(String name, UUID uuid, boolean enableOuterLayerSkin, boolean everyoneCanSee, boolean autoSpawn) {
         this.everyoneCanSee = everyoneCanSee;
@@ -60,16 +61,14 @@ public class NPC {
         all.remove(this);
     }
 
-    public NPC setClickEvent(Consumer<ClickEvent> e) {
-        this.event = e;
-        return this;
-    }
-
     public Consumer<ClickEvent> getClickEvent() {
         return event;
     }
 
-    Set<PlayerConnection> temp = new java.util.HashSet<>();
+    public NPC setClickEvent(Consumer<ClickEvent> e) {
+        this.event = e;
+        return this;
+    }
 
     public NPC addListener(Player... players) {
         for (Player p : players) {
@@ -191,13 +190,13 @@ public class NPC {
         return this;
     }
 
+    public boolean isGravity() {
+        return gravity;
+    }
+
     public NPC setGravity(boolean b) {
         this.gravity = b;
         return this;
-    }
-
-    public boolean isGravity() {
-        return gravity;
     }
 
     public NPC setSneaking(boolean sneaking) {

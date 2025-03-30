@@ -4,7 +4,6 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
-import it.minusone.fastbuilder.timer.Timer;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -7,7 +7,6 @@ import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
 import it.minusone.fastbuilder.npc.NPCManager;
-import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,6 +27,59 @@ public class fastbuilder implements CommandExecutor {
 
     public fastbuilder() {
         this.configManager = new ConfigManager(Main.getInstance());
+    }
+
+    public static void teleportPlayerToIsland(Player player, String mode, String island) {
+        if (Main.getInstance().modesWherePlayerIn.containsValue(mode) && Main.getInstance().islandWherePlayerIn.containsValue(island)) {
+            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Objects.requireNonNull(Main.getInstance().islandWherePlayerIn.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().equals(island))
+                    .map(Map.Entry::getKey)
+                    .findFirst()
+                    .orElse(null)).getName() + "!");
+            return;
+        }
+        Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
+        player.teleport(location);
+        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "-" + island + "!");
+        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+        block.setAmount(64);
+        player.getInventory().setItem(0, block);
+        player.getInventory().setItem(1, block);
+        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+        player.getInventory().setItem(4, new IslandSelector());
+        player.getInventory().setItem(6, new ReplayItem());
+        player.getInventory().setItem(7, new SettingsItem());
+        Main.getInstance().modesWherePlayerIn.put(player, mode);
+        Main.getInstance().islandWherePlayerIn.put(player, island);
+        Location baseLocationA = location.clone();
+        Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
+        baseLocationA.setWorld(player.getWorld());
+        baseLocationA.add(offsetA.getX(), offsetA.getY(), offsetA.getZ());
+        NPC modeSelector = new NPC(player, "Mode Changer", baseLocationA);
+        if (NPCManager.getNPC(player) != null)
+            NPCManager.removeNPC(NPCManager.getNPC(player), player);
+        modeSelector.spawn(player);
+        NPCManager.setNPC(modeSelector, player);
+        Location baseLocationB = location.clone();
+        Location offsetB = Main.getInstance().getConfigManager().getHoloOffset(mode, player.getLocation().getWorld());
+        baseLocationB.setWorld(player.getWorld());
+        baseLocationB.add(offsetB.getX(), offsetB.getY(), offsetB.getZ());
+        HologramStack stats = new HologramStack(4, 0.3, true, false,
+                "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player),
+                "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player),
+                "Personal Best: " + (!new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".") : "-.---"),
+                ChatColor.AQUA + player.getName() + "§r's stats:"
+        );
+        if (Main.getInstance().stats.containsKey(player)) {
+            Main.getInstance().stats.get(player).despawn();
+            Main.getInstance().stats.get(player).delete();
+            Main.getInstance().stats.remove(player);
+        }
+        stats.setLocation(baseLocationB);
+        stats.spawn();
+        Main.getInstance().stats.put(player, stats);
+        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
     }
 
     @Override
@@ -204,59 +256,6 @@ public class fastbuilder implements CommandExecutor {
         }
 
         return null; // No available island found
-    }
-
-    public static void teleportPlayerToIsland(Player player, String mode, String island) {
-        if (Main.getInstance().modesWherePlayerIn.containsValue(mode) && Main.getInstance().islandWherePlayerIn.containsValue(island)) {
-            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Objects.requireNonNull(Main.getInstance().islandWherePlayerIn.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().equals(island))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(null)).getName() + "!");
-            return;
-        }
-        Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
-        player.teleport(location);
-        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "-" + island + "!");
-        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
-        block.setAmount(64);
-        player.getInventory().setItem(0, block);
-        player.getInventory().setItem(1, block);
-        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-        player.getInventory().setItem(4, new IslandSelector());
-        player.getInventory().setItem(6, new ReplayItem());
-        player.getInventory().setItem(7, new SettingsItem());
-        Main.getInstance().modesWherePlayerIn.put(player, mode);
-        Main.getInstance().islandWherePlayerIn.put(player, island);
-        Location baseLocationA = location.clone();
-        Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
-        baseLocationA.setWorld(player.getWorld());
-        baseLocationA.add(offsetA.getX(), offsetA.getY(), offsetA.getZ());
-        NPC modeSelector = new NPC(player, "Mode Changer", baseLocationA);
-        if (NPCManager.getNPC(player) != null)
-            NPCManager.removeNPC(NPCManager.getNPC(player), player);
-        modeSelector.spawn(player);
-        NPCManager.setNPC(modeSelector, player);
-        Location baseLocationB = location.clone();
-        Location offsetB = Main.getInstance().getConfigManager().getHoloOffset(mode, player.getLocation().getWorld());
-        baseLocationB.setWorld(player.getWorld());
-        baseLocationB.add(offsetB.getX(), offsetB.getY(), offsetB.getZ());
-        HologramStack stats = new HologramStack(4, 0.3, true, false,
-                "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player),
-                "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player),
-                "Personal Best: " + (!new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".") : "-.---"),
-                ChatColor.AQUA + player.getName() + "§r's stats:"
-        );
-        if (Main.getInstance().stats.containsKey(player)) {
-            Main.getInstance().stats.get(player).despawn();
-            Main.getInstance().stats.get(player).delete();
-            Main.getInstance().stats.remove(player);
-        }
-        stats.setLocation(baseLocationB);
-        stats.spawn();
-        Main.getInstance().stats.put(player, stats);
-        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
     }
 
     private void leaveMode(Player player) {

@@ -1,9 +1,9 @@
 package it.minusone.fastbuilder.utils.bukkit.pluginMessage;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.utils.utils.bytes.ByteArrayBuffer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import it.minusone.fastbuilder.utils.utils.bytes.ByteArrayBuffer;
 
 public class BungeePluginMessage {
 

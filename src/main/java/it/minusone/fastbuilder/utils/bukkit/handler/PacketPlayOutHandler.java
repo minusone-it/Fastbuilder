@@ -2,9 +2,9 @@ package it.minusone.fastbuilder.utils.bukkit.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import it.minusone.fastbuilder.utils.bukkit.events.packet.PlayOutEvent;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.entity.Player;
-import it.minusone.fastbuilder.utils.bukkit.events.packet.PlayOutEvent;
 
 import java.util.List;
 

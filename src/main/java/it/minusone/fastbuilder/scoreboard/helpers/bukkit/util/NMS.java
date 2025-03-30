@@ -14,27 +14,21 @@ import java.util.Map;
 
 public class NMS {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NMS.class);
-
-    private static final String OLD_PACKAGE_NAME;
-    private static final Version VERSION;
-
     public static final Field PLAYER_SCORES;
-
     public static final Constructor<?> PACKET_SCORE_REMOVE;
     public static final Constructor<?> PACKET_SCORE;
-
     public static final Object ENUM_SCORE_ACTION_CHANGE;
     public static final Object ENUM_SCORE_ACTION_REMOVE;
-
     public static final Constructor<?> SB_SCORE;
     public static final Method SB_SCORE_SET;
-
     public static final Constructor<?> PACKET_OBJ;
     public static final Constructor<?> PACKET_DISPLAY;
-
     public static final Field PLAYER_CONNECTION;
     public static final Method SEND_PACKET;
+    private static final Logger LOGGER = LoggerFactory.getLogger(NMS.class);
+    private static final String OLD_PACKAGE_NAME;
+    private static final Version VERSION;
+    private static final Map<Class<?>, Method> HANDLES = new HashMap<>();
 
     static {
         String name = Bukkit.getServer().getClass().getPackage().getName();
@@ -80,8 +74,7 @@ public class NMS {
             if (VERSION.isBelow1_18()) {
                 sbScoreSet = scoreClass.getMethod("setScore", int.class);
                 sendPacket = playerConnectionClass.getMethod("sendPacket", packetClass);
-            }
-            else {
+            } else {
                 sbScoreSet = scoreClass.getMethod("a", int.class);
                 sendPacket = playerConnectionClass.getMethod("a", packetClass);
             }
@@ -91,8 +84,7 @@ public class NMS {
                 playerScores.setAccessible(true);
 
                 playerConnection = playerClass.getField("playerConnection");
-            }
-            else {
+            } else {
                 playerScores = sbClass.getDeclaredField("j");
                 playerScores.setAccessible(true);
 
@@ -121,7 +113,7 @@ public class NMS {
                     enumScoreActionRemove = scoreActionClass.getEnumConstants()[1];
                     break;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error while loading NMS methods. (Unsupported Minecraft version?)", e);
         }
 
@@ -153,13 +145,12 @@ public class NMS {
         return Class.forName(packageName + "." + name);
     }
 
-    private static final Map<Class<?>, Method> HANDLES = new HashMap<>();
     public static Object getHandle(Object obj) throws NoSuchMethodException,
             InvocationTargetException, IllegalAccessException {
 
         Class<?> clazz = obj.getClass();
 
-        if(!HANDLES.containsKey(clazz)) {
+        if (!HANDLES.containsKey(clazz)) {
             Method method = clazz.getDeclaredMethod("getHandle");
             method.setAccessible(true);
 
@@ -170,11 +161,11 @@ public class NMS {
     }
 
     public static void sendPacket(Object packet, Player... players) {
-        for(Player p : players) {
+        for (Player p : players) {
             try {
                 Object playerConnection = PLAYER_CONNECTION.get(getHandle(p));
                 SEND_PACKET.invoke(playerConnection, packet);
-            } catch(IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 LOGGER.error("Error while sending packet to player. (Unsupported Minecraft version?)", e);
             }
         }
@@ -196,15 +187,22 @@ public class NMS {
             this.minor = splitName[2].substring(1);
         }
 
-        public String getName() { return name; }
+        public String getName() {
+            return name;
+        }
 
-        public String getMajor() { return major; }
-        public String getMinor() { return minor; }
+        public String getMajor() {
+            return major;
+        }
+
+        public String getMinor() {
+            return minor;
+        }
 
         public boolean isBelow1_17() {
-            return  major.equals("1.7")  ||
-                    major.equals("1.8")  ||
-                    major.equals("1.9")  ||
+            return major.equals("1.7") ||
+                    major.equals("1.8") ||
+                    major.equals("1.9") ||
                     major.equals("1.10") ||
                     major.equals("1.11") ||
                     major.equals("1.12") ||

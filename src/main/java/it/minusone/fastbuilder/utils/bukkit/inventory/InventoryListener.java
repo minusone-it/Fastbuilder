@@ -1,11 +1,11 @@
 package it.minusone.fastbuilder.utils.bukkit.inventory;
 
+import it.minusone.fastbuilder.utils.bukkit.events.inventory.ClickInventoryEvent;
+import it.minusone.fastbuilder.utils.bukkit.events.inventory.CloseInventoryEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import it.minusone.fastbuilder.utils.bukkit.events.inventory.ClickInventoryEvent;
-import it.minusone.fastbuilder.utils.bukkit.events.inventory.CloseInventoryEvent;
 
 import java.util.HashMap;
 import java.util.Iterator;

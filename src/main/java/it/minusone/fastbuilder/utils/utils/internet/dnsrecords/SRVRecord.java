@@ -18,6 +18,20 @@ public class SRVRecord extends DNSRecord {
         this.target = target;
     }
 
+    public static SRVRecord lookup(String address) throws Exception {
+        try {
+            Attribute attr = lookup(address, "SRV");
+            if (attr == null)
+                return null;
+            else {
+                String[] srvRecord = ((String) attr.get(0)).split(" ");
+                return new SRVRecord(address, Integer.parseInt(srvRecord[0]), Integer.parseInt(srvRecord[1]), Integer.parseInt(srvRecord[2]), srvRecord[3].replaceFirst("\\.$", ""));
+            }
+        } catch (NamingException e) {
+            return null;
+        }
+    }
+
     public String getHost() {
         return host;
     }
@@ -41,19 +55,5 @@ public class SRVRecord extends DNSRecord {
     @Override
     public String toString() {
         return "SRV{host:\"" + host + "\",priority:" + priority + ",weight:" + weight + ",port:" + port + ",target:\"" + target + "\"}";
-    }
-
-    public static SRVRecord lookup(String address) throws Exception {
-        try {
-            Attribute attr = lookup(address,"SRV");
-            if (attr == null)
-                return null;
-            else {
-                String[] srvRecord = ((String) attr.get(0)).split(" ");
-                return new SRVRecord(address, Integer.parseInt(srvRecord[0]), Integer.parseInt(srvRecord[1]), Integer.parseInt(srvRecord[2]), srvRecord[3].replaceFirst("\\.$", ""));
-            }
-        } catch (NamingException e) {
-            return null;
-        }
     }
 }

@@ -1,6 +1,8 @@
 package it.minusone.fastbuilder.utils.bukkit;
 
 import io.netty.channel.ChannelPipeline;
+import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayInHandler;
+import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayOutHandler;
 import net.minecraft.server.v1_8_R3.EntityWither;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import org.bukkit.Bukkit;
@@ -8,8 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayInHandler;
-import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayOutHandler;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,29 +17,18 @@ import java.util.Map;
 
 public class CubingLibPlayer {
 
+    public static EntityWither sharedWither;
+    public static Map<Player, CubingLibPlayer> user = new HashMap<>();
+
     static {
         EntityWither wither = new EntityWither(((CraftWorld) Bukkit.getWorlds().get(0)).getHandle());
         wither.setInvisible(true);
         sharedWither = wither;
     }
 
-    public static EntityWither sharedWither;
-
-    public static Map<Player, CubingLibPlayer> user = new HashMap<>();
-
-    public static CubingLibPlayer get(Player player) {
-        return user.get(player);
-    }
-
-    public static Collection<CubingLibPlayer> getPlayers() {
-        return user.values();
-    }
-
     SideBar sideBar;
     Player player;
-
     String bossbar;
-
     public CubingLibPlayer(Player player) {
         this.player = player;
 
@@ -51,6 +40,14 @@ public class CubingLibPlayer {
             pipeline.addAfter("encoder", "speedcubingLib-packetplayout", new PacketPlayOutHandler(player));
 
         user.put(player, this);
+    }
+
+    public static CubingLibPlayer get(Player player) {
+        return user.get(player);
+    }
+
+    public static Collection<CubingLibPlayer> getPlayers() {
+        return user.values();
     }
 
     public SideBar getSideBar() {

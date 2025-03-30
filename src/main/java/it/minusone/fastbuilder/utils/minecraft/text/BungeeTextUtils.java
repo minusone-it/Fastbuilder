@@ -1,10 +1,10 @@
 package it.minusone.fastbuilder.utils.minecraft.text;
 
+import it.minusone.fastbuilder.utils.utils.StringUtils;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
-import it.minusone.fastbuilder.utils.utils.StringUtils;
 
 public class BungeeTextUtils {
 

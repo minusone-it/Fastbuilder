@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 public class MorseCode {
 
+    private static final List<String> codes = Arrays.asList(".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---",
+            ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----.", "-----");
+
     //ex: textToMorse("hello") = ".... . .-.. .-.. ---"
     public static String textToMorse(String text) {
         StringBuilder builder = new StringBuilder();
@@ -43,7 +46,4 @@ public class MorseCode {
         }
         return builder.substring(0, builder.length() - 1);
     }
-
-    private static final List<String> codes = Arrays.asList(".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---",
-            ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----.", "-----");
 }

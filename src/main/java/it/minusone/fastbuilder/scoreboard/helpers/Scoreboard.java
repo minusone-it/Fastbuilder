@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * The main class of the Netherboard API for Bukkit,
  * you'll need to use it if you want to create boards.
- *
+ * <p>
  * To create a board, get the instance using <code>Netherboard.instance()</code>
  * and call one of the <code>createBoard()</code> methods.
  */
@@ -19,14 +19,27 @@ public class Scoreboard {
 
     private final Map<Player, BPlayerBoard> boards = new HashMap<>();
 
-    private Scoreboard() {}
+    private Scoreboard() {
+    }
+
+    /**
+     * Returns the instance of the Netherboard class.
+     *
+     * @return the instance
+     */
+    public static Scoreboard instance() {
+        if (instance == null)
+            instance = new Scoreboard();
+
+        return instance;
+    }
 
     /**
      * Creates a board to a player.
      *
-     * @param player    the player
-     * @param name      the name of the board
-     * @return          the newly created board
+     * @param player the player
+     * @param name   the name of the board
+     * @return the newly created board
      */
     public BPlayerBoard createBoard(Player player, String name) {
         return createBoard(player, null, name);
@@ -35,10 +48,10 @@ public class Scoreboard {
     /**
      * Creates a board to a player, using a predefined scoreboard.
      *
-     * @param player        the player
-     * @param scoreboard    the scoreboard to use
-     * @param name          the name of the board
-     * @return              the newly created board
+     * @param player     the player
+     * @param scoreboard the scoreboard to use
+     * @param name       the name of the board
+     * @return the newly created board
      */
     public BPlayerBoard createBoard(Player player, org.bukkit.scoreboard.Scoreboard scoreboard, String name) {
         deleteBoard(player);
@@ -55,7 +68,7 @@ public class Scoreboard {
      * @param player the player
      */
     public void deleteBoard(Player player) {
-        if(boards.containsKey(player))
+        if (boards.containsKey(player))
             boards.get(player).delete();
     }
 
@@ -73,7 +86,7 @@ public class Scoreboard {
      * Checks if the player has a board.
      *
      * @param player the player
-     * @return       <code>true</code> if the player has a board, otherwise <code>false</code>
+     * @return <code>true</code> if the player has a board, otherwise <code>false</code>
      */
     public boolean hasBoard(Player player) {
         return boards.containsKey(player);
@@ -82,8 +95,8 @@ public class Scoreboard {
     /**
      * Gets the board of a player.
      *
-     * @param player    the player
-     * @return          the player board, or null if the player has no board
+     * @param player the player
+     * @return the player board, or null if the player has no board
      */
     public BPlayerBoard getBoard(Player player) {
         return boards.get(player);
@@ -98,18 +111,6 @@ public class Scoreboard {
      */
     public Map<Player, BPlayerBoard> getBoards() {
         return new HashMap<>(boards);
-    }
-
-    /**
-     * Returns the instance of the Netherboard class.
-     *
-     * @return the instance
-     */
-    public static Scoreboard instance() {
-        if(instance == null)
-            instance = new Scoreboard();
-
-        return instance;
     }
 
 }

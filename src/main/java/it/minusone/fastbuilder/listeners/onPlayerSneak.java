@@ -1,8 +1,6 @@
 package it.minusone.fastbuilder.listeners;
 
-import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.PacketPlayOutCamera;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;

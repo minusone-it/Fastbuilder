@@ -13,19 +13,20 @@ import java.util.Set;
 
 public class ReplayMain implements Listener {
     private static final ReplayMain api = new ReplayMain();
+    private final Set<Replay> recordingReplays = new HashSet<>();
+
+    // --- instance ---
+    private final Map<Class<? extends SaveRecordable>, Integer> recordableToId = new HashMap<>();
+    private final Map<Integer, Class<? extends SaveRecordable>> idToRecordable = new HashMap<>();
+    private Plugin plugin = null;
+
     public static ReplayMain getApi() {
         return api;
     }
 
-    // --- instance ---
-
-    private Plugin plugin = null;
-    private final Set<Replay> recordingReplays = new HashSet<>();
-    private final Map<Class<? extends SaveRecordable>, Integer> recordableToId = new HashMap<>();
-    private final Map<Integer, Class<? extends SaveRecordable>> idToRecordable = new HashMap<>();
-
     /**
      * Sets the plugin for the api
+     *
      * @param plugin The plugin to set
      */
     public void initialize(Plugin plugin) {

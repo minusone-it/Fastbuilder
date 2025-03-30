@@ -14,22 +14,9 @@ public class CNAMERecord extends DNSRecord {
         this.target = target;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    @Override
-    public String toString() {
-        return "CNAME{name:\"" + name + "\",target:\"" + target + "\"}";
-    }
-
     public static CNAMERecord lookup(String name) {
         try {
-            Attribute attr = lookup(name,"CNAME");
+            Attribute attr = lookup(name, "CNAME");
             if (attr == null)
                 return null;
             return new CNAMERecord(name, ((String) attr.get()).replaceFirst("\\.$", ""));
@@ -50,5 +37,18 @@ public class CNAMERecord extends DNSRecord {
             cnameRecords.add(current);
             return lookupAll(current.getTarget(), cnameRecords);
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    @Override
+    public String toString() {
+        return "CNAME{name:\"" + name + "\",target:\"" + target + "\"}";
     }
 }

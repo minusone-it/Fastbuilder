@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class SettingsGUI implements InventoryHolder {
     public Inventory inventory;
+
     public SettingsGUI() {
         this.inventory = Bukkit.createInventory(this, 27, "Settings");
         this.addItems(this.getInventory());

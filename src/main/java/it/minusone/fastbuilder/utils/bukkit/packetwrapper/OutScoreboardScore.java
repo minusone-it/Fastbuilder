@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit.packetwrapper;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 
 public class OutScoreboardScore {
     public final PacketPlayOutScoreboardScore packet = new PacketPlayOutScoreboardScore();

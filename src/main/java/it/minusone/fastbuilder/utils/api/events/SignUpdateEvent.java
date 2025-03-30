@@ -6,19 +6,18 @@ import java.util.List;
 
 public class SignUpdateEvent {
     private final Player player;
+    private final List<String> lines;
+
+    public SignUpdateEvent(Player player, List<String> lines) {
+        this.player = player;
+        this.lines = lines;
+    }
 
     public Player getPlayer() {
         return player;
     }
 
-    private final List<String> lines;
-
     public List<String> getLines() {
         return lines;
-    }
-
-    public SignUpdateEvent(Player player, List<String> lines) {
-        this.player = player;
-        this.lines = lines;
     }
 }

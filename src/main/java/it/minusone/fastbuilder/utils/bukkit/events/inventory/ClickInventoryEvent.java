@@ -1,8 +1,8 @@
 package it.minusone.fastbuilder.utils.bukkit.events.inventory;
 
+import it.minusone.fastbuilder.utils.bukkit.inventory.InventoryBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import it.minusone.fastbuilder.utils.bukkit.inventory.InventoryBuilder;
 
 public class ClickInventoryEvent {
 

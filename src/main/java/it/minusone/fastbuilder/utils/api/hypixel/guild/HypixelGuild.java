@@ -16,6 +16,10 @@ import java.util.List;
 public class HypixelGuild {
     private final JsonObject guild;
 
+    private HypixelGuild(JsonObject obj) {
+        guild = obj == null ? null : obj.getAsJsonObject().getAsJsonObject("guild");
+    }
+
     public static HypixelGuild get(String id) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL("https://api.hypixel.net/guild?key=" + HypixelLib.key + "&id=" + id).openConnection();
@@ -27,10 +31,6 @@ public class HypixelGuild {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private HypixelGuild(JsonObject obj) {
-        guild = obj == null ? null : obj.getAsJsonObject().getAsJsonObject("guild");
     }
 
     public List<String> getMembers() {

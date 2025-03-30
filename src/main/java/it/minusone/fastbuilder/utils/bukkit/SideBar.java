@@ -1,5 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit;
 
+import it.minusone.fastbuilder.utils.utils.Preconditions;
+import it.minusone.fastbuilder.utils.utils.collection.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -7,12 +9,26 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import it.minusone.fastbuilder.utils.utils.Preconditions;
-import it.minusone.fastbuilder.utils.utils.collection.Sets;
 
 import java.util.*;
 
 public class SideBar implements Listener {
+
+    public final Scoreboard scoreboard;
+    public final Objective objective;
+    public final Player player;
+    int changer = -1;
+    int line = 1;
+    Map<Integer, String> lines = new HashMap<>();
+    Map<Integer, Set<String>> scores = new HashMap<>();
+    public SideBar(Player player, String displayName) {
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        objective = scoreboard.registerNewObjective("sidebar", "dummy");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName(displayName);
+        this.player = player;
+        CubingLibPlayer.get(player).setSideBar(this);
+    }
 
     public static SideBar getSidebar(Player player) {
         return CubingLibPlayer.get(player).getSideBar();
@@ -28,21 +44,35 @@ public class SideBar implements Listener {
         return s;
     }
 
-    public final Scoreboard scoreboard;
-    public final Objective objective;
-    public final Player player;
-    int changer = -1;
-    int line = 1;
-    Map<Integer, String> lines = new HashMap<>();
-    Map<Integer, Set<String>> scores = new HashMap<>();
-
-    public SideBar(Player player, String displayName) {
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        objective = scoreboard.registerNewObjective("sidebar", "dummy");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(displayName);
-        this.player = player;
-        CubingLibPlayer.get(player).setSideBar(this);
+    private static String[] split(String str, char c) {
+        String prefix;
+        String suffix = "";
+        if (str.length() <= 16)
+            prefix = str;
+        else {
+            boolean splitted = false;
+            if (str.charAt(15) == '§') {
+                prefix = str.substring(0, 15);
+                if (str.charAt(16) < 'k')
+                    suffix = str.substring(15);
+            } else {
+                splitted = true;
+                prefix = str.substring(0, 16);
+            }
+            for (int j = splitted ? 14 : 13; j >= 0; j--) {
+                char next = str.charAt(j + 1);
+                if (str.charAt(j) == '§' && next < 'k') {
+                    suffix = "§" + next + str.substring(splitted ? 16 : 15);
+                    break;
+                }
+            }
+            suffix = suffix.isEmpty() ? str.substring(splitted ? 16 : 15) : suffix;
+        }
+        if (suffix.length() > 1) {
+            if (suffix.charAt(0) == '§' && suffix.charAt(1) == c)
+                suffix = suffix.substring(2);
+        }
+        return new String[]{prefix, suffix};
     }
 
     public void create() {
@@ -97,36 +127,5 @@ public class SideBar implements Listener {
             setPrefixSuffix(str, s);
         }
         return this;
-    }
-
-    private static String[] split(String str, char c) {
-        String prefix;
-        String suffix = "";
-        if (str.length() <= 16)
-            prefix = str;
-        else {
-            boolean splitted = false;
-            if (str.charAt(15) == '§') {
-                prefix = str.substring(0, 15);
-                if (str.charAt(16) < 'k')
-                    suffix = str.substring(15);
-            } else {
-                splitted = true;
-                prefix = str.substring(0, 16);
-            }
-            for (int j = splitted ? 14 : 13; j >= 0; j--) {
-                char next = str.charAt(j + 1);
-                if (str.charAt(j) == '§' && next < 'k') {
-                    suffix = "§" + next + str.substring(splitted ? 16 : 15);
-                    break;
-                }
-            }
-            suffix = suffix.isEmpty() ? str.substring(splitted ? 16 : 15) : suffix;
-        }
-        if (suffix.length() > 1) {
-            if (suffix.charAt(0) == '§' && suffix.charAt(1) == c)
-                suffix = suffix.substring(2);
-        }
-        return new String[]{prefix, suffix};
     }
 }

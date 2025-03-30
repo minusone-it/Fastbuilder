@@ -38,6 +38,44 @@ public class TimeFormatter {
         this.setTime(t, timeUnit);
     }
 
+    public static String unixToRealTime(long t, String format, TimeUnit timeUnit) {
+        return unixToRealTime(t, DateTimeFormatter.ofPattern(format), timeUnit);
+    }
+
+    public static String unixToRealTime(long t, DateTimeFormatter formatter, TimeUnit timeUnit) {
+        switch (timeUnit) {
+            case SECONDS:
+                return unixToRealTime(Instant.ofEpochSecond(t), formatter);
+            case MILLISECONDS:
+                return unixToRealTime(Instant.ofEpochMilli(t), formatter);
+        }
+        return null;
+    }
+
+    public static String unixToRealTime(Instant instant, DateTimeFormatter formatter) {
+        return formatter.format(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()));
+    }
+
+    public static String unixToRealTime(String format, OffsetDateTime offsetDateTime) {
+        return DateTimeFormatter.ofPattern(format).format(LocalDateTime.ofInstant(offsetDateTime.toInstant(), ZoneId.systemDefault()));
+    }
+
+    public static String unixToRealTime(DateTimeFormatter formatter, OffsetDateTime offsetDateTime) {
+        return formatter.format(LocalDateTime.ofInstant(offsetDateTime.toInstant(), ZoneId.systemDefault()));
+    }
+
+    public static String formatNow(String format) {
+        return DateTimeFormatter.ofPattern(format).format(LocalDateTime.now());
+    }
+
+    public static String formatNow(DateTimeFormatter formatter) {
+        return formatter.format(LocalDateTime.now());
+    }
+
+    public static String format(DateTimeFormatter formatter, LocalDateTime localDateTime) {
+        return formatter.format(localDateTime);
+    }
+
     public void setTime(long t, TimeUnit timeUnit) {
         if (Objects.requireNonNull(timeUnit) == TimeUnit.MILLISECONDS) {
             //ms
@@ -117,43 +155,5 @@ public class TimeFormatter {
 
     public String toString() {
         return format;
-    }
-
-    public static String unixToRealTime(long t, String format, TimeUnit timeUnit) {
-        return unixToRealTime(t, DateTimeFormatter.ofPattern(format), timeUnit);
-    }
-
-    public static String unixToRealTime(long t, DateTimeFormatter formatter, TimeUnit timeUnit) {
-        switch (timeUnit) {
-            case SECONDS:
-                return unixToRealTime(Instant.ofEpochSecond(t), formatter);
-            case MILLISECONDS:
-                return unixToRealTime(Instant.ofEpochMilli(t), formatter);
-        }
-        return null;
-    }
-
-    public static String unixToRealTime(Instant instant, DateTimeFormatter formatter) {
-        return formatter.format(LocalDateTime.ofInstant(instant, ZoneId.systemDefault()));
-    }
-
-    public static String unixToRealTime(String format, OffsetDateTime offsetDateTime) {
-        return DateTimeFormatter.ofPattern(format).format(LocalDateTime.ofInstant(offsetDateTime.toInstant(), ZoneId.systemDefault()));
-    }
-
-    public static String unixToRealTime(DateTimeFormatter formatter, OffsetDateTime offsetDateTime) {
-        return formatter.format(LocalDateTime.ofInstant(offsetDateTime.toInstant(), ZoneId.systemDefault()));
-    }
-
-    public static String formatNow(String format) {
-        return DateTimeFormatter.ofPattern(format).format(LocalDateTime.now());
-    }
-
-    public static String formatNow(DateTimeFormatter formatter) {
-        return formatter.format(LocalDateTime.now());
-    }
-
-    public static String format(DateTimeFormatter formatter, LocalDateTime localDateTime) {
-        return formatter.format(localDateTime);
     }
 }

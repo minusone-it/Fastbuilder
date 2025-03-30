@@ -9,14 +9,6 @@ import java.io.File;
 //rgb >> 24 != 0x00
 public class ImageRotator {
 
-    enum RotateType {
-        ROTATE_90,
-        ROTATE_180,
-        ROTATE_270,
-        FLIP_HORIZONTAL,
-        FLIP_VERTICAL
-    }
-
     public static void rotate(File input, File output, RotateType type) {
         try {
             ImageIO.write(rotate(ImageIO.read(input), type), FileUtils.getExtension(input.getName()), output);
@@ -71,5 +63,13 @@ public class ImageRotator {
             break;
         }
         return image;
+    }
+
+    enum RotateType {
+        ROTATE_90,
+        ROTATE_180,
+        ROTATE_270,
+        FLIP_HORIZONTAL,
+        FLIP_VERTICAL
     }
 }

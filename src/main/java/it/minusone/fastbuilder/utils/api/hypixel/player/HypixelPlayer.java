@@ -14,6 +14,10 @@ import java.util.UUID;
 public class HypixelPlayer {
     private final JsonObject player;
 
+    private HypixelPlayer(JsonObject obj) {
+        player = obj == null ? null : obj.getAsJsonObject().getAsJsonObject("player");
+    }
+
     public static HypixelPlayer get(UUID uuid) {
         return get(uuid.toString());
     }
@@ -29,10 +33,6 @@ public class HypixelPlayer {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private HypixelPlayer(JsonObject obj) {
-        player = obj == null ? null : obj.getAsJsonObject().getAsJsonObject("player");
     }
 
     public BedwarsStats getBedwars() {

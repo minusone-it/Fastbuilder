@@ -4,8 +4,8 @@ import it.minusone.fastbuilder.replay.entity.EntityInfo;
 import it.minusone.fastbuilder.replay.enums.PlaybackState;
 import it.minusone.fastbuilder.replay.event.PlaybackEndEvent;
 import it.minusone.fastbuilder.replay.event.PlaybackStateChangeEvent;
-import it.minusone.fastbuilder.replay.npc.ReplayNPC;
 import it.minusone.fastbuilder.replay.npc.ActualNPC;
+import it.minusone.fastbuilder.replay.npc.ReplayNPC;
 import it.minusone.fastbuilder.replay.recordable.Recordable;
 import it.minusone.fastbuilder.replay.recordable.UndoRecordable;
 import org.bukkit.Bukkit;
@@ -72,8 +72,9 @@ public class ReplayPlayback {
 
     /**
      * Spawns a npc in the replay playback
+     *
      * @param entityId Entity id of the new npc
-     * @param info The info of the npc
+     * @param info     The info of the npc
      */
     public void spawnNpc(int entityId, EntityInfo info) {
         // Note: This can be changed for another npc library if needed, or native npc packets.
@@ -95,6 +96,7 @@ public class ReplayPlayback {
 
     /**
      * Removes a npc in the playback
+     *
      * @param id The entity id of the npc
      */
     public void removeNPC(int id) {
@@ -292,6 +294,7 @@ public class ReplayPlayback {
 
     /**
      * Sends a message to everyone listening to the replay, should only be used for testing
+     *
      * @param message Message to send
      */
     public void messageListeners(String message) {

@@ -12,6 +12,7 @@ public class NMS {
     public static BlockPosition toNMS(Location location) {
         return new BlockPosition(location.getX(), location.getY(), location.getZ());
     }
+
     public static void sendPacket(Player player, Packet<?> packet) {
         NMS.getHandle(player).playerConnection.sendPacket(packet);
     }

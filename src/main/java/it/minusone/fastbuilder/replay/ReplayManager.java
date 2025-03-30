@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.replay;
 
-import it.minusone.fastbuilder.replay.data.stream.ReplayInputStream;
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.replay.data.stream.ReplayInputStream;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

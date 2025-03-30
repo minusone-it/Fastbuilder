@@ -9,6 +9,11 @@ public class ClickEvent {
 
     private final PacketPlayInUseEntity.EnumEntityUseAction action;
 
+    public ClickEvent(Player player, PacketPlayInUseEntity.EnumEntityUseAction action) {
+        this.player = player;
+        this.action = action;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -17,13 +22,10 @@ public class ClickEvent {
         return action;
     }
 
-    public ClickEvent(Player player, PacketPlayInUseEntity.EnumEntityUseAction action) {
-        this.player = player;
-        this.action = action;
-    }
     public boolean isLeftClick() {
         return action == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK;
     }
+
     public boolean isRightClick() {
         return action == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT;
     }

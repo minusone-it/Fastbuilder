@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit.packetwrapper;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 
 import java.util.Collection;
 

@@ -1,5 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit.entity;
 
+import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
+import it.minusone.fastbuilder.utils.utils.collection.Sets;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,8 +10,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
-import it.minusone.fastbuilder.utils.utils.collection.Sets;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,14 +19,15 @@ import java.util.function.Consumer;
 public class Hologram {
 
     public static final Set<Hologram> all = new HashSet<>();
-    public Set<PlayerConnection> tracker = new HashSet<>();
     public final Set<String> world = new HashSet<>();
-    private Consumer<ClickEvent> event;
     public final boolean autoSpawn;
     public final boolean everyoneCanSee;
     public final EntityArmorStand armorStand;
+    public Set<PlayerConnection> tracker = new HashSet<>();
     public Entity followEntity;
     public Vector followOffset;
+    Set<PlayerConnection> temp = new HashSet<>();
+    private Consumer<ClickEvent> event;
 
     public Hologram(String name, boolean everyoneCanSee, boolean autoSpawn) {
         this.everyoneCanSee = everyoneCanSee;
@@ -47,17 +48,15 @@ public class Hologram {
         all.remove(this);
     }
 
+    public Consumer<ClickEvent> getClickEvent() {
+        return event;
+    }
+
     public Hologram setClickEvent(Consumer<ClickEvent> e) {
         armorStand.n(false);
         this.event = e;
         return this;
     }
-
-    public Consumer<ClickEvent> getClickEvent() {
-        return event;
-    }
-
-    Set<PlayerConnection> temp = new HashSet<>();
 
     public void spawnFor(Player player) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(this.armorStand));

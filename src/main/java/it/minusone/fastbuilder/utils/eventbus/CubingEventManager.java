@@ -8,8 +8,7 @@ import java.util.*;
 /**
  * class listener extends CubingEvent {
  *
- * @CubingEventHandler
- * public void a(MyEvent e){
+ * @CubingEventHandler public void a(MyEvent e){
  * //...
  * }
  * }

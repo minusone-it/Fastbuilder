@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,7 +12,6 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutPlayerListHeaderFooter;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,6 +57,7 @@ public class PlayerUtils {
             }
         });
     }
+
     public static void particleCrash(Player player) {
         Location loc = player.getLocation();
         PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.HEART, false, (float) loc.getX(), (float) loc.getY(), (float) loc.getZ(), 0, 0, 0, 0.05f, 100000000);

@@ -4,7 +4,6 @@ import it.minusone.fastbuilder.replay.entity.EntityInfo;
 import it.minusone.fastbuilder.replay.entity.ReplaySkin;
 import it.minusone.fastbuilder.replay.recordable.Recordable;
 import it.minusone.fastbuilder.replay.recordable.entity.*;
-import it.minusone.fastbuilder.replay.recordable.entity.*;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -12,14 +11,14 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class Replay {
-    private int startTick = -1;
-    private int length;
-    private boolean recording = false;
     private final Location origin;
     private final Set<Integer> recordingEntities = new HashSet<>();
     private final Map<Integer, List<Recordable>> replayData = new HashMap<>();
     private final Map<Integer, EntityInfo> entityInfo = new HashMap<>();
     private final Map<String, String> metadata = new HashMap<>();
+    private int startTick = -1;
+    private int length;
+    private boolean recording = false;
 
     public Replay(Location origin) {
         this.origin = origin;
@@ -96,7 +95,8 @@ public class Replay {
 
     /**
      * Adds an entity to the replay
-     * @param id The id of the entity, must be unique
+     *
+     * @param id   The id of the entity, must be unique
      * @param info The info object of the entity
      */
     public void addEntity(int id, EntityInfo info) {
@@ -134,7 +134,7 @@ public class Replay {
         record(new SneakRecordable(player.getEntityId(), player.isSneaking()));
 
         if (player.getItemInHand() != null) {
-            record(new ItemHeldRecordable(player.getEntityId(), player.getItemInHand().getType(),player.getItemInHand().getData().getData()));
+            record(new ItemHeldRecordable(player.getEntityId(), player.getItemInHand().getType(), player.getItemInHand().getData().getData()));
         }
     }
 
@@ -208,7 +208,8 @@ public class Replay {
 
     /**
      * Sets some replay metadata
-     * @param key The key of the data
+     *
+     * @param key  The key of the data
      * @param data The data in the replay
      */
     public void setMetadata(String key, String data) {

@@ -1,8 +1,8 @@
 package it.minusone.fastbuilder.utils.bukkit.entity;
 
+import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class HologramStack {
+    public final List<Hologram> hologramList = new ArrayList<>();
     private final int count;
     private final double d;
-
-    public final List<Hologram> hologramList = new ArrayList<>();
 
     public HologramStack(int count, double d, boolean everyoneCanSee, boolean autoSpawn, String... name) {
         this.count = count;

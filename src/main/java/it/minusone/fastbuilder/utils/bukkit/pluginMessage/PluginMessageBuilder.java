@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit.pluginMessage;
 
-import org.bukkit.entity.Player;
 import it.minusone.fastbuilder.utils.utils.bytes.ByteArrayBuffer;
+import org.bukkit.entity.Player;
 
 //new PluginMessageBuilder(...).write...write...send();
 class PluginMessageBuilder {

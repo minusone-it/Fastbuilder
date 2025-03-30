@@ -1,8 +1,8 @@
 package it.minusone.fastbuilder.utils.minecraft.utils;
 
 
-import org.bukkit.ChatColor;
 import it.minusone.fastbuilder.utils.api.MojangAPI;
+import org.bukkit.ChatColor;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

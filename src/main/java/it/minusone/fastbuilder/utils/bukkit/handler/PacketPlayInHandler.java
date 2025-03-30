@@ -2,11 +2,6 @@ package it.minusone.fastbuilder.utils.bukkit.handler;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
-import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
-import org.bukkit.entity.Player;
 import it.minusone.fastbuilder.utils.api.events.SignUpdateEvent;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
@@ -14,6 +9,11 @@ import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
 import it.minusone.fastbuilder.utils.bukkit.events.packet.PlayInEvent;
 import it.minusone.fastbuilder.utils.bukkit.inventory.SignBuilder;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
+import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashSet;

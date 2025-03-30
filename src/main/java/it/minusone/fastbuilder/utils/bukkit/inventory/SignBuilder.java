@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.utils.bukkit.inventory;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.utils.api.events.SignUpdateEvent;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutOpenSignEditor;
 import net.minecraft.server.v1_8_R3.TileEntitySign;
@@ -11,7 +12,6 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import it.minusone.fastbuilder.utils.api.events.SignUpdateEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,42 +19,11 @@ import java.util.function.Consumer;
 
 public class SignBuilder {
     public static Set<SignBuilder> signs = new HashSet<>();
-
-    public static SignBuilder openSign(Player player, int x, int y, int z, String... lines) {
-        return new SignBuilder(player, x, y, z, lines);
-    }
-
-
-    private long timeout = 10000L;
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
     private final long generatedTime = System.currentTimeMillis();
-
-    public long getGeneratedTime() {
-        return generatedTime;
-    }
-
+    private final Player player;
+    private long timeout = 10000L;
     private Consumer<SignUpdateEvent> event = (r) -> {
     };
-
-    public void onFinish(Consumer<SignUpdateEvent> event) {
-        this.event = event;
-    }
-
-    public Consumer<SignUpdateEvent> getEvent() {
-        return event;
-    }
-
-    private final Player player;
-
-    public Player getPlayer() {
-        return player;
-    }
 
     SignBuilder(Player player, int x, int y, int z, String... lines) {
         this.player = player;
@@ -74,5 +43,33 @@ public class SignBuilder {
         PacketPlayOutOpenSignEditor packetPlayOutOpenSignEditor = new PacketPlayOutOpenSignEditor(position);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutOpenSignEditor);
         signs.add(this);
+    }
+
+    public static SignBuilder openSign(Player player, int x, int y, int z, String... lines) {
+        return new SignBuilder(player, x, y, z, lines);
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    public long getGeneratedTime() {
+        return generatedTime;
+    }
+
+    public void onFinish(Consumer<SignUpdateEvent> event) {
+        this.event = event;
+    }
+
+    public Consumer<SignUpdateEvent> getEvent() {
+        return event;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

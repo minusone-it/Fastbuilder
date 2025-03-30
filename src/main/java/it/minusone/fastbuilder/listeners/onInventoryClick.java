@@ -1,9 +1,9 @@
 package it.minusone.fastbuilder.listeners;
 
-import it.minusone.fastbuilder.replay.ReplayManager;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.gui.*;
+import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

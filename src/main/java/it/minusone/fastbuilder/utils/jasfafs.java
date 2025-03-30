@@ -1,10 +1,10 @@
 package it.minusone.fastbuilder.utils;
 
 import it.minusone.fastbuilder.Main;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.Chunk;
 
 public class jasfafs {
     public static void scanLoadedChunksForPressurePlates(World world) {
@@ -27,8 +27,8 @@ public class jasfafs {
         if (block == null) return false;
         Material type = block.getType();
         return type == Material.STONE_PLATE ||
-               type == Material.WOOD_PLATE ||
-               type == Material.GOLD_PLATE ||
-               type == Material.IRON_PLATE;
+                type == Material.WOOD_PLATE ||
+                type == Material.GOLD_PLATE ||
+                type == Material.IRON_PLATE;
     }
 }

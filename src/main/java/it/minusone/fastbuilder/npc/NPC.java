@@ -19,8 +19,8 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class NPC {
-    private EntityPlayer npc;
-    private String name;
+    private final EntityPlayer npc;
+    private final String name;
 
     public NPC(Player player, String name, Location location) {
         this.name = ChatColor.translateAlternateColorCodes('&', name);

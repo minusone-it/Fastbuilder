@@ -1,9 +1,9 @@
 package it.minusone.fastbuilder.utils.bukkit.packetwrapper;
 
+import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
-import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 
 public class OutPlayerListHeaderFooter {
     public final PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();

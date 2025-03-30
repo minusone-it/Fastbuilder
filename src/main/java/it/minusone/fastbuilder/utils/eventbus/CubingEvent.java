@@ -14,7 +14,7 @@ public class CubingEvent {
             for (int i = 0; i < size; i++) {
                 try {
                     methods.get(i).invoke(instances.get(i), this);
-                }  catch (Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }

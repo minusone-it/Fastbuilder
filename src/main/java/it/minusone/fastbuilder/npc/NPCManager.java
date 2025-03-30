@@ -19,12 +19,14 @@ public class NPCManager {
         getNPC(player).despawn(player);
         npcs.remove(player, npc);
     }
+
     public static List<NPC> getAllNPCs() {
         List<NPC> npcsList = new ArrayList<>();
         for (Map.Entry<Player, NPC> npc : npcs.entrySet())
             npcsList.add(npc.getValue());
         return npcsList;
     }
+
     public static NPC getNPC(Player player) {
         return npcs.get(player);
     }

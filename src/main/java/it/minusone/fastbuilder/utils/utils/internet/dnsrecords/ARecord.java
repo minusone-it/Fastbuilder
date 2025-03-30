@@ -14,6 +14,19 @@ public class ARecord extends DNSRecord {
         this.IPv4 = IPv4;
     }
 
+    public static List<ARecord> lookup(String name) {
+        try {
+            Attribute attr = lookup(name, "A");
+            List<ARecord> records = new ArrayList<>();
+            if (attr != null)
+                for (String s : attr.toString().substring(3).split(", "))
+                    records.add(new ARecord(name, s));
+            return records;
+        } catch (NamingException e) {
+            return null;
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -25,18 +38,5 @@ public class ARecord extends DNSRecord {
     @Override
     public String toString() {
         return "A{name:\"" + name + "\",IPv4:\"" + IPv4 + "\"}";
-    }
-
-    public static List<ARecord> lookup(String name) {
-        try {
-            Attribute attr = lookup(name,"A");
-            List<ARecord> records = new ArrayList<>();
-            if (attr != null)
-                for (String s : attr.toString().substring(3).split(", "))
-                    records.add(new ARecord(name, s));
-            return records;
-        } catch (NamingException e) {
-            return null;
-        }
     }
 }

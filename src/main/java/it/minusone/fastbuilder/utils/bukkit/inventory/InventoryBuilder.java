@@ -1,12 +1,12 @@
 package it.minusone.fastbuilder.utils.bukkit.inventory;
 
+import it.minusone.fastbuilder.utils.bukkit.events.inventory.ClickInventoryEvent;
+import it.minusone.fastbuilder.utils.bukkit.events.inventory.CloseInventoryEvent;
+import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import it.minusone.fastbuilder.utils.bukkit.events.inventory.ClickInventoryEvent;
-import it.minusone.fastbuilder.utils.bukkit.events.inventory.CloseInventoryEvent;
-import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +15,10 @@ import java.util.function.Consumer;
 public class InventoryBuilder {
     public final Map<Integer, Consumer<ClickInventoryEvent>> clickEvents = new HashMap<>();
     public final boolean[] clickable;
-    public Consumer<ClickInventoryEvent> allClickEvent;
-    public Consumer<CloseInventoryEvent> closeInventoryEvent;
     private final Player player;
     private final Inventory inventory;
+    public Consumer<ClickInventoryEvent> allClickEvent;
+    public Consumer<CloseInventoryEvent> closeInventoryEvent;
 
     public InventoryBuilder(int size, String title) {
         this(null, size, title);

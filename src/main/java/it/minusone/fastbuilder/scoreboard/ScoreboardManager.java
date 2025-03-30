@@ -1,16 +1,13 @@
 package it.minusone.fastbuilder.scoreboard;
 
+import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
-import it.minusone.fastbuilder.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ScoreboardManager {
 

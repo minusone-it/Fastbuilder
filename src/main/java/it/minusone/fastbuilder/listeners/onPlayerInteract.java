@@ -1,7 +1,5 @@
 package it.minusone.fastbuilder.listeners;
 
-import it.minusone.fastbuilder.replay.ReplayManager;
-import it.minusone.fastbuilder.replay.ReplayPlayback;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
@@ -9,6 +7,8 @@ import it.minusone.fastbuilder.gui.SettingsGUI;
 import it.minusone.fastbuilder.items.IslandSelector;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
+import it.minusone.fastbuilder.replay.ReplayManager;
+import it.minusone.fastbuilder.replay.ReplayPlayback;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +36,7 @@ public class onPlayerInteract implements Listener {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
                 event.getPlayer().openInventory(new SettingsGUI().getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
-                 event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId()).getInventory());
+                event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
                     ReplayManager.endReplay(event.getPlayer());

@@ -48,14 +48,14 @@ public interface ReplayNPC {
     void setSneaking(boolean sneaking);
 
     /**
-     * Teleports the npc to the new location
-     */
-    void setLocation(Location location);
-
-    /**
      * @return The npc location
      */
     Location getLocation();
+
+    /**
+     * Teleports the npc to the new location
+     */
+    void setLocation(Location location);
 
     /**
      * Sets the item in the npc hand
