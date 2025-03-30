@@ -1,7 +1,6 @@
 package it.minusone.fastbuilder.scoreboard.helpers.bukkit;
 
 import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
-import it.minusone.fastbuilder.scoreboard.helpers.api.PlayerBoard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.util.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

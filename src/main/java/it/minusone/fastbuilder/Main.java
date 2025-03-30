@@ -83,9 +83,9 @@ public final class Main extends JavaPlugin {
             }
         } catch (IOException e) {
             MinecraftConsole.printlnColor(this.PREFIX +
-                    "Error while trying to connect to the license server. Please contact support on discord.");
+                    "Error while trying to connect to the license server. Please contact support on discord with the error below.");
             MinecraftConsole.printlnColor(this.PREFIX +
-                    "Error: " + e.getMessage() + " (" + e.getClass().getSimpleName() + ")");
+                    "Error: " + e.getClass().getSimpleName() + ".");
             Bukkit.getPluginManager().disablePlugin(this);
         }
         INSTANCE = this;

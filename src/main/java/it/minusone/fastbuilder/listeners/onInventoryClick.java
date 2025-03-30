@@ -25,6 +25,7 @@ public class onInventoryClick implements Listener {
         if (clickedInventory != null) {
             Player player = (Player) event.getWhoClicked();
             ItemStack clickedItem = event.getCurrentItem();
+            if (Main.getInstance().modesWherePlayerIn.containsKey(player)) event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
                 event.setCancelled(true);
                 if (clickedItem != null) {

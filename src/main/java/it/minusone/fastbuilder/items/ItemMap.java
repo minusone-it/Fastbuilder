@@ -13,7 +13,7 @@ public class ItemMap extends ItemStack {
         SkullMeta skullMeta = (SkullMeta) this.getItemMeta();
         skullMeta.setDisplayName("§r§7Island " + map);
         skullMeta.setLore(Collections.singletonList(isOccupied ? "§r§cOccupied by " + player : "§r§2Not occupied!"));
-        skullMeta.setOwner(skullOwner == null ? "MHF_Question" : skullOwner.getName());
+        skullMeta.setOwner(skullOwner == null ? "MHF_Question" : isOccupied ? skullOwner.getName() : "MHF_Question");
         this.setItemMeta(skullMeta);
     }
 }

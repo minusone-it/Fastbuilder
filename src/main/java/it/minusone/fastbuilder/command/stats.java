@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.command;
 
 import it.minusone.fastbuilder.Main;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,13 +19,18 @@ public class stats implements CommandExecutor {
 
         Player player = (Player) sender;
         Player target = Main.getInstance().getServer().getPlayer(args[0]);
+        if (target == null) target = Main.getInstance().getServer().getOfflinePlayer(args[0]).getPlayer();
+        if (target == null) {
+            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player doesn't exist!");
+            return true;
+        }
         player.sendMessage(Main.getInstance().PREFIX + target.getName() + "'s stats:");
         player.sendMessage(Main.getInstance().PREFIX + "     §eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
         player.sendMessage(Main.getInstance().PREFIX + "     §7Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
         player.sendMessage(Main.getInstance().PREFIX + "     §7Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
         player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Bests:");
         for (String mode : Main.getInstance().getConfigManager().getModes()) {
-            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + (new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000")));
+            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + (new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".")));
         }
         return true;
     }

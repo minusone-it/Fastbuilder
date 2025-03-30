@@ -29,11 +29,11 @@ public class IslandSelectorGUI implements InventoryHolder {
 
             Map<String, Player> islandToPlayerMap = Main.getInstance().islandWherePlayerIn.entrySet().stream()
                     .filter(entry -> islands.contains(entry.getValue()))
-                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (existing, replacement) -> existing));
 
             for (String island : islands) {
                 Player islandPlayer = islandToPlayerMap.get(island);
-                boolean isOccupied = islandPlayer != null && Main.getInstance().modesWherePlayerIn.containsKey(islandPlayer);
+                boolean isOccupied = islandPlayer != null && mode.equals(Main.getInstance().modesWherePlayerIn.get(islandPlayer));
                 ItemMap mapItem = new ItemMap(island, islandPlayer != null ? islandPlayer.getName() : "", islandPlayer, isOccupied);
                 inventory.addItem(mapItem);
             }

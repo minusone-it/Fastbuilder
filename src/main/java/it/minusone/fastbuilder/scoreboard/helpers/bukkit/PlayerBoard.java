@@ -1,4 +1,4 @@
-package it.minusone.fastbuilder.scoreboard.helpers.api;
+package it.minusone.fastbuilder.scoreboard.helpers.bukkit;
 
 import java.util.Map;
 

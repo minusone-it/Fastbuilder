@@ -78,7 +78,7 @@ public class Timer {
             replay.removeRecording();
             replay.end();
         }
-        if (isAlreadyTeleported(player)) {
+        if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
                 try {
                     File replayFolder = new File(Main.getInstance().getDataFolder() + "\\replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().modesWherePlayerIn.get(player));
@@ -115,7 +115,6 @@ public class Timer {
     public void setAlreadyTeleported(Player player, boolean state) {
         alreadyTeleported.put(player.getUniqueId(), state);
     }
-
 
     public void scoreTime(Player player) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
@@ -179,7 +178,7 @@ public class Timer {
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (isAlreadyTeleported(player))
+                    if (!isAlreadyTeleported(player))
                         player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
                     block.setAmount(64);

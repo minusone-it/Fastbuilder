@@ -52,9 +52,11 @@ public class onPlayerJoinQuit implements Listener {
         Main.getInstance().modesWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().islandWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().timer.stopTimer(e.getPlayer(), false);
-        Main.getInstance().stats.get(e.getPlayer()).despawn();
-        Main.getInstance().stats.get(e.getPlayer()).delete();
-        Main.getInstance().stats.remove(e.getPlayer());
+        if (Main.getInstance().stats.get(e.getPlayer()) != null) {
+            Main.getInstance().stats.get(e.getPlayer()).despawn();
+            Main.getInstance().stats.get(e.getPlayer()).delete();
+            Main.getInstance().stats.remove(e.getPlayer());
+        }
     }
 
 }

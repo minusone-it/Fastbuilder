@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class ConfigManager {
     private final Main plugin;
-    private final FileConfiguration config;
+    private FileConfiguration config;
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
@@ -68,9 +68,8 @@ public class ConfigManager {
     }
 
     public void reloadConfig() {
-        Main.getInstance().configManager = null;
-        Main.getInstance().configManager = new ConfigManager(Main.getInstance());
-        this.plugin.reloadConfig();
+        plugin.reloadConfig();
+        this.config = plugin.getConfig();
     }
 
     public Location getSpawnLocation(String mode, String island) {

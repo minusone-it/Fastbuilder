@@ -25,8 +25,7 @@ public class onPlayerMove implements Listener {
             try {
                 String mode = Main.getInstance().modesWherePlayerIn.get(player);
                 String island = Main.getInstance().islandWherePlayerIn.get(player);
-                if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4) {
-                    Main.getInstance().timer.setAlreadyTeleported(player, true);
+                if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4 || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - 4) {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                     if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
                         player.getInventory().clear();
@@ -49,6 +48,7 @@ public class onPlayerMove implements Listener {
                             Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
                         }
                         Main.getInstance().timer.stopTimer(player, false);
+                        Main.getInstance().timer.setAlreadyTeleported(player, true);
                     }
                 }
                 if (Main.getInstance().getConfigManager().isJumpPlateEnabled()) {
@@ -57,10 +57,14 @@ public class onPlayerMove implements Listener {
                         Location loc1 = loc.clone().add(0, 1, 0);
                         Location loc2 = loc.clone().add(0, 2, 0);
                         Location loc3 = loc.clone().add(0, 3, 0);
+                        Location loc4 = loc.clone().add(0, 4, 0);
+                        Location loc5 = loc.clone().add(0, 5, 0);
 
                         locs.add(loc1);
                         locs.add(loc2);
                         locs.add(loc3);
+                        locs.add(loc4);
+                        locs.add(loc5);
                     }
                     Location playerLoc = player.getLocation();
                     playerLoc.setX(Math.floor(playerLoc.getX()) + 0.5);

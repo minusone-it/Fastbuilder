@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.gui;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -14,27 +15,32 @@ import java.util.*;
 public class ReplayGUI implements InventoryHolder {
 
     private final Inventory inventory;
+    private static final int[] AVAILABLE_SLOTS = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43};
+    private static final int ITEMS_PER_PAGE = AVAILABLE_SLOTS.length;
+    private final int page;
+    private final UUID playerUUID;
 
-    public ReplayGUI(UUID playerUUID) {
-        this.inventory = Bukkit.createInventory(this, 45, "Replays");
+    public ReplayGUI(UUID playerUUID, int page) {
+        this.inventory = Bukkit.createInventory(this, 54, "Replays - Page " + (page + 1));
+        this.page = page;
+        this.playerUUID = playerUUID;
 
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
-                "\\replays\\" + playerUUID.toString() + "\\" + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
+                "replays" + File.separator + playerUUID.toString() + File.separator + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
 
         if (!replayFolder.exists()) replayFolder.mkdirs();
 
         List<File> replayFiles = new ArrayList<>(Arrays.asList(Objects.requireNonNull(replayFolder.listFiles())));
+        replayFiles.sort(Comparator.comparingLong(File::lastModified).reversed());
 
         addItems(replayFiles);
     }
 
     private void addItems(List<File> replayFiles) {
-        ItemStack item1 = new ItemStack(Material.ENCHANTED_BOOK);
-        ItemMeta meta1 = item1.getItemMeta();
-        meta1.setDisplayName("Last Replay");
-        item1.setItemMeta(meta1);
-        this.inventory.addItem(item1);
-        for (int i = 0; i < replayFiles.size(); i++) {
+        int startIndex = page * ITEMS_PER_PAGE;
+        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, replayFiles.size());
+
+        for (int i = startIndex, slot = 0; i < endIndex; i++, slot++) {
             File replayFile = replayFiles.get(i);
             ItemStack item = new ItemStack(Material.BOOK);
             ItemMeta meta = item.getItemMeta();
@@ -42,12 +48,40 @@ public class ReplayGUI implements InventoryHolder {
                 meta.setDisplayName("Replay: " + replayFile.getName().replace(".replay", ""));
                 item.setItemMeta(meta);
             }
-            inventory.setItem(i + 1, item);
+            inventory.setItem(AVAILABLE_SLOTS[slot], item);
         }
+
+        // Aggiunta pulsanti per la navigazione tra le pagine
+        if (page > 0) {
+            inventory.setItem(45, createItem(Material.ARROW, "Previous Page"));
+        }
+        if (replayFiles.size() > (page + 1) * ITEMS_PER_PAGE) {
+            inventory.setItem(53, createItem(Material.ARROW, "Next Page"));
+        }
+    }
+
+    private ItemStack createItem(Material material, String name) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(name);
+            item.setItemMeta(meta);
+        }
+        return item;
     }
 
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public static void handleNavigation(Player player, ItemStack clickedItem, UUID playerUUID, int currentPage) {
+        if (clickedItem.getType() == Material.ARROW) {
+            if (clickedItem.getItemMeta().getDisplayName().equals("Previous Page")) {
+                player.openInventory(new ReplayGUI(playerUUID, currentPage - 1).getInventory());
+            } else if (clickedItem.getItemMeta().getDisplayName().equals("Next Page")) {
+                player.openInventory(new ReplayGUI(playerUUID, currentPage + 1).getInventory());
+            }
+        }
     }
 }

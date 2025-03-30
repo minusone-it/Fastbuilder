@@ -7,7 +7,7 @@ scoreboard-prefix: "§3§lFastbuilder"
 # Shown on scoreboard.
 server-ip: example.net
 # You can make it 0 to disable it.
-reset-stats-cost: 100
+reset-stats-cost: 50
 # Jump Plate like the Bridger Land one.
 jump-plate: false
 # Placeholders:

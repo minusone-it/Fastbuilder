@@ -19,8 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager;
@@ -30,7 +32,12 @@ public class fastbuilder implements CommandExecutor {
     }
 
     public static void teleportPlayerToIsland(Player player, String mode, String island) {
-        if (Main.getInstance().modesWherePlayerIn.containsValue(mode) && Main.getInstance().islandWherePlayerIn.containsValue(island)) {
+        List<String> islands = Main.getInstance().getConfigManager().getIslandsOfMod(mode);
+        Map<String, Player> islandToPlayerMap = Main.getInstance().islandWherePlayerIn.entrySet().stream()
+                .filter(entry -> islands.contains(entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (existing, replacement) -> existing));
+        Player islandPlayer = islandToPlayerMap.get(island);
+        if (islandPlayer != null && mode.equals(Main.getInstance().modesWherePlayerIn.get(islandPlayer))) {
             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Objects.requireNonNull(Main.getInstance().islandWherePlayerIn.entrySet()
                     .stream()
                     .filter(entry -> entry.getValue().equals(island))
@@ -126,7 +133,9 @@ public class fastbuilder implements CommandExecutor {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addcoins <player> <coins>");
                     return true;
                 }
-                Main.getInstance().getConfigManager().setCoinsOfPlayer(Bukkit.getPlayer(args[1]), Main.getInstance().getConfigManager().getCoinsOfPlayer(player) + Integer.parseInt(args[2]));
+                Player target = Bukkit.getPlayer(args[1]);
+                if (target == null) target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+                Main.getInstance().getConfigManager().setCoinsOfPlayer(target, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) + Integer.parseInt(args[2]));
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Added " + args[2] + " coins to " + args[1] + ".");
                 break;
 
@@ -135,7 +144,13 @@ public class fastbuilder implements CommandExecutor {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder setcoins <player> <coins>");
                     return true;
                 }
-                Main.getInstance().getConfigManager().setCoinsOfPlayer(Bukkit.getPlayer(args[1]), Integer.parseInt(args[2]));
+                Player targetA = Bukkit.getPlayer(args[1]);
+                if (targetA == null) targetA = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+                if (targetA == null) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player not found!");
+                    return true;
+                }
+                Main.getInstance().getConfigManager().setCoinsOfPlayer(targetA, Integer.parseInt(args[2]));
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + args[2] + " coins to " + args[1] + ".");
                 break;
 
