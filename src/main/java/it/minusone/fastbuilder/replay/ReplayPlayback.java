@@ -265,6 +265,7 @@ public class ReplayPlayback {
                 recordable.play(this);
             }
         }
+        sendTickInfoToActionBar();
     }
 
     /**

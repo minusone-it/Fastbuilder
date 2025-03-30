@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -39,36 +40,19 @@ public class ReplayGUI implements InventoryHolder {
         Main.getInstance().page.put(playerUUID, page);
     }
 
-    private void addItems(List<File> replayFiles) {
-        int startIndex = page * ITEMS_PER_PAGE;
-        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, replayFiles.size());
-        if (this.page == 0)
-            inventory.setItem(0, createItem(Material.PAPER, "Last Replay"));
-        for (int i = startIndex, slot = 0; i < endIndex; i++, slot++) {
-            File replayFile = replayFiles.get(i);
-            ItemStack item = new ItemStack(Material.BOOK);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                String replayName = replayFile.getName().replace(".replay", "");
-                DateTimeFormatter utcFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
-                        .withZone(ZoneId.of("UTC"));
-                Instant instant = Instant.ofEpochSecond(Long.parseLong(replayName));
-                meta.setDisplayName("Replay: " + replayName);
-                List<String> lore = new ArrayList<>();
-                lore.add("§r§7Duration: " + ReplayManager.getDuration(replayFile));
-                lore.add("§r§7Created: " + utcFormatter.format(instant) + " UTC");
-                meta.setLore(lore);
-                item.setItemMeta(meta);
+    public static String unixToDate(long unixTime) {
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTime), ZoneId.systemDefault());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+
+    public static void handleNavigation(Player player, ItemStack clickedItem, UUID playerUUID, int currentPage) {
+        if (clickedItem.getType() == Material.ARROW) {
+            if (clickedItem.getItemMeta().getDisplayName().contains("Previous Page")) {
+                player.openInventory(new ReplayGUI(playerUUID, currentPage - 1).getInventory());
+            } else if (clickedItem.getItemMeta().getDisplayName().contains("Next Page")) {
+                player.openInventory(new ReplayGUI(playerUUID, currentPage + 1).getInventory());
             }
-            inventory.setItem(AVAILABLE_SLOTS[slot], item);
-        }
-
-        if (page > 0) {
-            inventory.setItem(45, createItem(Material.ARROW, "§cPrevious Page"));
-        }
-
-        if (replayFiles.size() > (page + 1) * ITEMS_PER_PAGE) {
-            inventory.setItem(53, createItem(Material.ARROW, "§aNext Page"));
         }
     }
 
@@ -87,13 +71,33 @@ public class ReplayGUI implements InventoryHolder {
         return inventory;
     }
 
-    public static void handleNavigation(Player player, ItemStack clickedItem, UUID playerUUID, int currentPage) {
-        if (clickedItem.getType() == Material.ARROW) {
-            if (clickedItem.getItemMeta().getDisplayName().equals("Previous Page")) {
-                player.openInventory(new ReplayGUI(playerUUID, currentPage - 1).getInventory());
-            } else if (clickedItem.getItemMeta().getDisplayName().equals("Next Page")) {
-                player.openInventory(new ReplayGUI(playerUUID, currentPage + 1).getInventory());
+    private void addItems(List<File> replayFiles) {
+        int startIndex = page * ITEMS_PER_PAGE;
+        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, replayFiles.size());
+        if (this.page == 0)
+            inventory.setItem(0, createItem(Material.PAPER, "Last Replay"));
+        for (int i = startIndex, slot = 0; i < endIndex; i++, slot++) {
+            File replayFile = replayFiles.get(i);
+            ItemStack item = new ItemStack(Material.BOOK);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                String replayName = replayFile.getName().replace(".replay", "");
+                meta.setDisplayName("Replay: " + replayName);
+                List<String> lore = new ArrayList<>();
+                lore.add("§r§7Duration: " + ReplayManager.getDuration(replayFile));
+                lore.add("§r§7Created: " + unixToDate(Long.parseLong(replayName) / 1000));
+                meta.setLore(lore);
+                item.setItemMeta(meta);
             }
+            inventory.setItem(AVAILABLE_SLOTS[slot], item);
+        }
+
+        if (page > 0) {
+            inventory.setItem(45, createItem(Material.ARROW, "§cPrevious Page"));
+        }
+
+        if (replayFiles.size() > (page + 1) * ITEMS_PER_PAGE) {
+            inventory.setItem(53, createItem(Material.ARROW, "§aNext Page"));
         }
     }
 }
