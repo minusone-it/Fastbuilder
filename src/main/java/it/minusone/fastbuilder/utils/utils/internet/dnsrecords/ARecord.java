@@ -27,10 +27,6 @@ public class ARecord extends DNSRecord {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getIPv4() {
         return IPv4;
     }

@@ -16,13 +16,12 @@ public class onBlockPlaceBreak implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
             return;
-        }
 
         Player player = event.getPlayer();
-        String mode = Main.getInstance().modesWherePlayerIn.get(player);
-        String island = Main.getInstance().islandWherePlayerIn.get(player);
+        String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+        String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
         Location spawnLocation = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         Location blockLocation = event.getBlock().getLocation();
 
@@ -40,7 +39,6 @@ public class onBlockPlaceBreak implements Listener {
             Main.getInstance().timer.startTimer(player);
         }
     }
-
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {

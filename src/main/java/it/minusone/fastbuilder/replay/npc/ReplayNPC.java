@@ -13,11 +13,6 @@ public interface ReplayNPC {
     void addListener(Player player);
 
     /**
-     * Removes a player from the listeners
-     */
-    void removeListener(Player player);
-
-    /**
      * Spawns the npc, called after listeners are added
      */
     void spawn();

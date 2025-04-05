@@ -13,11 +13,4 @@ public class SignUpdateEvent {
         this.lines = lines;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public List<String> getLines() {
-        return lines;
-    }
 }

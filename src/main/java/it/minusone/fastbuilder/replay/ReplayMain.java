@@ -51,13 +51,6 @@ public class ReplayMain implements Listener {
         registerRecordable(BlockRecordable.class, 0x0B);
     }
 
-    /**
-     * @return The current plugin
-     */
-    public Plugin getPlugin() {
-        return plugin;
-    }
-
     public void addRecording(Replay replay) {
         recordingReplays.add(replay);
     }

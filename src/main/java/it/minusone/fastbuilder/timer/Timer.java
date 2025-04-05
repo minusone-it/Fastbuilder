@@ -51,14 +51,14 @@ public class Timer {
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
 
                 double currentTime = getTime(player);
-                double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+                double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
                 Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
             }
         };
 
         task.runTaskTimer(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
-        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
         replay.addPlayer(player);
         replay.addRecording();
         replay.start();
@@ -81,7 +81,7 @@ public class Timer {
         if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
                 try {
-                    File replayFolder = new File(Main.getInstance().getDataFolder() + "\\replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().modesWherePlayerIn.get(player));
+                    File replayFolder = new File(Main.getInstance().getDataFolder() + "\\replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                     if (!replayFolder.exists()) replayFolder.mkdirs();
                     File replayFile = new File(replayFolder.toPath() + File.separator + System.currentTimeMillis() + ".replay");
                     ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(replayFile.toPath()));
@@ -122,7 +122,7 @@ public class Timer {
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
         if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
             Main.getInstance().timer.stopTimer(player, true);
-            double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000);
+            double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
             boolean equalTime = PB == time;
             boolean newPB = time < PB;
             int baseCoins = (int) (1000 / (time + 1));
@@ -155,7 +155,7 @@ public class Timer {
             List<String> pbMessages = Main.getInstance().getConfigManager().getPersonalBestMessage();
             DecimalFormat format = this.getFormat();
 
-            if (newPB || Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().modesWherePlayerIn.get(player)) == 0.000) {
+            if (newPB || Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]) == 0.000) {
                 for (String msg : pbMessages)
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg
                             .replace("%pb%", format.format(PB))
@@ -171,15 +171,15 @@ public class Timer {
                     ));
             }
 
-            Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().modesWherePlayerIn.get(player), time);
+            Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
             player.getInventory().clear();
-            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().modesWherePlayerIn.get(player), 0.000));
-            Main.getInstance().updateLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player), time);
+            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
+            Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
                     if (!isAlreadyTeleported(player))
-                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
                     block.setAmount(64);
                     player.getInventory().setItem(0, block);

@@ -124,20 +124,6 @@ public class Hologram {
         return this;
     }
 
-    public Hologram changeWorld(String... world) {
-        this.world.clear();
-        this.world.addAll(Sets.hashSet(world));
-        if (everyoneCanSee) {
-            despawn();
-            this.tracker.clear();
-            for (String s : world) {
-                Bukkit.getWorld(s).getPlayers().forEach(a -> this.tracker.add(((CraftPlayer) a).getHandle().playerConnection));
-            }
-            spawn();
-        }
-        return this;
-    }
-
     public Hologram setLocation(double x, double y, double z, float yaw, float pitch) {
         armorStand.setLocation(x, y, z, yaw, pitch);
         return this;
@@ -167,8 +153,4 @@ public class Hologram {
         return this;
     }
 
-    public void follow(Entity followEntity, Vector followOffset) {
-        this.followEntity = followEntity;
-        this.followOffset = followOffset;
-    }
 }

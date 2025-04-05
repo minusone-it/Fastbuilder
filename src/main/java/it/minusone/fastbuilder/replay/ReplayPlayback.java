@@ -45,10 +45,6 @@ public class ReplayPlayback {
         listeners.add(player);
     }
 
-    public boolean isListening(Player player) {
-        return listeners.contains(player);
-    }
-
     public ReplayNPC getNPC(int id) {
         return npcs.getOrDefault(id, null);
     }
@@ -59,10 +55,6 @@ public class ReplayPlayback {
 
     public Replay getReplay() {
         return replay;
-    }
-
-    public PlaybackState getState() {
-        return state;
     }
 
     private void setState(PlaybackState state) {
@@ -117,14 +109,6 @@ public class ReplayPlayback {
      */
     public int getCurrentTick() {
         return currentTick;
-    }
-
-    /**
-     * Sets the tick of the playback
-     * Note: This does not change anything in the replay beside the variable.
-     */
-    public void setCurrentTick(int currentTick) {
-        this.currentTick = currentTick;
     }
 
     /**
@@ -216,10 +200,6 @@ public class ReplayPlayback {
         sendPacket.invoke(playerConnection, ppoc);
     }
 
-    private Class<?> getNMSClass(String name) throws ClassNotFoundException {
-        return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + name);
-    }
-
     public void end() {
         if (state == PlaybackState.PLAYING) {
             pause();
@@ -293,14 +273,4 @@ public class ReplayPlayback {
         sendTickInfoToActionBar();
     }
 
-    /**
-     * Sends a message to everyone listening to the replay, should only be used for testing
-     *
-     * @param message Message to send
-     */
-    public void messageListeners(String message) {
-        for (Player listener : listeners) {
-            listener.sendMessage(message);
-        }
-    }
 }

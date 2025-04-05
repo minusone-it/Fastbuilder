@@ -2,8 +2,6 @@ package it.minusone.fastbuilder.utils.minecraft;
 
 import org.fusesource.jansi.Ansi;
 
-import java.util.Arrays;
-
 public class MinecraftConsole {
 
 
@@ -33,27 +31,6 @@ public class MinecraftConsole {
                 .replace("§o", Ansi.ansi().a(Ansi.Attribute.ITALIC).toString())
                 .replace("§r", reset.toString()) + reset
         );
-    }
-
-    //convert ansi string to minecraft string
-    public static String ansiToColoredText(String str) {
-        if (str.endsWith("\n"))
-            str = str.substring(0, str.length() - 1);
-        String[] array = str.split("\u001B");
-        StringBuilder re = new StringBuilder(array[0]);
-        if (!re.toString().equals(""))
-            array = Arrays.copyOfRange(array, 1, array.length);
-        for (String s : array) {
-            int m = s.indexOf('m');
-            if (m != s.length() - 1) {
-                int u = 0;
-                for (String n : s.substring(1, m).split(";")) {
-                    u += Integer.parseInt(n);
-                }
-                re.append("§").append(ansiNumberToColorCode(u)).append(s.substring(m + 1));
-            }
-        }
-        return re.toString();
     }
 
     public static String ansiNumberToColorCode(int ansi) {

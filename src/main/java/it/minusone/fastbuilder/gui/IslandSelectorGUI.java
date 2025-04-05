@@ -8,8 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class IslandSelectorGUI implements InventoryHolder {
     private final Inventory inventory;
@@ -22,23 +20,19 @@ public class IslandSelectorGUI implements InventoryHolder {
     }
 
     private void addItems(Inventory inventory) {
-        String mode = Main.getInstance().modesWherePlayerIn.get(requestedPlayer);
+        String mode = Main.getInstance().mapWherePlayerIn.get(requestedPlayer).split("-")[0];
 
         if (mode != null && Main.getInstance().getConfigManager().modeExists(mode)) {
             List<String> islands = Main.getInstance().getConfigManager().getIslandsOfMod(mode);
-
-            Map<String, Player> islandToPlayerMap = Main.getInstance().islandWherePlayerIn.entrySet().stream()
-                    .filter(entry -> islands.contains(entry.getValue()))
-                    .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (existing, replacement) -> existing));
-
             for (String island : islands) {
-                Player islandPlayer = islandToPlayerMap.get(island);
-                boolean isOccupied = islandPlayer != null && mode.equals(Main.getInstance().modesWherePlayerIn.get(islandPlayer));
-                ItemMap mapItem = new ItemMap(island, islandPlayer != null ? islandPlayer.getName() : "", islandPlayer, isOccupied);
+                Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
+                boolean isOccupied = islandPlayer != null;
+                ItemMap mapItem = new ItemMap(island, isOccupied ? islandPlayer.getName() : "", islandPlayer, isOccupied);
                 inventory.addItem(mapItem);
             }
         }
     }
+
 
     @Override
     public Inventory getInventory() {

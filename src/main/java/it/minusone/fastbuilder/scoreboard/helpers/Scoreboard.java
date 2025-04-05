@@ -83,16 +83,6 @@ public class Scoreboard {
     }
 
     /**
-     * Checks if the player has a board.
-     *
-     * @param player the player
-     * @return <code>true</code> if the player has a board, otherwise <code>false</code>
-     */
-    public boolean hasBoard(Player player) {
-        return boards.containsKey(player);
-    }
-
-    /**
      * Gets the board of a player.
      *
      * @param player the player
@@ -100,17 +90,6 @@ public class Scoreboard {
      */
     public BPlayerBoard getBoard(Player player) {
         return boards.get(player);
-    }
-
-    /**
-     * Gets all the boards mapped to their player.
-     * This returns a copy of the current boards map,
-     * thus modifying the given Map will not have any effect on the boards.
-     *
-     * @return a new map with all the player boards
-     */
-    public Map<Player, BPlayerBoard> getBoards() {
-        return new HashMap<>(boards);
     }
 
 }

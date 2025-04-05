@@ -40,7 +40,7 @@ public class onPlayerInteract implements Listener {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
                     ReplayManager.endReplay(event.getPlayer());
-                    event.getPlayer().teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(event.getPlayer()), Main.getInstance().islandWherePlayerIn.get(event.getPlayer())));
+                    event.getPlayer().teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(event.getPlayer()).split("-")[0], Main.getInstance().mapWherePlayerIn.get(event.getPlayer()).split("-")[1]));
                     event.getPlayer().getInventory().clear();
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(event.getPlayer());
                     block.setAmount(64);

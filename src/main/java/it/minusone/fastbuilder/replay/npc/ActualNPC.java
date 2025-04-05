@@ -28,11 +28,6 @@ public class ActualNPC implements ReplayNPC {
     }
 
     @Override
-    public void removeListener(Player player) {
-        npc.removeListener(player);
-    }
-
-    @Override
     public void spawn() {
         npc.spawn();
     }

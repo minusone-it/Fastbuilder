@@ -16,28 +16,8 @@ public class OutScoreboardTeam {
         return this;
     }
 
-    public OutScoreboardTeam b(String displayName) {
-        ReflectionUtils.setField(packet, "b", displayName);
-        return this;
-    }
-
-    public OutScoreboardTeam c(String prefix) {
-        ReflectionUtils.setField(packet, "c", prefix);
-        return this;
-    }
-
-    public OutScoreboardTeam d(String suffix) {
-        ReflectionUtils.setField(packet, "d", suffix);
-        return this;
-    }
-
     public OutScoreboardTeam e(String nametag) {
         ReflectionUtils.setField(packet, "e", nametag);
-        return this;
-    }
-
-    public OutScoreboardTeam f(int f) {
-        ReflectionUtils.setField(packet, "f", f);
         return this;
     }
 
@@ -51,8 +31,4 @@ public class OutScoreboardTeam {
         return this;
     }
 
-    public OutScoreboardTeam i(int i) {
-        ReflectionUtils.setField(packet, "i", i);
-        return this;
-    }
 }

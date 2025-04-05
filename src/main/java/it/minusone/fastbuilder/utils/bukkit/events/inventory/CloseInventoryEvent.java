@@ -18,15 +18,4 @@ public class CloseInventoryEvent {
         this.inventory = inventory;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public InventoryCloseEvent getEvent() {
-        return event;
-    }
-
-    public InventoryBuilder getInventory() {
-        return inventory;
-    }
 }

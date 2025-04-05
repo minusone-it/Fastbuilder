@@ -45,24 +45,12 @@ public class SignBuilder {
         signs.add(this);
     }
 
-    public static SignBuilder openSign(Player player, int x, int y, int z, String... lines) {
-        return new SignBuilder(player, x, y, z, lines);
-    }
-
     public long getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
-    }
-
     public long getGeneratedTime() {
         return generatedTime;
-    }
-
-    public void onFinish(Consumer<SignUpdateEvent> event) {
-        this.event = event;
     }
 
     public Consumer<SignUpdateEvent> getEvent() {

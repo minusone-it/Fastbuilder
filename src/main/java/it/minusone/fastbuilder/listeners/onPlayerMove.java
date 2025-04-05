@@ -23,8 +23,8 @@ public class onPlayerMove implements Listener {
         Player player = event.getPlayer();
         if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             try {
-                String mode = Main.getInstance().modesWherePlayerIn.get(player);
-                String island = Main.getInstance().islandWherePlayerIn.get(player);
+                String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+                String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
                 if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4 || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - 4) {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                     if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
@@ -77,7 +77,7 @@ public class onPlayerMove implements Listener {
                         loc.setX(Math.floor(loc.getX()) + 0.5);
                         loc.setY(Math.floor(loc.getY()));
                         loc.setZ(Math.floor(loc.getZ()) + 0.5);
-                        if (playerLoc.equals(loc) && Main.getInstance().modesWherePlayerIn.containsKey(player)) {
+                        if (playerLoc.equals(loc) && Main.getInstance().mapWherePlayerIn.containsKey(player)) {
                             Main.getInstance().timer.scoreTime(player);
                             Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().getConfigManager().addSuccessfulAttempt(player);

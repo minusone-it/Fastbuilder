@@ -2,17 +2,11 @@ package it.minusone.fastbuilder.utils.utils;
 
 import it.minusone.fastbuilder.utils.utils.bytes.DataConversion;
 
-import java.util.UUID;
-
 public class UUIDUtils {
 
     public static String dash(String uuid) {
         Preconditions.checkArgument(uuid.length() == 32, "UUID length must be 32 characters");
         return uuid.substring(0, 8) + "-" + uuid.substring(8, 12) + "-" + uuid.substring(12, 16) + "-" + uuid.substring(16, 20) + "-" + uuid.substring(20);
-    }
-
-    public static String undash(UUID uuid) {
-        return undash(uuid.toString());
     }
 
     public static String undash(String uuid) {
@@ -25,10 +19,6 @@ public class UUIDUtils {
             }
         }
         return result.toString();
-    }
-
-    public static byte[] toByteArray(UUID uuid) {
-        return toByteArray(uuid.toString());
     }
 
     public static byte[] toByteArray(String uuid) {

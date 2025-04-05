@@ -55,10 +55,6 @@ public class IOUtils {
         }
     }
 
-    public static DataInputStream toDataInputStream(byte[] b) {
-        return new DataInputStream(new ByteArrayInputStream(b));
-    }
-
     public static void closeQuietly(Closeable... closeables) {
         for (Closeable c : closeables) {
             if (c != null) {

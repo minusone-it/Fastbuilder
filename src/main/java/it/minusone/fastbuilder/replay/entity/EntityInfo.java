@@ -4,10 +4,6 @@ public class EntityInfo {
     private final String name;
     private ReplaySkin skin = null;
 
-    public EntityInfo(String name) {
-        this.name = name;
-    }
-
     public EntityInfo(String name, ReplaySkin skin) {
         this.name = name;
         this.skin = skin;

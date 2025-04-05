@@ -139,26 +139,11 @@ public class Replay {
     }
 
     /**
-     * Removes the player from the recording
-     */
-    public void removePlayer(Player player) {
-        removeEntity(player.getEntityId());
-    }
-
-    /**
      * @param id The id of the entity
      * @return If the entity is in the replay
      */
     public boolean hasEntity(int id) {
         return entityInfo.containsKey(id);
-    }
-
-    /**
-     * @param player The player to check
-     * @return If the replay is in the replay
-     */
-    public boolean hasPlayer(Player player) {
-        return hasEntity(player.getEntityId());
     }
 
     /**
@@ -197,13 +182,6 @@ public class Replay {
      */
     public Map<String, String> getMetadata() {
         return metadata;
-    }
-
-    /**
-     * Returns metadata with the name
-     */
-    public String getMetadata(String key) {
-        return metadata.get(key);
     }
 
     /**

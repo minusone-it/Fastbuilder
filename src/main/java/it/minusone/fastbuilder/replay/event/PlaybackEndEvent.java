@@ -12,15 +12,8 @@ public class PlaybackEndEvent extends Event {
         this.playback = playback;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     public HandlerList getHandlers() {
         return handlers;
     }
 
-    public ReplayPlayback getPlayback() {
-        return playback;
-    }
 }

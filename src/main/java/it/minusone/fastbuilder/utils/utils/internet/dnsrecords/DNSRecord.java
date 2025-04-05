@@ -23,15 +23,8 @@ public abstract class DNSRecord {
         return context.getAttributes(address, new String[]{type}).get(type);
     }
 
-    public ARecord toA() {
-        return (ARecord) this;
-    }
-
     public CNAMERecord toCNAME() {
         return (CNAMERecord) this;
     }
 
-    public SRVRecord toSRV() {
-        return (SRVRecord) this;
-    }
 }

@@ -37,31 +37,6 @@ public class ServerPingRequest {
         return this;
     }
 
-    public ServerPingRequest serverPort(int port) {
-        handshake.setServerPort(port);
-        return this;
-    }
-
-    public ServerPingRequest protocolVersion(int protocol) {
-        handshake.setProtocolVersion(protocol);
-        return this;
-    }
-
-    public ServerPingRequest srvLookup(boolean srvLookup) {
-        this.srvLookup = srvLookup;
-        return this;
-    }
-
-    public ServerPingRequest dnsLookup(boolean dnsLookup) {
-        this.dnsLookup = dnsLookup;
-        return this;
-    }
-
-    public ServerPingRequest timeout(int timeout) {
-        this.timeout = timeout;
-        return this;
-    }
-
     public ServerPingResponse ping() throws IOException {
         String srvHostname = handshake.getServerAddress();
         int srvPort = handshake.getServerPort();

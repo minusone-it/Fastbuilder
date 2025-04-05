@@ -5,12 +5,9 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.npc.NPCManager;
-import it.minusone.fastbuilder.utils.api.MojangAPI;
-import it.minusone.fastbuilder.utils.api.mojang.ProfileSkin;
 import it.minusone.fastbuilder.utils.bukkit.events.entity.ClickEvent;
 import it.minusone.fastbuilder.utils.bukkit.packetwrapper.OutScoreboardTeam;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
-import it.minusone.fastbuilder.utils.utils.collection.Sets;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +19,6 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -65,11 +61,6 @@ public class NPC {
         return event;
     }
 
-    public NPC setClickEvent(Consumer<ClickEvent> e) {
-        this.event = e;
-        return this;
-    }
-
     public NPC addListener(Player... players) {
         for (Player p : players) {
             tracker.add(((CraftPlayer) p).getHandle().playerConnection);
@@ -77,23 +68,7 @@ public class NPC {
         return this;
     }
 
-    public NPC addListener(Collection<Player> players) {
-        for (Player p : players) {
-            tracker.add(((CraftPlayer) p).getHandle().playerConnection);
-        }
-        return this;
-    }
-
     public NPC setListener(Player... players) {
-        temp = tracker;
-        tracker = new java.util.HashSet<>();
-        for (Player p : players) {
-            tracker.add(((CraftPlayer) p).getHandle().playerConnection);
-        }
-        return this;
-    }
-
-    public NPC setListener(Collection<Player> players) {
         temp = tracker;
         tracker = new java.util.HashSet<>();
         for (Player p : players) {
@@ -119,32 +94,6 @@ public class NPC {
         return this;
     }
 
-
-    public NPC world(String... world) {
-        this.world.clear();
-        this.world.addAll(Sets.hashSet(world));
-        if (everyoneCanSee) {
-            this.tracker.clear();
-            for (String s : world) {
-                Bukkit.getWorld(s).getPlayers().forEach(a -> this.tracker.add(((CraftPlayer) a).getHandle().playerConnection));
-            }
-        }
-        return this;
-    }
-
-    public NPC changeWorld(String... world) {
-        this.world.clear();
-        this.world.addAll(Sets.hashSet(world));
-        if (everyoneCanSee) {
-            despawn();
-            this.tracker.clear();
-            for (String s : world) {
-                Bukkit.getWorld(s).getPlayers().forEach(a -> this.tracker.add(((CraftPlayer) a).getHandle().playerConnection));
-            }
-            spawn();
-        }
-        return this;
-    }
 
     public NPC spawn() {
         float yaw = entityPlayer.yaw;
@@ -182,21 +131,8 @@ public class NPC {
         return this;
     }
 
-    public NPC status(int status) {
-        PacketPlayOutEntityStatus packet = new PacketPlayOutEntityStatus();
-        ReflectionUtils.setField(packet, "a", entityPlayer.getId());
-        ReflectionUtils.setField(packet, "b", (byte) status);
-        tracker.forEach(a -> a.sendPacket(packet));
-        return this;
-    }
-
     public boolean isGravity() {
         return gravity;
-    }
-
-    public NPC setGravity(boolean b) {
-        this.gravity = b;
-        return this;
     }
 
     public NPC setSneaking(boolean sneaking) {
@@ -246,29 +182,6 @@ public class NPC {
         return this;
     }
 
-    public NPC setSkin(Player player) {
-        Property property = ((CraftPlayer) player).getProfile().getProperties().get("textures").iterator().next();
-        return setSkin(property.getValue(), property.getSignature());
-    }
-
-    public NPC setSkin(UUID uuid) {
-        try {
-            ProfileSkin profileSkin = MojangAPI.getSkinByUUID(uuid);
-            return setSkin(profileSkin.getSkin().getValue(), profileSkin.getSkin().getSignature());
-        } catch (Exception e) {
-            return this;
-        }
-    }
-
-    public NPC setSkin(String name) {
-        try {
-            ProfileSkin profileSkin = MojangAPI.getSkinByName(name);
-            return setSkin(profileSkin.getSkin().getValue(), profileSkin.getSkin().getSignature());
-        } catch (Exception e) {
-            return this;
-        }
-    }
-
     public NPC setSkin(String value, String signature) {
         PropertyMap properties = entityPlayer.getProfile().getProperties();
         properties.removeAll("textures");
@@ -296,11 +209,6 @@ public class NPC {
                     a.sendPacket(p3);
                 }
         );
-        return this;
-    }
-
-    public NPC setSpawnBodyYaw(float spawnBodyYaw) {
-        this.spawnBodyYaw = spawnBodyYaw;
         return this;
     }
 

@@ -24,8 +24,6 @@ public class onInventoryClick implements Listener {
         if (clickedInventory != null) {
             Player player = (Player) event.getWhoClicked();
             ItemStack clickedItem = event.getCurrentItem();
-            ReplayGUI.handleNavigation(player, clickedItem, player.getUniqueId(), Main.getInstance().page.get(player.getUniqueId()));
-            if (Main.getInstance().modesWherePlayerIn.containsKey(player)) event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
                 event.setCancelled(true);
                 if (clickedItem != null) {
@@ -49,7 +47,7 @@ public class onInventoryClick implements Listener {
                     String playerName = itemMeta.getLore() != null && !itemMeta.getLore().isEmpty()
                             ? itemMeta.getLore().get(0).replace("§r§cOccupied by ", "").replace("§r§2Not occupied!", "")
                             : "N/A";
-                    String mode = Main.getInstance().modesWherePlayerIn.get(player);
+                    String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                     if (playerName.isEmpty())
                         fastbuilder.teleportPlayerToIsland(player, mode, islandName);
                     else
@@ -57,11 +55,13 @@ public class onInventoryClick implements Listener {
                 }
             } else if (clickedInventory.getHolder() instanceof ReplayGUI) {
                 event.setCancelled(true);
-                if (clickedItem != null && clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
+                ReplayGUI.handleNavigation(player, clickedItem, player.getUniqueId(), Main.getInstance().page.get(player.getUniqueId()));
+                if (clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
                     if (!clickedItem.getItemMeta().getDisplayName().contains("Last")) {
                         String a = clickedItem.getItemMeta().getDisplayName().replace("Replay: ", "");
                         String b = a + ".replay";
-                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId() + "/" + Main.getInstance().modesWherePlayerIn.get(player), b);
+                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId() + "/" + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], b);
+                        System.out.println(replayFile);
                         if (replayFile.exists()) {
                             player.closeInventory();
                             player.getInventory().clear();
@@ -76,10 +76,13 @@ public class onInventoryClick implements Listener {
                 event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
                     String mode = clickedItem.getItemMeta().getDisplayName().replaceAll("§[0-9a-fA-Fk-oK-r]", "");
-                    if (!Main.getInstance().modesWherePlayerIn.get(player).equals(mode))
-                        player.performCommand("fb join " + mode);
-                    else
-                        player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You are already in this mode!");
+                    String modeA = Main.getInstance().mapWherePlayerIn.get(player);
+                    if (modeA != null) {
+                        if (!modeA.split("-")[0].equals(mode))
+                            player.performCommand("fb join " + mode);
+                        else
+                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You are already in this mode!");
+                    }
                 }
             } else if (clickedInventory.getHolder() instanceof BlockSelectorGUI) {
                 event.setCancelled(true);
@@ -131,8 +134,8 @@ public class onInventoryClick implements Listener {
                     if (clickedItem.getItemMeta().getDisplayName().contains("Confirm")) {
                         Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");
                         Main.getInstance().saveConfig();
-                        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", 0.000);
                         Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - Main.getInstance().getConfigManager().getCoinsForResetStats());
+                        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", 0.000);
                         player.closeInventory();
                         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Successfully resetted stats!");
                     } else {

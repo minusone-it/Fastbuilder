@@ -4,14 +4,11 @@ import io.netty.channel.ChannelPipeline;
 import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayInHandler;
 import it.minusone.fastbuilder.utils.bukkit.handler.PacketPlayOutHandler;
 import net.minecraft.server.v1_8_R3.EntityWither;
-import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +23,6 @@ public class CubingLibPlayer {
         sharedWither = wither;
     }
 
-    SideBar sideBar;
     Player player;
     String bossbar;
     public CubingLibPlayer(Player player) {
@@ -46,28 +42,8 @@ public class CubingLibPlayer {
         return user.get(player);
     }
 
-    public static Collection<CubingLibPlayer> getPlayers() {
-        return user.values();
-    }
-
-    public SideBar getSideBar() {
-        return sideBar;
-    }
-
-    public void setSideBar(SideBar sideBar) {
-        this.sideBar = sideBar;
-    }
-
     public String getBossbar() {
         return bossbar;
     }
 
-    public void setBossbar(String bossbar) {
-        this.bossbar = bossbar;
-        Location location = player.getLocation();
-        Location newLocation = location.clone().add(location.getDirection().multiply(100));
-        sharedWither.setCustomName(bossbar);
-        sharedWither.setLocation(newLocation.getX(), newLocation.getY(), newLocation.getZ(), 0, 0);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(sharedWither));
-    }
 }

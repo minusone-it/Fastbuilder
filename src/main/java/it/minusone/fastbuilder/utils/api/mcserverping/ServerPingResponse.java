@@ -25,35 +25,4 @@ public class ServerPingResponse {
         this.records = records;
     }
 
-    public String getLookedUpHost() {
-        return SRVHostname;
-    }
-
-    public int getLookedUpPort() {
-        return SRVPort;
-    }
-
-    public String getHost() {
-        return hostname;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public long getPing() {
-        return ping;
-    }
-
-    public boolean isSrv() {
-        return srv;
-    }
-
-    public ServerPingJSONResponse getServerInfo() {
-        return response;
-    }
-
-    public List<DNSRecord> getRecords() {
-        return records;
-    }
 }

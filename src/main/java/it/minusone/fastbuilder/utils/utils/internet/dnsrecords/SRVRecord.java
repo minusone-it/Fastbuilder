@@ -32,18 +32,6 @@ public class SRVRecord extends DNSRecord {
         }
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
     public int getPort() {
         return port;
     }

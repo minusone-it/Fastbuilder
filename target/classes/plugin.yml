@@ -1,9 +1,10 @@
 name: Fastbuilder
-version: '1.2.5'
+version: '1.2.6'
 main: it.minusone.fastbuilder.Main
-api-version: '1.8'
+api-version: '1.8.8'
 authors: [ _MinusOne_ ]
-description: Made with <3 by _MinusOne_. Buy it on https://builtbybit.com/resources/fastbuilder.62493/.
+description: Made with <3 by _MinusOne_.
+website: https://builtbybit.com/resources/fastbuilder.62493/.
 depend:
   - ProtocolLib
 commands:

@@ -57,38 +57,6 @@ public class ServerPingJSONResponse {
         return json;
     }
 
-    public String getVersionName() {
-        return versionName;
-    }
-
-    public int getVersionProtocol() {
-        return versionProtocol;
-    }
-
-    public int getPlayerMax() {
-        return playerMax;
-    }
-
-    public int getPlayerOnline() {
-        return playerOnline;
-    }
-
-    public List<PlayerSample> getPlayerSample() {
-        return playerSample;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getFavicon() {
-        return favicon;
-    }
-
-    public String getModType() {
-        return modType;
-    }
-
 
     public static class PlayerSample {
         private final String name;
@@ -99,12 +67,5 @@ public class ServerPingJSONResponse {
             this.id = id;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public String getId() {
-            return id;
-        }
     }
 }

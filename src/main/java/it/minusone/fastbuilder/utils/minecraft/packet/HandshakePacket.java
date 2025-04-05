@@ -16,10 +16,6 @@ public class HandshakePacket {
         this.nextState = nextState;
     }
 
-    public int getProtocolVersion() {
-        return protocolVersion;
-    }
-
     public void setProtocolVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
     }
@@ -38,14 +34,6 @@ public class HandshakePacket {
 
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
-    }
-
-    public int getNextState() {
-        return nextState;
-    }
-
-    public void setNextState(int nextState) {
-        this.nextState = nextState;
     }
 
     public byte[] toByteArray() {

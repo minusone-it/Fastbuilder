@@ -19,7 +19,7 @@ public class ModeChangerGUI implements InventoryHolder {
         for (String mode : Main.getInstance().getConfigManager().getModes()) {
             this.inventory.addItem(new ModeItem(mode));
             slot++;
-            if (slot >= inventory.getSize()) break;
+            if (slot > inventory.getSize()) break;
         }
     }
 

@@ -1,8 +1,6 @@
 package it.minusone.fastbuilder.utils.utils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class ReflectionUtils {
 
@@ -41,27 +39,4 @@ public class ReflectionUtils {
         return getField(obj, obj.getClass(), name);
     }
 
-    public static Object getStaticField(Class<?> clazz, String name) {
-        return getField(null, clazz, name);
-    }
-
-    public static void invoke(Object obj, String method, Object... args) {
-        try {
-            Method m = obj.getClass().getDeclaredMethod(method);
-            m.setAccessible(true);
-            m.invoke(obj, args);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void invokeStatic(Class<?> clazz, String method, Object... args) {
-        try {
-            Method m = clazz.getDeclaredMethod(method);
-            m.setAccessible(true);
-            m.invoke(null, args);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
 }

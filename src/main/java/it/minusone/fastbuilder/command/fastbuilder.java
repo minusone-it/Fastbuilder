@@ -19,10 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager;
@@ -32,23 +28,14 @@ public class fastbuilder implements CommandExecutor {
     }
 
     public static void teleportPlayerToIsland(Player player, String mode, String island) {
-        List<String> islands = Main.getInstance().getConfigManager().getIslandsOfMod(mode);
-        Map<String, Player> islandToPlayerMap = Main.getInstance().islandWherePlayerIn.entrySet().stream()
-                .filter(entry -> islands.contains(entry.getValue()))
-                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (existing, replacement) -> existing));
-        Player islandPlayer = islandToPlayerMap.get(island);
-        if (islandPlayer != null && mode.equals(Main.getInstance().modesWherePlayerIn.get(islandPlayer))) {
-            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + Objects.requireNonNull(Main.getInstance().islandWherePlayerIn.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().equals(island))
-                    .map(Map.Entry::getKey)
-                    .findFirst()
-                    .orElse(null)).getName() + "!");
+        Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
+        if (islandPlayer != null) {
+            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + islandPlayer.getName() + "!");
             return;
         }
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
-        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "-" + island + "!");
+        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "!");
         ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
         block.setAmount(64);
         player.getInventory().setItem(0, block);
@@ -57,8 +44,7 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(4, new IslandSelector());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
-        Main.getInstance().modesWherePlayerIn.put(player, mode);
-        Main.getInstance().islandWherePlayerIn.put(player, island);
+        Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         Location baseLocationA = location.clone();
         Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
         baseLocationA.setWorld(player.getWorld());
@@ -99,16 +85,17 @@ public class fastbuilder implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage(Main.getInstance().PREFIX + "This server is running Fastbuilder by MinusOne! Buy it on https://builtbybit.com/resources/fastbuilder.62493/.");
+            player.sendMessage(Main.getInstance().PREFIX + "§fRunning Fastbuilder V" + Main.getInstance().getDescription().getVersion() + " by MinusOne.");
+            player.sendMessage(Main.getInstance().PREFIX + "§fBuy it on https://shorturl.at/g20GL.");
             if (player.hasPermission("fastbuilder.admin")) {
                 player.sendMessage(Main.getInstance().PREFIX + "List of commands:");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb join <mode> <island_number> - To join a mode");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb addmode <mode> - To add a mode");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb removemode <mode> - To remove a mode");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb set <mode> <island_number> - To set spawn of an island of a mode");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb setcoins <player> <coins> - To set coins of a player.");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb addcoins <player> <coins> - To add coins to a player.");
-                player.sendMessage(Main.getInstance().PREFIX + "/fb reloadconfig - To reload plugin config.");
+                player.sendMessage("§7/fb join <mode> <island_number> - To join a mode");
+                player.sendMessage("§7/fb addmode <mode> - To add a mode");
+                player.sendMessage("§7/fb removemode <mode> - To remove a mode");
+                player.sendMessage("§7/fb set <mode> <island_number> - To set spawn of an island of a mode");
+                player.sendMessage("§7/fb setcoins <player> <coins> - To set coins of a player.");
+                player.sendMessage("§7/fb addcoins <player> <coins> - To add coins to a player.");
+                player.sendMessage("§7/fb reloadconfig - To reload plugin config.");
             }
             return true;
         }
@@ -228,10 +215,12 @@ public class fastbuilder implements CommandExecutor {
                         return true;
                     }
 
-                    Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+                    if (Main.getInstance().mapWherePlayerIn.get(player) != null) {
 
-                    leaveMode(player);
+                        Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
 
+                        leaveMode(player);
+                    }
 
                     teleportPlayerToIsland(player, joinMode, closestIsland);
                 } else {
@@ -248,7 +237,7 @@ public class fastbuilder implements CommandExecutor {
                         return true;
                     }
 
-                    Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+                    Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                     leaveMode(player);
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
@@ -263,7 +252,7 @@ public class fastbuilder implements CommandExecutor {
 
     private String findClosestIsland(String mode) {
         for (String island : Main.getInstance().getConfig().getConfigurationSection("spawns." + mode).getKeys(false)) {
-            if (Main.getInstance().islandWherePlayerIn.containsValue(island) && Main.getInstance().modesWherePlayerIn.containsValue(mode)) {
+            if (Main.getInstance().mapWherePlayerIn.containsValue(mode + "-" + island)) {
                 continue; // Skip islands that are already occupied
             }
 
@@ -274,14 +263,13 @@ public class fastbuilder implements CommandExecutor {
     }
 
     private void leaveMode(Player player) {
-        String currentMode = Main.getInstance().modesWherePlayerIn.get(player);
-        String currentIsland = Main.getInstance().islandWherePlayerIn.get(player);
+        String currentMode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+        String currentIsland = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
 
         if (currentMode != null && currentIsland != null) {
 
-            Main.getInstance().modesWherePlayerIn.remove(player);
-            Main.getInstance().islandWherePlayerIn.remove(player);
-            Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().modesWherePlayerIn.get(player));
+            Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+            Main.getInstance().mapWherePlayerIn.remove(player);
             if (NPCManager.getNPC(player) != null) {
                 NPCManager.removeNPC(NPCManager.getNPC(player), player);
             }
@@ -294,7 +282,6 @@ public class fastbuilder implements CommandExecutor {
             Main.getInstance().stats.get(player).despawn();
             Main.getInstance().stats.get(player).delete();
             Main.getInstance().stats.remove(player);
-            player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You have left " + currentMode + "-" + currentIsland + "!");
         }
     }
 

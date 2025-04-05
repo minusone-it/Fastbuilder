@@ -39,10 +39,6 @@ public class CNAMERecord extends DNSRecord {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
     public String getTarget() {
         return target;
     }

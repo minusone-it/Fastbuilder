@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-public class jasfafs {
+public class a {
     public static void scanLoadedChunksForPressurePlates(World world) {
         if (world == null) return;
 

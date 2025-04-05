@@ -106,15 +106,6 @@ public class ConfigManager {
         return config.getDouble("best-times." + playerId + "." + mode, 0.0);
     }
 
-    public void setPB(UUID playerId, String mode, double time) {
-        String path = "best-times." + playerId + "." + mode;
-        double currentBest = getPB(playerId, mode);
-        if (currentBest == 0.0 || time < currentBest) {
-            config.set(path, time);
-            plugin.saveConfig();
-        }
-    }
-
     public String getScoreboardPrefix() {
         return config.getString("scoreboard-prefix");
     }

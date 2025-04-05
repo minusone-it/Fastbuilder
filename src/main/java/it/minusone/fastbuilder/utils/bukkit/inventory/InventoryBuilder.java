@@ -2,7 +2,6 @@ package it.minusone.fastbuilder.utils.bukkit.inventory;
 
 import it.minusone.fastbuilder.utils.bukkit.events.inventory.ClickInventoryEvent;
 import it.minusone.fastbuilder.utils.bukkit.events.inventory.CloseInventoryEvent;
-import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -20,10 +19,6 @@ public class InventoryBuilder {
     public Consumer<ClickInventoryEvent> allClickEvent;
     public Consumer<CloseInventoryEvent> closeInventoryEvent;
 
-    public InventoryBuilder(int size, String title) {
-        this(null, size, title);
-    }
-
     //item destory at InventoryListener onClose -> iterator.remove();
     public InventoryBuilder(Player player, int size, String title) {
         inventory = Bukkit.createInventory(null, size, title);
@@ -40,29 +35,8 @@ public class InventoryBuilder {
         return player != null;
     }
 
-    public void setTitle(String title) {
-        ReflectionUtils.setField(ReflectionUtils.getField(inventory, inventory.getClass().getSuperclass(), "inventory"), "title", title);
-    }
-
-    public InventoryBuilder setCloseEvent(Consumer<CloseInventoryEvent> e) {
-        this.closeInventoryEvent = e;
-        return this;
-    }
-
     public InventoryBuilder setItem(ItemStack stack, int slot) {
         inventory.setItem(slot, stack);
-        return this;
-    }
-
-    public InventoryBuilder setItem(ItemStack stack, int... slots) {
-        for (int i : slots)
-            setItem(stack, i);
-        return this;
-    }
-
-    public InventoryBuilder setItem(ItemStack stack, int start, int end) {
-        for (; start <= end; start++)
-            inventory.setItem(start, stack);
         return this;
     }
 
@@ -72,40 +46,8 @@ public class InventoryBuilder {
         return this;
     }
 
-    public InventoryBuilder setItem(ItemStack stack, Consumer<ClickInventoryEvent> event, int... slots) {
-        for (int i : slots) {
-            setItem(stack, event, i);
-        }
-        return this;
-    }
-
-    public InventoryBuilder setItem(ItemStack stack, Consumer<ClickInventoryEvent> event, int start, int end) {
-        for (; start <= end; start++) {
-            inventory.setItem(start, stack);
-            clickEvents.put(start, event);
-        }
-        return this;
-    }
-
     public InventoryBuilder setClickEvent(Consumer<ClickInventoryEvent> event, int slot) {
         clickEvents.put(slot, event);
-        return this;
-    }
-
-    public InventoryBuilder setClickEvent(Consumer<ClickInventoryEvent> event, int... slots) {
-        for (int i : slots)
-            setClickEvent(event, i);
-        return this;
-    }
-
-    public InventoryBuilder setClickEvent(Consumer<ClickInventoryEvent> event, int start, int end) {
-        for (; start <= end; start++)
-            clickEvents.put(start, event);
-        return this;
-    }
-
-    public InventoryBuilder setAllClickEvent(Consumer<ClickInventoryEvent> event) {
-        this.allClickEvent = event;
         return this;
     }
 
@@ -114,15 +56,4 @@ public class InventoryBuilder {
         return this;
     }
 
-    public InventoryBuilder setClickable(boolean flag, int... slots) {
-        for (int i : slots)
-            setClickable(flag, i);
-        return this;
-    }
-
-    public InventoryBuilder setClickable(boolean flag, int start, int end) {
-        for (; start <= end; start++)
-            clickable[start] = flag;
-        return this;
-    }
 }

@@ -48,9 +48,8 @@ public class onPlayerJoinQuit implements Listener {
             Main.getInstance().placedBlocks.remove(e.getPlayer().getUniqueId());
         }
         Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());
-        Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().modesWherePlayerIn.get(e.getPlayer()));
-        Main.getInstance().modesWherePlayerIn.remove(e.getPlayer());
-        Main.getInstance().islandWherePlayerIn.remove(e.getPlayer());
+        Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().mapWherePlayerIn.get(e.getPlayer()).split("-")[0]);
+        Main.getInstance().mapWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().timer.stopTimer(e.getPlayer(), false);
         if (Main.getInstance().stats.get(e.getPlayer()) != null) {
             Main.getInstance().stats.get(e.getPlayer()).despawn();

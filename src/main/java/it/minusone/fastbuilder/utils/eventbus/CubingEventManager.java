@@ -1,7 +1,6 @@
 package it.minusone.fastbuilder.utils.eventbus;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 
@@ -38,24 +37,4 @@ public class CubingEventManager {
         }
     }
 
-    public static void registerListeners(Object... objects) {
-        for (Object o : objects) {
-            for (Method m : o.getClass().getDeclaredMethods()) {
-                CubingEventHandler handler = m.getAnnotation(CubingEventHandler.class);
-                if (m.getModifiers() == Modifier.PUBLIC && handler != null && m.getParameterTypes().length == 1) {
-                    Class<?> c = m.getParameterTypes()[0];
-                    createNewEvents(c);
-                    int priority = handler.priority();
-                    List<Integer> i = Priorities.get(c);
-                    if (priority != 0 && i.contains(priority))
-                        System.out.println("[speedcubingLib] Duplicated priority " + m + " " + o);
-                    i.add(priority);
-                    Collections.sort(i);
-                    int index = i.indexOf(priority);
-                    Methods.get(c).add(index, m);
-                    Instances.get(c).add(index, o);
-                }
-            }
-        }
-    }
 }

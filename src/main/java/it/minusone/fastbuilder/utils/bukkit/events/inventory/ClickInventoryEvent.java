@@ -16,15 +16,4 @@ public class ClickInventoryEvent {
         this.inventory = inventory;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public InventoryClickEvent getEvent() {
-        return event;
-    }
-
-    public InventoryBuilder getInventory() {
-        return inventory;
-    }
 }

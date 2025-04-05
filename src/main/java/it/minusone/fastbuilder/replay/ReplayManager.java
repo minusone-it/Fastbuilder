@@ -20,7 +20,7 @@ public class ReplayManager {
         player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
         try (ReplayInputStream replayInputStream = new ReplayInputStream(Files.newInputStream(replayFile.toPath()))) {
-            Replay replay = replayInputStream.readReplay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().modesWherePlayerIn.get(player), Main.getInstance().islandWherePlayerIn.get(player)));
+            Replay replay = replayInputStream.readReplay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
             ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, replay.getOrigin());
             playback.addListener(player);
             playback.setup();

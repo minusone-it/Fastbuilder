@@ -29,7 +29,7 @@ public class ReplayGUI implements InventoryHolder {
         this.page = page;
 
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
-                "replays" + File.separator + playerUUID.toString() + File.separator + Main.getInstance().modesWherePlayerIn.get(Bukkit.getPlayer(playerUUID)));
+                "replays" + File.separator + playerUUID.toString() + File.separator + Main.getInstance().mapWherePlayerIn.get(Bukkit.getPlayer(playerUUID)).split("-")[0]);
 
         if (!replayFolder.exists()) replayFolder.mkdirs();
 

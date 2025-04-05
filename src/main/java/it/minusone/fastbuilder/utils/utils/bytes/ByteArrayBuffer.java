@@ -24,10 +24,6 @@ public class ByteArrayBuffer {
         dataOutputStream = new DataOutputStream(outputStream);
     }
 
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
-
     public byte[] toByteArray() {
         Preconditions.checkArgument(outputStream instanceof ByteArrayOutputStream);
 

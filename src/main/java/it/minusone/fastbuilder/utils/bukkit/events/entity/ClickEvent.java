@@ -14,19 +14,4 @@ public class ClickEvent {
         this.action = action;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public PacketPlayInUseEntity.EnumEntityUseAction getAction() {
-        return action;
-    }
-
-    public boolean isLeftClick() {
-        return action == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK;
-    }
-
-    public boolean isRightClick() {
-        return action == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT;
-    }
 }

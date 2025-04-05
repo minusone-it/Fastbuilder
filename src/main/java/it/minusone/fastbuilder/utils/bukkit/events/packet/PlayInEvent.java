@@ -16,14 +16,6 @@ public class PlayInEvent extends CubingEvent implements Cancellable {
         this.packet = packet;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Packet<?> getPacket() {
-        return packet;
-    }
-
     @Override
     public boolean isCancelled() {
         return cancel;
