@@ -9,6 +9,7 @@ import java.util.Iterator;
 public class ReplaySkin {
     private final String value;
     private final String signature;
+
     public ReplaySkin(String value, String signature) {
         this.value = value;
         this.signature = signature;

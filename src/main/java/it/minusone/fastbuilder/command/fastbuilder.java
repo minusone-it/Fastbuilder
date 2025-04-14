@@ -2,7 +2,7 @@ package it.minusone.fastbuilder.command;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
-import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager;
@@ -33,6 +34,17 @@ public class fastbuilder implements CommandExecutor {
             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + islandPlayer.getName() + "!");
             return;
         }
+        leaveMode(player);
+        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+        if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
+            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
+        if (playerBlocks != null) {
+            for (Location blockLocation : playerBlocks) {
+                blockLocation.getBlock().setType(Material.AIR);
+            }
+            Main.getInstance().getConfigManager().addAttempt(player);
+            Main.getInstance().placedBlocks.remove(player.getUniqueId());
+        }
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "!");
@@ -41,7 +53,7 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(0, block);
         player.getInventory().setItem(1, block);
         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-        player.getInventory().setItem(4, new IslandSelector());
+        player.getInventory().setItem(4, new IslandSelectorItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
@@ -73,6 +85,41 @@ public class fastbuilder implements CommandExecutor {
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
         Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+    }
+
+    private static void leaveMode(Player player) {
+        if (Main.getInstance().mapWherePlayerIn.get(player) != null) {
+            String currentMode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+            String currentIsland = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
+            if (currentMode != null && currentIsland != null) {
+                Main.getInstance().timer.stopTimer(player, false);
+                Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                Main.getInstance().mapWherePlayerIn.remove(player);
+                if (NPCManager.getNPC(player) != null) {
+                    NPCManager.removeNPC(NPCManager.getNPC(player), player);
+                }
+
+                List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
+                if (playerBlocks != null) {
+                    for (Location blockLocation : playerBlocks) {
+                        blockLocation.getBlock().setType(Material.AIR);
+                    }
+                    Main.getInstance().getConfigManager().addAttempt(player);
+                    Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                }
+
+                player.getInventory().clear();
+                Location spawn = Main.getInstance().getConfigManager().getSpawnLocation(currentMode, currentIsland);
+                if (spawn != null) {
+                    player.teleport(spawn);
+                }
+                Main.getInstance().stats.get(player).despawn();
+                Main.getInstance().stats.get(player).delete();
+                Main.getInstance().stats.remove(player);
+            }
+        }
     }
 
     @Override
@@ -242,7 +289,8 @@ public class fastbuilder implements CommandExecutor {
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
                 break;
-
+            case "leave":
+                leaveMode(player);
             default:
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Unknown command! Use /fastbuilder to see list of commands.");
                 break;
@@ -261,29 +309,5 @@ public class fastbuilder implements CommandExecutor {
 
         return null; // No available island found
     }
-
-    private void leaveMode(Player player) {
-        String currentMode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
-        String currentIsland = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
-
-        if (currentMode != null && currentIsland != null) {
-
-            Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
-            Main.getInstance().mapWherePlayerIn.remove(player);
-            if (NPCManager.getNPC(player) != null) {
-                NPCManager.removeNPC(NPCManager.getNPC(player), player);
-            }
-
-            player.getInventory().clear();
-            Location spawn = Main.getInstance().getConfigManager().getSpawnLocation(currentMode, currentIsland);
-            if (spawn != null) {
-                player.teleport(spawn);
-            }
-            Main.getInstance().stats.get(player).despawn();
-            Main.getInstance().stats.get(player).delete();
-            Main.getInstance().stats.remove(player);
-        }
-    }
-
 
 }

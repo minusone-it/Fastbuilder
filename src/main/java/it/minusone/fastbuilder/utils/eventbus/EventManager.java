@@ -1,7 +1,10 @@
 package it.minusone.fastbuilder.utils.eventbus;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,7 +25,7 @@ import java.util.*;
  * LibEventHandler.createNewEvents(MyEvent.class,...);
  * }
  */
-public class CubingEventManager {
+public class EventManager {
     public static final Map<Class<?>, List<Object>> Instances = new HashMap<>();
     public static final Map<Class<?>, List<Integer>> Priorities = new HashMap<>();
     public static final Map<Class<?>, List<Method>> Methods = new HashMap<>();

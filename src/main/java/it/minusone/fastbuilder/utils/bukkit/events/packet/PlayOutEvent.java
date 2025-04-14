@@ -1,21 +1,16 @@
 package it.minusone.fastbuilder.utils.bukkit.events.packet;
 
-import it.minusone.fastbuilder.utils.eventbus.CubingEvent;
+import it.minusone.fastbuilder.utils.eventbus.Event;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
 //EVENT of listening PlayOutPACKETS
-public class PlayOutEvent extends CubingEvent implements Cancellable {
-    private final Packet<?> packet;
-    private final Player player;
+public class PlayOutEvent extends Event implements Cancellable {
     private boolean cancel;
 
     public PlayOutEvent(Player player, Packet<?> packet) {
-        this.packet = packet;
-        this.player = player;
     }
-
 
     @Override
     public boolean isCancelled() {

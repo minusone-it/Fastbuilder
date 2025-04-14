@@ -19,9 +19,9 @@ import java.util.*;
 
 public class ReplayGUI implements InventoryHolder {
 
-    private final Inventory inventory;
     private static final int[] AVAILABLE_SLOTS = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43};
     private static final int ITEMS_PER_PAGE = AVAILABLE_SLOTS.length;
+    private final Inventory inventory;
     private final int page;
 
     public ReplayGUI(UUID playerUUID, int page) {

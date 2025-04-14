@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.Replay;
@@ -38,7 +38,20 @@ public class Timer {
         }
 
         playerTimers.put(uuid, 0);
+        BukkitRunnable task = getBukkitRunnable(player, uuid);
 
+        task.runTaskTimer(Main.getInstance(), 0L, 0L);
+        runningTasks.put(uuid, task);
+        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
+        replay.addPlayer(player);
+        replay.addRecording();
+        replay.start();
+        Main.getInstance().replays.put(uuid, replay);
+        Main.getInstance().lastReplay.put(uuid, replay);
+    }
+
+    private BukkitRunnable getBukkitRunnable(Player player, UUID uuid) {
+        DecimalFormat format = new DecimalFormat("0.000");
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
@@ -50,20 +63,12 @@ public class Timer {
 
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
 
-                double currentTime = getTime(player);
+                double currentTime = playerTimers.get(uuid) * 0.05;
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
-                Main.getInstance().scoreboardManager.updateTimer(player, new DecimalFormat("0.000").format(currentTime).replace(",", "."), bestTime);
+                Main.getInstance().scoreboardManager.updateTimer(player, format.format(currentTime).replace(",", "."), bestTime);
             }
         };
-
-        task.runTaskTimer(Main.getInstance(), 0L, 0L);
-        runningTasks.put(uuid, task);
-        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
-        replay.addPlayer(player);
-        replay.addRecording();
-        replay.start();
-        Main.getInstance().replays.put(uuid, replay);
-        Main.getInstance().lastReplay.put(uuid, replay);
+        return task;
     }
 
     public void stopTimer(Player player, boolean saveReplay) {
@@ -101,7 +106,7 @@ public class Timer {
     }
 
     public double getTime(Player player) {
-        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - 0.050;
+        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) + 0.05;
     }
 
     public boolean isPlayerInTimer(Player player) {
@@ -129,8 +134,6 @@ public class Timer {
             int efficiencyBonus = (int) ((double) playerBlocks.size() / (time + 1) * 10);
             int pbBonus = newPB ? 7 : 0;
             int coins = Math.max(10, (baseCoins + efficiencyBonus + pbBonus) / 10);
-            player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
-            Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 10, 1);
             if (newPB) {
                 World world = player.getWorld();
@@ -170,11 +173,16 @@ public class Timer {
                             .replace("%time%", timeFormatted)
                     ));
             }
-
-            Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
+            if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
+                Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
+                Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
+                Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
+            } else
+                player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "");
             player.getInventory().clear();
             Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
-            Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
+            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -185,7 +193,9 @@ public class Timer {
                     player.getInventory().setItem(0, block);
                     player.getInventory().setItem(1, block);
                     player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                    player.getInventory().setItem(4, new IslandSelector());
+                    if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
+                        player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                    player.getInventory().setItem(4, new IslandSelectorItem());
                     player.getInventory().setItem(6, new ReplayItem());
                     player.getInventory().setItem(7, new SettingsItem());
                 }

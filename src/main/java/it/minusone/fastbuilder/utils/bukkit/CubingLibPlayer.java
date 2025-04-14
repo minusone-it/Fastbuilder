@@ -25,6 +25,7 @@ public class CubingLibPlayer {
 
     Player player;
     String bossbar;
+
     public CubingLibPlayer(Player player) {
         this.player = player;
 

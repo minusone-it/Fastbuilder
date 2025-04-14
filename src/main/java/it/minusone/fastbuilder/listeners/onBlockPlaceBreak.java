@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.listeners;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,17 +34,23 @@ public class onBlockPlaceBreak implements Listener {
             return;
         }
 
-        Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
+        if (event.getBlock().getType() != Material.STAINED_CLAY)
+            Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
+        else
+            Main.getInstance().playersInPracticeMode.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>().add(blockLocation));
 
         if (!Main.getInstance().timer.isPlayerInTimer(player)) {
             Main.getInstance().timer.startTimer(player);
         }
+        if (event.getItemInHand().getAmount() < 10)
+            event.getItemInHand().setAmount(64);
     }
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId());
-        if (playerBlocks != null && playerBlocks.contains(event.getBlock().getLocation()))
+        playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()));
+        if (playerBlocks.contains(event.getBlock().getLocation()))
             event.setCancelled(false);
         else if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
             event.setCancelled(true);

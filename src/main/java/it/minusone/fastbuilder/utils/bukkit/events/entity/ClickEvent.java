@@ -5,13 +5,7 @@ import org.bukkit.entity.Player;
 
 public class ClickEvent {
 
-    private final Player player;
-
-    private final PacketPlayInUseEntity.EnumEntityUseAction action;
-
     public ClickEvent(Player player, PacketPlayInUseEntity.EnumEntityUseAction action) {
-        this.player = player;
-        this.action = action;
     }
 
 }

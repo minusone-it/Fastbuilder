@@ -16,12 +16,11 @@ import it.minusone.fastbuilder.utils.a;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
-import it.minusone.fastbuilder.utils.bukkit.inventory.SignBuilder;
 import it.minusone.fastbuilder.utils.bukkit.listeners.PlayerListener;
-import it.minusone.fastbuilder.utils.minecraft.MinecraftConsole;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -29,11 +28,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.fusesource.jansi.Ansi;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public final class Main extends JavaPlugin {
 
@@ -42,31 +46,59 @@ public final class Main extends JavaPlugin {
     public static final List<Location> plateAboveLocations = new ArrayList<>();
     public static final Map<Material, Integer> blocks = new HashMap<>();
     private static Main INSTANCE;
-
-    public static Main getInstance() {
-        return INSTANCE;
-    }
-
+    public final Map<Player, HologramStack> stats = new HashMap<>();
+    public final Map<Player, String> mapWherePlayerIn = new HashMap<>();
+    public final Map<UUID, Integer> page = new HashMap<>();
+    public final Map<String, List<Entry>> tops = new HashMap<>();
+    public final Map<UUID, List<Location>> placedBlocks = new HashMap<>();
+    public final Map<UUID, List<Location>> placedPracticeBlocks = new HashMap<>();
+    public final Map<UUID, Replay> replays = new HashMap<>();
+    public final Map<UUID, Replay> lastReplay = new HashMap<>();
+    public final Map<UUID, Boolean> playersInPracticeMode = new HashMap<>();
     public String PREFIX;
     public ProtocolManager protocolManager;
     public ConfigManager configManager;
     public ScoreboardManager scoreboardManager;
     public Timer timer;
 
-    public final Map<Player, HologramStack> stats = new HashMap<>();
-    public final Map<Player, String> mapWherePlayerIn = new HashMap<>();
-    public final Map<UUID, Integer> page = new HashMap<>();
-    public final Map<String, List<Entry>> tops = new HashMap<>();
-    public final Map<UUID, List<Location>> placedBlocks = new HashMap<>();
-    public final Map<UUID, Replay> replays = new HashMap<>();
-    public final Map<UUID, Replay> lastReplay = new HashMap<>();
+    public static Main getInstance() {
+        return INSTANCE;
+    }
+
+    private void printlnColor(String message) {
+        Ansi reset = Ansi.ansi().a(Ansi.Attribute.RESET);
+        System.out.println(message
+                .replace("§0", reset.fg(Ansi.Color.BLACK).boldOff().toString())
+                .replace("§1", reset.fg(Ansi.Color.BLUE).boldOff().toString())
+                .replace("§2", reset.fg(Ansi.Color.GREEN).boldOff().toString())
+                .replace("§3", reset.fg(Ansi.Color.CYAN).boldOff().toString())
+                .replace("§4", reset.fg(Ansi.Color.RED).boldOff().toString())
+                .replace("§5", reset.fg(Ansi.Color.MAGENTA).boldOff().toString())
+                .replace("§6", reset.fg(Ansi.Color.YELLOW).boldOff().toString())
+                .replace("§7", reset.fg(Ansi.Color.WHITE).boldOff().toString())
+                .replace("§8", reset.fg(Ansi.Color.BLACK).bold().toString())
+                .replace("§9", reset.fg(Ansi.Color.BLUE).bold().toString())
+                .replace("§a", reset.fg(Ansi.Color.GREEN).bold().toString())
+                .replace("§b", reset.fg(Ansi.Color.CYAN).bold().toString())
+                .replace("§c", reset.fg(Ansi.Color.RED).bold().toString())
+                .replace("§d", reset.fg(Ansi.Color.MAGENTA).bold().toString())
+                .replace("§e", reset.fg(Ansi.Color.YELLOW).bold().toString())
+                .replace("§f", reset.fg(Ansi.Color.WHITE).bold().toString())
+                .replace("§k", Ansi.ansi().a(Ansi.Attribute.BLINK_SLOW).toString())
+                .replace("§l", Ansi.ansi().a(Ansi.Attribute.UNDERLINE_DOUBLE).toString())
+                .replace("§m", Ansi.ansi().a(Ansi.Attribute.STRIKETHROUGH_ON).toString())
+                .replace("§n", Ansi.ansi().a(Ansi.Attribute.UNDERLINE).toString())
+                .replace("§o", Ansi.ansi().a(Ansi.Attribute.ITALIC).toString())
+                .replace("§r", reset.toString()) + reset
+        );
+    }
 
     @Override
     public void onEnable() {
         INSTANCE = this;
         saveDefaultConfig();
         PREFIX = getConfig().getString("prefix");
-        MinecraftConsole.printlnColor(PREFIX + "Starting...");
+        printlnColor(PREFIX + "Starting...");
 
         long startTime = System.currentTimeMillis();
         configManager = new ConfigManager(this);
@@ -79,7 +111,7 @@ public final class Main extends JavaPlugin {
 
             initializePlugin();
 
-            MinecraftConsole.printlnColor(PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
+            printlnColor(PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
         }
     }
 
@@ -95,7 +127,8 @@ public final class Main extends JavaPlugin {
                         connection.sendPacket(new PacketPlayOutPlayerInfo(
                                 PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, (EntityPlayer) entity));
                         connection.sendPacket(new PacketPlayOutNamedEntitySpawn((EntityHuman) entity));
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         });
@@ -108,13 +141,13 @@ public final class Main extends JavaPlugin {
 
             out.println(getConfig().getString("license"));
             if (!Boolean.parseBoolean(in.readLine())) {
-                MinecraftConsole.printlnColor(PREFIX + "§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON [...]");
+                printlnColor(PREFIX + "§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT THE PLUGIN REQUEST THE LICENSE ON https://discord.gg/CnQGtfEdjj");
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }
 
         } catch (IOException e) {
-            MinecraftConsole.printlnColor(PREFIX + "License server error: " + e.getClass().getSimpleName());
+            printlnColor(PREFIX + "§cLicense server error: " + e.getClass().getSimpleName());
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
@@ -144,8 +177,7 @@ public final class Main extends JavaPlugin {
         blocks.put(Material.STONE, 100);
         blocks.put(Material.WOOD, 100);
         blocks.put(Material.QUARTZ_BLOCK, 200);
-        blocks.put(Material.STAINED_CLAY, 300);
-        blocks.put(Material.CLAY, 500);
+        blocks.put(Material.CLAY, 400);
         blocks.put(Material.HARD_CLAY, 500);
         blocks.put(Material.COBBLESTONE, 500);
         blocks.put(Material.COAL_BLOCK, 600);
@@ -198,7 +230,7 @@ public final class Main extends JavaPlugin {
                     }
                 }
             }
-        }.runTaskTimer(this, 0L, 0L);
+        }.runTaskTimer(this, 0L, 1L);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             try {
@@ -215,14 +247,6 @@ public final class Main extends JavaPlugin {
                         h.tracker.forEach(p -> p.sendPacket(new PacketPlayOutEntityTeleport(h.armorStand)));
                     }
                 }
-
-                Set<SignBuilder> toRemove = new HashSet<>();
-                for (SignBuilder b : SignBuilder.signs) {
-                    if (System.currentTimeMillis() - b.getGeneratedTime() > b.getTimeout()) {
-                        toRemove.add(b);
-                    }
-                }
-                SignBuilder.signs.removeAll(toRemove);
 
             } catch (Exception e) {
                 e.printStackTrace();

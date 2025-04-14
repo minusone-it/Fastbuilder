@@ -5,6 +5,7 @@ import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.gui.*;
 import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +36,19 @@ public class onInventoryClick implements Listener {
                         }
                     } else if (clickedItem.getType() == Material.SANDSTONE) {
                         player.openInventory(new BlockSelectorGUI(player).getInventory());
+                    } else if (clickedItem.getType() == Material.STAINED_CLAY) {
+                        if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), true);
+                        } else {
+                            player.getInventory().setItem(3, null);
+                            if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null) {
+                                for (Location loc : Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()))
+                                    loc.getBlock().setType(Material.AIR);
+                            }
+                            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+                        }
+                        player.closeInventory();
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof IslandSelectorGUI) {

@@ -18,7 +18,9 @@ public class onPlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
-        Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer(), Main.getInstance().getConfigManager().getScoreboardPrefix());
+        Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer());
+        if (Main.getInstance().getConfigManager().getModes() != null)
+            e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
         onPlayerClickEntity.injectPacketListener(e.getPlayer());
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
@@ -37,11 +39,15 @@ public class onPlayerJoinQuit implements Listener {
                 }
             }
         }
+        Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
+
     }
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent e) {
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId());
+        if (Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()) != null)
+            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()));
         if (playerBlocks != null) {
             for (Location blockLocation : playerBlocks)
                 blockLocation.getBlock().setType(Material.AIR);
@@ -56,6 +62,7 @@ public class onPlayerJoinQuit implements Listener {
             Main.getInstance().stats.get(e.getPlayer()).delete();
             Main.getInstance().stats.remove(e.getPlayer());
         }
+        Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
     }
 
 }

@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.gui;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.items.ItemMap;
+import it.minusone.fastbuilder.items.MapItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -27,7 +27,7 @@ public class IslandSelectorGUI implements InventoryHolder {
             for (String island : islands) {
                 Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
                 boolean isOccupied = islandPlayer != null;
-                ItemMap mapItem = new ItemMap(island, isOccupied ? islandPlayer.getName() : "", islandPlayer, isOccupied);
+                MapItem mapItem = new MapItem(island, isOccupied ? islandPlayer.getName() : "", islandPlayer, isOccupied);
                 inventory.addItem(mapItem);
             }
         }

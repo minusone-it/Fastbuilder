@@ -3,7 +3,6 @@ package it.minusone.fastbuilder.utils.bukkit.listeners;
 import it.minusone.fastbuilder.utils.bukkit.CubingLibPlayer;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
-import it.minusone.fastbuilder.utils.bukkit.inventory.InventoryListener;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -11,27 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void InventoryClickEvent(InventoryClickEvent e) {
-        int slot = e.getRawSlot();
-        if (slot == -999 || e.getClickedInventory() == null) {
-            return;
-        }
-        InventoryListener.inventoryClickEvent(e);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void InventoryCloseEvent(InventoryCloseEvent e) {
-        InventoryListener.inventoryCloseEvent(e);
-    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
@@ -60,7 +44,6 @@ public class PlayerListener implements Listener {
         CubingLibPlayer.user.remove(player);
         NPC.all.forEach(a -> a.removeListener(player));
         Hologram.all.forEach(a -> a.removeListener(player));
-        InventoryListener.playerQuitEvent(e);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

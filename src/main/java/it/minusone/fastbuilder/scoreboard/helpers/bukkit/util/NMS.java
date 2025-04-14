@@ -1,6 +1,5 @@
 package it.minusone.fastbuilder.scoreboard.helpers.bukkit.util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -11,8 +10,6 @@ import java.util.Map;
 
 public class NMS {
 
-    private static final Map<Class<?>, Method> HANDLES = new HashMap<>();
-
     public static final Field PLAYER_SCORES;
     public static final Constructor<?> PACKET_SCORE_REMOVE;
     public static final Constructor<?> PACKET_SCORE;
@@ -22,6 +19,7 @@ public class NMS {
     public static final Constructor<?> PACKET_DISPLAY;
     public static final Field PLAYER_CONNECTION;
     public static final Method SEND_PACKET;
+    private static final Map<Class<?>, Method> HANDLES = new HashMap<>();
 
     static {
         Field playerScores = null;

@@ -3,13 +3,13 @@ package it.minusone.fastbuilder.utils.eventbus;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class CubingEvent {
+public class Event {
 
-    public CubingEvent call() {
+    public Event call() {
         Class<?> c = getClass();
-        if (CubingEventManager.Instances.containsKey(c)) {
-            List<Object> instances = CubingEventManager.Instances.get(c);
-            List<Method> methods = CubingEventManager.Methods.get(c);
+        if (EventManager.Instances.containsKey(c)) {
+            List<Object> instances = EventManager.Instances.get(c);
+            List<Method> methods = EventManager.Methods.get(c);
             int size = instances.size();
             for (int i = 0; i < size; i++) {
                 try {

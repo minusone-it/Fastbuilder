@@ -4,7 +4,7 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
 import it.minusone.fastbuilder.gui.SettingsGUI;
-import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.ReplayManager;
@@ -18,6 +18,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+
 public class onPlayerInteract implements Listener {
 
     @EventHandler
@@ -27,8 +29,11 @@ public class onPlayerInteract implements Listener {
                 Player player = event.getPlayer();
                 Main.getInstance().timer.scoreTime(player);
                 Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
-                Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
-                Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
+                if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
+                    Main.getInstance().stats.get(player).setName(2, "Personal Best: " + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", "."));
+                    Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
+                    Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
+                }
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
@@ -47,7 +52,7 @@ public class onPlayerInteract implements Listener {
                     event.getPlayer().getInventory().setItem(0, block);
                     event.getPlayer().getInventory().setItem(1, block);
                     event.getPlayer().getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                    event.getPlayer().getInventory().setItem(4, new IslandSelector());
+                    event.getPlayer().getInventory().setItem(4, new IslandSelectorItem());
                     event.getPlayer().getInventory().setItem(6, new ReplayItem());
                     event.getPlayer().getInventory().setItem(7, new SettingsItem());
                 }

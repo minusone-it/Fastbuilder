@@ -2,7 +2,7 @@ package it.minusone.fastbuilder.replay.entity;
 
 public class EntityInfo {
     private final String name;
-    private ReplaySkin skin = null;
+    private final ReplaySkin skin;
 
     public EntityInfo(String name, ReplaySkin skin) {
         this.name = name;

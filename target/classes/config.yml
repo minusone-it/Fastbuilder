@@ -1,15 +1,18 @@
-# For color formatting, you have to use §, & will not work. & will work only on finish messages.
-
 # The plugin prefix, called in the commands. Leave a space after the last char.
 prefix: "§3§lFastbuilder§7>> "
+
 # The scoreboard prefix, called only in the scoreboard.
 scoreboard-prefix: "§3§lFastbuilder"
+
 # Shown on scoreboard.
 server-ip: example.net
+
 # You can make it 0 to disable it.
 reset-stats-cost: 50
+
 # Jump Plate like the Bridger Land one.
 jump-plate: false
+
 # Placeholders:
 # %time% - Time of the course;
 # %pb% - Personal Best;
@@ -32,4 +35,32 @@ messages:
     - "&aPB: &e&l%pb% &8| &b&l%difference%"
     - "&8----------------------------------"
 
+# Scoreboard Lines.
+# Placeholders:
+# %time% - Current time;
+# %pb% - Personal Best;
+# %top_1 - Session top 1;
+# %top_2 - Session top 2;
+# %top_3 - Session top 3;
+# %coins% - The current coins of the player.
+scoreboard:
+  title: "&b&lFastBuilder"
+  lines:
+    15: "&a&8&l|"
+    14: "&a&8&l| §b§lPersonal Best:"
+    13: "&a&8&l| §e%pb%"
+    12: "&a&8&l|"
+    11: "&a&8&l| §e§lSession-Top:"
+    10: "&a&8&l| §7%top_1%"
+    9:  "&a&8&l| §7%top_2%"
+    8:  "&a&8&l| §7%top_3%"
+    7:  "&a&8&l|"
+    6:  "&a&8&l| §e§lCoins:"
+    5:  "&a&8&l| §e%coins%"
+    4:  "&a&8&l|"
+    3:  "&a&8&l| §a§lTime:"
+    2:  "&a&8&l| §e%time%"
+    1:  "&a&8&l|   &7&oexample.net"
+
+# Go get it via on https://discord.gg/CnQGtfEdjj
 license: none

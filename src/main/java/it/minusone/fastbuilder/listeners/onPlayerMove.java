@@ -1,7 +1,7 @@
 package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.items.IslandSelector;
+import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.GameMode;
@@ -34,7 +34,9 @@ public class onPlayerMove implements Listener {
                         player.getInventory().setItem(0, block);
                         player.getInventory().setItem(1, block);
                         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                        player.getInventory().setItem(4, new IslandSelector());
+                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
+                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                        player.getInventory().setItem(4, new IslandSelectorItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
                         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
@@ -77,7 +79,7 @@ public class onPlayerMove implements Listener {
                         loc.setX(Math.floor(loc.getX()) + 0.5);
                         loc.setY(Math.floor(loc.getY()));
                         loc.setZ(Math.floor(loc.getZ()) + 0.5);
-                        if (playerLoc.equals(loc) && Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+                        if (playerLoc.equals(loc) && Main.getInstance().mapWherePlayerIn.containsKey(player) && !Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
                             Main.getInstance().timer.scoreTime(player);
                             Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().getConfigManager().addSuccessfulAttempt(player);

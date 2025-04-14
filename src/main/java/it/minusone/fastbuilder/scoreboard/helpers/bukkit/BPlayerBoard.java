@@ -13,10 +13,8 @@ import java.util.Map;
 public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
 
     private final Player player;
+    private final String name;
     private org.bukkit.scoreboard.Scoreboard scoreboard;
-
-    private String name;
-
     private Objective objective;
     private Objective buffer;
 
