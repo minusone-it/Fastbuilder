@@ -37,7 +37,7 @@ public class onBlockPlaceBreak implements Listener {
         if (event.getBlock().getType() != Material.STAINED_CLAY)
             Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
         else
-            Main.getInstance().playersInPracticeMode.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>().add(blockLocation));
+            Main.getInstance().placedPracticeBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
 
         if (!Main.getInstance().timer.isPlayerInTimer(player)) {
             Main.getInstance().timer.startTimer(player);
@@ -48,10 +48,16 @@ public class onBlockPlaceBreak implements Listener {
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId());
-        playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()));
+        List<Location> playerBlocks = new ArrayList<>();
+        if (Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()) != null)
+            playerBlocks.addAll(Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()));
+
+        if (Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()) != null)
+            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()));
+
         if (playerBlocks.contains(event.getBlock().getLocation()))
             event.setCancelled(false);
+
         else if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
             event.setCancelled(true);
     }

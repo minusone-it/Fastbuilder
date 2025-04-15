@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -253,6 +254,22 @@ public class ConfigManager {
     public long getSuccessfulAttempts(Player player) {
         String path = player.getUniqueId().toString() + ".successfulattempts";
         return config.getLong(path);
+    }
+
+    public String getScoreTitle() {
+        return config.getString("title");
+    }
+
+    public String getScoreSubTitle() {
+        return config.getString("subtitle");
+    }
+
+    public String[] getHoloLines(Player player) {
+        List<String> a = config.getStringList("holo");
+        String[] c = new String[a.size()];
+        for (int i = a.size(); i > 0; i--)
+            c[i - 1] = a.get(i - 1).replace("%successful_attempts%", "" + getSuccessfulAttempts(player)).replace("%total_attempts%", "" + getAttempts(player)).replace("%pb%", new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]))).replace("%player%", player.getName()).replace("&", "§");
+        return c;
     }
 
 }

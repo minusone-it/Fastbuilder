@@ -1,5 +1,5 @@
 # The plugin prefix, called in the commands. Leave a space after the last char.
-prefix: "§3§lFastbuilder§7>> "
+prefix: "§3§lFastbuilder §7» "
 
 # The scoreboard prefix, called only in the scoreboard.
 scoreboard-prefix: "§3§lFastbuilder"
@@ -35,6 +35,25 @@ messages:
     - "&aPB: &e&l%pb% &8| &b&l%difference%"
     - "&8----------------------------------"
 
+# Holo Lines
+# Placeholders:
+# %player% - Player's name;
+# %pb% - Player's personal best;
+# %successful_attempts% - Player's successful attempts;
+# %total_attempts% - Player's total attempts.
+holo:
+  - "&b%player%'s stats:"
+  - "Personal Best: %pb%"
+  - "Successful Attempts: %successful_attempts%"
+  - "Total Attempts: %total_attempts%"
+
+# Score Title.
+# Placeholders:
+# %time% - Current time;
+# %coins% - The coins gained of the player.
+title: "&aTime: &e%time%"
+subtitle: "+&e%coins% coins!"
+
 # Scoreboard Lines.
 # Placeholders:
 # %time% - Current time;
@@ -47,19 +66,19 @@ scoreboard:
   title: "&b&lFastBuilder"
   lines:
     15: "&a&8&l|"
-    14: "&a&8&l| §b§lPersonal Best:"
-    13: "&a&8&l| §e%pb%"
+    14: "&a&8&l| &b&lPersonal Best:"
+    13: "&a&8&l| &e%pb%"
     12: "&a&8&l|"
-    11: "&a&8&l| §e§lSession-Top:"
-    10: "&a&8&l| §7%top_1%"
-    9:  "&a&8&l| §7%top_2%"
-    8:  "&a&8&l| §7%top_3%"
+    11: "&a&8&l| &e&lSession-Top:"
+    10: "&a&8&l| &7%top_1%"
+    9:  "&a&8&l| &7%top_2%"
+    8:  "&a&8&l| &7%top_3%"
     7:  "&a&8&l|"
-    6:  "&a&8&l| §e§lCoins:"
-    5:  "&a&8&l| §e%coins%"
+    6:  "&a&8&l| &e&lCoins:"
+    5:  "&a&8&l| &e%coins%"
     4:  "&a&8&l|"
-    3:  "&a&8&l| §a§lTime:"
-    2:  "&a&8&l| §e%time%"
+    3:  "&a&8&l| &a&lTime:"
+    2:  "&a&8&l| &e%time%"
     1:  "&a&8&l|   &7&oexample.net"
 
 # Go get it via on https://discord.gg/CnQGtfEdjj

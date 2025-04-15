@@ -14,7 +14,7 @@ public class HologramStack {
         this.count = count;
         this.d = d;
         for (int i = 0; i < count; i++) {
-            hologramList.add(new Hologram(name[i], everyoneCanSee, autoSpawn));
+            hologramList.add(new Hologram(name[count - (i + 1)], everyoneCanSee, autoSpawn));
         }
     }
 
@@ -47,7 +47,8 @@ public class HologramStack {
     }
 
     public HologramStack setName(int index, String name) {
-        hologramList.get(index).setName(name);
+        hologramList.get(count - index - 1).setName(name);
         return this;
     }
+
 }

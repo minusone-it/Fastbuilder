@@ -156,7 +156,7 @@ public final class Main extends JavaPlugin {
 
     private void initializePlugin() {
         this.timer = new Timer();
-        this.scoreboardManager = new ScoreboardManager();
+        this.scoreboardManager = new ScoreboardManager(this);
         this.protocolManager = ProtocolLibrary.getProtocolManager();
 
         ReplayMain.getApi().initialize(this);
@@ -226,7 +226,7 @@ public final class Main extends JavaPlugin {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.setFoodLevel(20);
                     if (mapWherePlayerIn.containsKey(p)) {
-                        scoreboardManager.updateTopThree(p, mapWherePlayerIn.get(p).split("-")[0]);
+                        scoreboardManager.updateScoreboard(p);
                     }
                 }
             }

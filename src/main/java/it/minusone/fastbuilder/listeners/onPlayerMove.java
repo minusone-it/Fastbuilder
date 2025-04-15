@@ -46,8 +46,12 @@ public class onPlayerMove implements Listener {
                             }
                             Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().placedBlocks.remove(player.getUniqueId());
-                            Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
-                            Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
+                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                Main.getInstance().stats.get(player).setName(
+                                        i,
+                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                );
+                            }
                         }
                         Main.getInstance().timer.stopTimer(player, false);
                         Main.getInstance().timer.setAlreadyTeleported(player, true);
@@ -83,13 +87,13 @@ public class onPlayerMove implements Listener {
                             Main.getInstance().timer.scoreTime(player);
                             Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
-                            Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
-                            Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
+                            for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
+                                Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
                         }
                     }
                 }
             } catch (Exception ignored) {
-
+                ignored.printStackTrace();
             }
         }
     }

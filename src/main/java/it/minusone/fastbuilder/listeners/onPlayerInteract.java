@@ -18,8 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.text.DecimalFormat;
-
 public class onPlayerInteract implements Listener {
 
     @EventHandler
@@ -30,16 +28,15 @@ public class onPlayerInteract implements Listener {
                 Main.getInstance().timer.scoreTime(player);
                 Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
                 if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
-                    Main.getInstance().stats.get(player).setName(2, "Personal Best: " + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", "."));
-                    Main.getInstance().stats.get(player).setName(1, "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
-                    Main.getInstance().stats.get(player).setName(0, "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
+                    for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
+                        Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
                 }
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
                 event.getPlayer().openInventory(new IslandSelectorGUI(event.getPlayer()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
-                event.getPlayer().openInventory(new SettingsGUI().getInventory());
+                event.getPlayer().openInventory(new SettingsGUI(event.getPlayer()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
                 event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId(), 0).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {

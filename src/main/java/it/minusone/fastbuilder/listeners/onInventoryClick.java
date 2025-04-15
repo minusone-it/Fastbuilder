@@ -75,7 +75,6 @@ public class onInventoryClick implements Listener {
                         String a = clickedItem.getItemMeta().getDisplayName().replace("Replay: ", "");
                         String b = a + ".replay";
                         File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId() + "/" + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], b);
-                        System.out.println(replayFile);
                         if (replayFile.exists()) {
                             player.closeInventory();
                             player.getInventory().clear();
@@ -149,12 +148,12 @@ public class onInventoryClick implements Listener {
                         Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");
                         Main.getInstance().saveConfig();
                         Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - Main.getInstance().getConfigManager().getCoinsForResetStats());
-                        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", 0.000);
+                        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", 0.000);
                         player.closeInventory();
                         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Successfully resetted stats!");
                     } else {
                         player.closeInventory();
-                        player.openInventory(new SettingsGUI().getInventory());
+                        player.openInventory(new SettingsGUI(player).getInventory());
                     }
                 }
             }

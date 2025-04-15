@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class fastbuilder implements CommandExecutor {
@@ -70,11 +70,12 @@ public class fastbuilder implements CommandExecutor {
         Location offsetB = Main.getInstance().getConfigManager().getHoloOffset(mode, player.getLocation().getWorld());
         baseLocationB.setWorld(player.getWorld());
         baseLocationB.add(offsetB.getX(), offsetB.getY(), offsetB.getZ());
-        HologramStack stats = new HologramStack(4, 0.3, true, false,
-                "Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player),
-                "Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player),
-                "Personal Best: " + (!new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".") : "-.---"),
-                ChatColor.AQUA + player.getName() + "§r's stats:"
+        HologramStack stats = new HologramStack(
+                Main.getInstance().getConfigManager().getHoloLines(player).length,
+                0.3,
+                true,
+                false,
+                Main.getInstance().getConfigManager().getHoloLines(player)
         );
         if (Main.getInstance().stats.containsKey(player)) {
             Main.getInstance().stats.get(player).despawn();
@@ -84,7 +85,7 @@ public class fastbuilder implements CommandExecutor {
         stats.setLocation(baseLocationB);
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
-        Main.getInstance().scoreboardManager.updateTimer(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
     }
 
     private static void leaveMode(Player player) {
@@ -99,16 +100,16 @@ public class fastbuilder implements CommandExecutor {
                     NPCManager.removeNPC(NPCManager.getNPC(player), player);
                 }
 
-                List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                List<Location> playerBlocks = new ArrayList<>();
+                if (Main.getInstance().placedBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedBlocks.get(player.getUniqueId()));
                 if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
                     playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
-                if (playerBlocks != null) {
-                    for (Location blockLocation : playerBlocks) {
-                        blockLocation.getBlock().setType(Material.AIR);
-                    }
-                    Main.getInstance().getConfigManager().addAttempt(player);
-                    Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                for (Location blockLocation : playerBlocks) {
+                    blockLocation.getBlock().setType(Material.AIR);
                 }
+                Main.getInstance().getConfigManager().addAttempt(player);
+                Main.getInstance().placedBlocks.remove(player.getUniqueId());
 
                 player.getInventory().clear();
                 Location spawn = Main.getInstance().getConfigManager().getSpawnLocation(currentMode, currentIsland);
@@ -132,8 +133,8 @@ public class fastbuilder implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            player.sendMessage(Main.getInstance().PREFIX + "§fRunning Fastbuilder V" + Main.getInstance().getDescription().getVersion() + " by MinusOne.");
-            player.sendMessage(Main.getInstance().PREFIX + "§fBuy it on https://shorturl.at/g20GL.");
+            player.sendMessage(Main.getInstance().PREFIX + "§fRunning Fastbuilder V" + Main.getInstance().getDescription().getVersion() + " by _MinusOne_.");
+            player.sendMessage(Main.getInstance().PREFIX + "§fBuy it on https://builtbybit.com/resources/fastbuilder.62493/.");
             if (player.hasPermission("fastbuilder.admin")) {
                 player.sendMessage(Main.getInstance().PREFIX + "List of commands:");
                 player.sendMessage("§7/fb join <mode> <island_number> - To join a mode");

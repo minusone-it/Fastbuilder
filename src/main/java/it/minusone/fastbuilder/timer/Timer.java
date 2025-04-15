@@ -65,7 +65,7 @@ public class Timer {
 
                 double currentTime = playerTimers.get(uuid) * 0.05;
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
-                Main.getInstance().scoreboardManager.updateTimer(player, format.format(currentTime).replace(",", "."), bestTime);
+                Main.getInstance().scoreboardManager.updateScoreboard(player, format.format(currentTime).replace(",", "."), bestTime);
             }
         };
         return task;
@@ -106,7 +106,7 @@ public class Timer {
     }
 
     public double getTime(Player player) {
-        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) + 0.05;
+        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - 0.05;
     }
 
     public boolean isPlayerInTimer(Player player) {
@@ -174,15 +174,14 @@ public class Timer {
                     ));
             }
             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "+" + ChatColor.YELLOW + coins + " coins!");
+                player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), Main.getInstance().getConfigManager().getScoreSubTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"));
                 Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
                 Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
                 Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
             } else
-                player.sendTitle(ChatColor.GREEN + "Time: " + ChatColor.YELLOW + timeFormatted, "");
+                player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "");
             player.getInventory().clear();
-            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
-            Main.getInstance().scoreboardManager.updateTimer(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
+            Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
