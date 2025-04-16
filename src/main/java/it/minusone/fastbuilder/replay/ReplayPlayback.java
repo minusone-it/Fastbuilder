@@ -156,20 +156,17 @@ public class ReplayPlayback {
      */
 
     public void sendTickInfoToActionBar() {
-        // Ottieni il tick attuale e quello massimo del replay
         int currentTick = getCurrentTick();
-        int maxTick = getReplay().getLength();   // assumendo ci sia un metodo getLength che restituisce i tick totali
+        int maxTick = getReplay().getLength();
 
-        // Conversione da tick a secondi (1 secondo = 20 tick)
         double currentSeconds = currentTick / 20.0;
         double maxSeconds = maxTick / 20.0;
 
         DecimalFormat decimalFormat = new DecimalFormat("0.000");
 
-        // Invio del messaggio in action bar a tutti i listeners
         for (Player player : getListeners()) {
             try {
-                sendActionBar(player, "§3" + decimalFormat.format(currentSeconds) + " / " + decimalFormat.format(maxSeconds));
+                sendActionBar(player, "§3" + decimalFormat.format(currentSeconds) + " / " + decimalFormat.format(maxSeconds - 0.050));
             } catch (Exception e) {
 
             }

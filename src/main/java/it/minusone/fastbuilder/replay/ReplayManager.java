@@ -116,7 +116,7 @@ public class ReplayManager {
 
     public static String getDuration(File replayFile) {
         try (ReplayInputStream replayInputStream = new ReplayInputStream(Files.newInputStream(replayFile.toPath()))) {
-            return new DecimalFormat("0.000").format(replayInputStream.readReplay(new Location(Bukkit.getWorld("world"), 1, 1, 1)).getLength() / 20.0).replace(",", ".");
+            return new DecimalFormat("0.000").format((replayInputStream.readReplay(new Location(Bukkit.getWorld("world"), 1, 1, 1)).getLength() / 20.0) - 0.050).replace(",", ".");
         } catch (Exception ignored) {
         }
         return null;
