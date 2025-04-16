@@ -86,10 +86,11 @@ public class Timer {
         if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
                 try {
-                    File replayFolder = new File(Main.getInstance().getDataFolder() + "\\replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                    File replayFolder = new File(Main.getInstance().getDataFolder() + File.separator + "replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                     if (!replayFolder.exists()) replayFolder.mkdirs();
                     File replayFile = new File(replayFolder.toPath() + File.separator + System.currentTimeMillis() + ".replay");
                     ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(replayFile.toPath()));
+                    assert replay != null;
                     replayOutputStream.writeReplay(replay);
                 } catch (Exception e) {
                     e.printStackTrace();

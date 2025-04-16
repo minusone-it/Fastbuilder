@@ -93,7 +93,7 @@ public class onPlayerMove implements Listener {
                     }
                 }
             } catch (Exception ignored) {
-                ignored.printStackTrace();
+
             }
         }
     }

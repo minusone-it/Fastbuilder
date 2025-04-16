@@ -268,7 +268,7 @@ public class ConfigManager {
         List<String> a = config.getStringList("holo");
         String[] c = new String[a.size()];
         for (int i = a.size(); i > 0; i--)
-            c[i - 1] = a.get(i - 1).replace("%successful_attempts%", "" + getSuccessfulAttempts(player)).replace("%total_attempts%", "" + getAttempts(player)).replace("%pb%", new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]))).replace("%player%", player.getName()).replace("&", "§");
+            c[i - 1] = a.get(i - 1).replace("%successful_attempts%", "" + getSuccessfulAttempts(player)).replace("%total_attempts%", "" + getAttempts(player)).replace("%pb%", new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".")).replace("%player%", player.getName()).replace("&", "§");
         return c;
     }
 

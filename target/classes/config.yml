@@ -1,12 +1,6 @@
 # The plugin prefix, called in the commands. Leave a space after the last char.
 prefix: "§3§lFastbuilder §7» "
 
-# The scoreboard prefix, called only in the scoreboard.
-scoreboard-prefix: "§3§lFastbuilder"
-
-# Shown on scoreboard.
-server-ip: example.net
-
 # You can make it 0 to disable it.
 reset-stats-cost: 50
 

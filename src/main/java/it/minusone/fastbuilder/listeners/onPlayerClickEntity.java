@@ -22,24 +22,29 @@ public class onPlayerClickEntity implements Listener {
         pipeline.addBefore("packet_handler", "npc_interact_" + player.getUniqueId(), new ChannelDuplexHandler() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                if (msg instanceof PacketPlayInUseEntity) {
-                    PacketPlayInUseEntity packet = (PacketPlayInUseEntity) msg;
-                    if (packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT ||
-                            packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK) {
-                        Field field = packet.getClass().getDeclaredField("a");
-                        field.setAccessible(true);
-                        int entityId = (int) field.get(packet);
-                        if (NPCManager.getNPC(player) != null) {
-                            if (entityId == NPCManager.getNPC(player).getNpc().getId() && !Main.currentPlayerReplay.containsKey(player.getUniqueId()))
-                                player.openInventory(new ModeChangerGUI().getInventory());
-                            else {
-                                if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
-                                    if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId() && player.getItemInHand().getType() == Material.AIR)
+                try {
+                    if (msg instanceof PacketPlayInUseEntity) {
+                        PacketPlayInUseEntity packet = (PacketPlayInUseEntity) msg;
+                        if (packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT ||
+                                packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK) {
+                            Field field = packet.getClass().getDeclaredField("a");
+                            field.setAccessible(true);
+                            int entityId = (int) field.get(packet);
+
+                            if (NPCManager.getNPC(player) != null) {
+                                if (entityId == NPCManager.getNPC(player).getNpc().getId()
+                                        && !Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
+                                    player.openInventory(new ModeChangerGUI().getInventory());
+                                } else if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
+                                    if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId()
+                                            && player.getItemInHand().getType() == Material.AIR) {
                                         onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (Exception ignored) {
                 }
                 super.channelRead(ctx, msg);
             }

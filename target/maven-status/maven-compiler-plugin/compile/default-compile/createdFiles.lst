@@ -64,6 +64,7 @@ it\minusone\fastbuilder\scoreboard\helpers\bukkit\util\NMS.class
 it\minusone\fastbuilder\npc\NPC.class
 it\minusone\fastbuilder\items\IslandSelectorItem.class
 it\minusone\fastbuilder\utils\bukkit\CubingLibPlayer.class
+it\minusone\fastbuilder\listeners\onItemDrop.class
 it\minusone\fastbuilder\replay\utils\NMS.class
 it\minusone\fastbuilder\listeners\onPlayerInteract.class
 it\minusone\fastbuilder\utils\utils\ReflectionUtils.class

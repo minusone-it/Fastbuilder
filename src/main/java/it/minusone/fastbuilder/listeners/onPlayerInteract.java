@@ -26,7 +26,6 @@ public class onPlayerInteract implements Listener {
             if (event.getClickedBlock().getType() == Material.GOLD_PLATE) {
                 Player player = event.getPlayer();
                 Main.getInstance().timer.scoreTime(player);
-                Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
                 if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
                     for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
                         Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);

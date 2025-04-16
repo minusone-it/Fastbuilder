@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class onPlayerJoinQuit implements Listener {
@@ -45,14 +46,15 @@ public class onPlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent e) {
-        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId());
+        List<Location> playerBlocks = new ArrayList<>();
+        if (Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId()) != null)
+            Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId());
         if (Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()) != null)
             playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()));
-        if (playerBlocks != null) {
-            for (Location blockLocation : playerBlocks)
-                blockLocation.getBlock().setType(Material.AIR);
-            Main.getInstance().placedBlocks.remove(e.getPlayer().getUniqueId());
-        }
+        for (Location blockLocation : playerBlocks)
+            blockLocation.getBlock().setType(Material.AIR);
+        Main.getInstance().placedBlocks.remove(e.getPlayer().getUniqueId());
+        Main.getInstance().placedPracticeBlocks.remove(e.getPlayer().getUniqueId());
         Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());
         Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().mapWherePlayerIn.get(e.getPlayer()).split("-")[0]);
         Main.getInstance().mapWherePlayerIn.remove(e.getPlayer());
