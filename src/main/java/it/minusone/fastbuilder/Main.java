@@ -18,6 +18,7 @@ import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import it.minusone.fastbuilder.utils.bukkit.entity.NPC;
 import it.minusone.fastbuilder.utils.bukkit.listeners.PlayerListener;
 import it.minusone.fastbuilder.utils.utils.ReflectionUtils;
+import net.luckperms.api.LuckPerms;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,6 +27,7 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.fusesource.jansi.Ansi;
@@ -60,6 +62,8 @@ public final class Main extends JavaPlugin {
     public ConfigManager configManager;
     public ScoreboardManager scoreboardManager;
     public Timer timer;
+    public boolean luckpermsSupport;
+    public LuckPerms luckpermsApi;
 
     public static Main getInstance() {
         return INSTANCE;
@@ -106,9 +110,6 @@ public final class Main extends JavaPlugin {
         if (!checkLicense()) return;
 
         if (Bukkit.getPluginManager().getPlugin("Fastbuilder").isEnabled()) {
-            Bukkit.getOnlinePlayers().forEach(p ->
-                    p.kickPlayer("Rejoin, please! Fastbuilder doesn't support reloads with players online."));
-
             initializePlugin();
 
             printlnColor(PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
@@ -131,6 +132,7 @@ public final class Main extends JavaPlugin {
                     }
                 }
             }
+            p.kickPlayer("Rejoin, please! Fastbuilder doesn't support reloads with players online.");
         });
     }
 
@@ -155,6 +157,12 @@ public final class Main extends JavaPlugin {
     }
 
     private void initializePlugin() {
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            this.luckpermsApi = provider.getProvider();
+            this.luckpermsSupport = true;
+        }
+
         this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager(this);
         this.protocolManager = ProtocolLibrary.getProtocolManager();

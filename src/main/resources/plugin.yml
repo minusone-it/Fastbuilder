@@ -1,5 +1,5 @@
 name: Fastbuilder
-version: '1.3.6'
+version: '1.4.0'
 main: it.minusone.fastbuilder.Main
 api-version: '1.8.8'
 authors: [ _MinusOne_ ]
@@ -7,6 +7,8 @@ description: Made with <3 by _MinusOne_.
 website: https://builtbybit.com/resources/fastbuilder.62493/.
 depend:
   - ProtocolLib
+softdepend:
+  - Luckperms
 commands:
   fastbuilder:
     description:

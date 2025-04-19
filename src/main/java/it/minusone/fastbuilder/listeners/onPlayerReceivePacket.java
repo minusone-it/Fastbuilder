@@ -6,6 +6,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.PacketPlayInBlockPlace;
+import org.bukkit.Location;
+import org.bukkit.Material;
 
 
 public class onPlayerReceivePacket extends PacketAdapter {
@@ -16,8 +18,48 @@ public class onPlayerReceivePacket extends PacketAdapter {
     @Override
     public void onPacketReceiving(PacketEvent event) {
         PacketPlayInBlockPlace packet = (PacketPlayInBlockPlace) event.getPacket().getHandle();
+
         if (packet.getFace() == 255) return;
-        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId()))
+
+        int x = packet.a().getX();
+        int y = packet.a().getY();
+        int z = packet.a().getZ();
+
+        int face = packet.getFace();
+
+        Location loc = new Location(event.getPlayer().getWorld(), x, y, z);
+
+        switch (face) {
+            case 0:
+                loc.subtract(0, 1, 0);
+                break;
+            case 1:
+                loc.add(0, 1, 0);
+                break;
+            case 2:
+                loc.subtract(0, 0, 1);
+                break;
+            case 3:
+                loc.add(0, 0, 1);
+                break;
+            case 4:
+                loc.subtract(1, 0, 0);
+                break;
+            case 5:
+                loc.add(1, 0, 0);
+                break;
+        }
+
+        Material target = loc.getBlock().getType();
+        if (target == Material.WATER || target == Material.STATIONARY_WATER || target == Material.LAVA || target == Material.STATIONARY_LAVA) {
             event.setCancelled(true);
+            event.getPlayer().sendBlockChange(loc.getBlock().getLocation(), loc.getBlock().getType(), (byte) 0);
+            return;
+        }
+
+        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
+            event.setCancelled(true);
+        }
     }
+
 }

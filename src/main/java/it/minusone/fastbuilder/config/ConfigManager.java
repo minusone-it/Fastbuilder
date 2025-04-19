@@ -107,14 +107,6 @@ public class ConfigManager {
         return config.getDouble("best-times." + playerId + "." + mode, 0.0);
     }
 
-    public String getScoreboardPrefix() {
-        return config.getString("scoreboard-prefix");
-    }
-
-    public String getServerIP() {
-        return config.getString("server-ip");
-    }
-
     public int getCoinsOfPlayer(Player player) {
         String path = player.getUniqueId().toString();
         return config.getInt(path + ".coins");
@@ -270,6 +262,18 @@ public class ConfigManager {
         for (int i = a.size(); i > 0; i--)
             c[i - 1] = a.get(i - 1).replace("%successful_attempts%", "" + getSuccessfulAttempts(player)).replace("%total_attempts%", "" + getAttempts(player)).replace("%pb%", new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".")).replace("%player%", player.getName()).replace("&", "§");
         return c;
+    }
+
+    public boolean canPlaceBlocksOnWaterOrLava() {
+        return config.getBoolean("blocks-on-water");
+    }
+
+    public boolean isLuckpermsSupportEnabled() {
+        return Main.getInstance().luckpermsSupport && config.getBoolean("luckperms-support");
+    }
+
+    public String getNPCname() {
+        return config.getString("npc-name");
     }
 
 }

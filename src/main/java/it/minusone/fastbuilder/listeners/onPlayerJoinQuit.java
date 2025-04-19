@@ -48,7 +48,7 @@ public class onPlayerJoinQuit implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent e) {
         List<Location> playerBlocks = new ArrayList<>();
         if (Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId()) != null)
-            Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId());
+            playerBlocks.addAll(Main.getInstance().placedBlocks.get(e.getPlayer().getUniqueId()));
         if (Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()) != null)
             playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(e.getPlayer().getUniqueId()));
         for (Location blockLocation : playerBlocks)

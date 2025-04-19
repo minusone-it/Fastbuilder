@@ -25,6 +25,8 @@ public class onInventoryClick implements Listener {
         if (clickedInventory != null) {
             Player player = (Player) event.getWhoClicked();
             ItemStack clickedItem = event.getCurrentItem();
+            if (Main.getInstance().mapWherePlayerIn.containsKey(player))
+                event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
                 event.setCancelled(true);
                 if (clickedItem != null) {
@@ -47,6 +49,7 @@ public class onInventoryClick implements Listener {
                                     loc.getBlock().setType(Material.AIR);
                             }
                             Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+                            player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
                         }
                         player.closeInventory();
                     }

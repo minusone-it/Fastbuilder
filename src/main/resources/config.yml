@@ -7,6 +7,15 @@ reset-stats-cost: 50
 # Jump Plate like the Bridger Land one.
 jump-plate: false
 
+# Can blocks be placed on water / lava?
+blocks-on-water: true
+
+# Luckperms support with the scoreboard.
+luckperms-support: false
+
+# Mode Changer NPC's name
+npc-name: "Mode Changer"
+
 # Placeholders:
 # %time% - Time of the course;
 # %pb% - Personal Best;

@@ -25,11 +25,17 @@ public class onPlayerInteract implements Listener {
         if (event.getAction() == Action.PHYSICAL) {
             if (event.getClickedBlock().getType() == Material.GOLD_PLATE) {
                 Player player = event.getPlayer();
-                Main.getInstance().timer.scoreTime(player);
                 if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
-                    for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
-                        Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
-                }
+                    if (Main.getInstance().timer.scoreTime(player)) {
+                        try {
+                            for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
+                                Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                } else
+                    Main.getInstance().timer.scoreTime(player);
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))

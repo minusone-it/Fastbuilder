@@ -61,7 +61,7 @@ public class fastbuilder implements CommandExecutor {
         Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
         baseLocationA.setWorld(player.getWorld());
         baseLocationA.add(offsetA.getX(), offsetA.getY(), offsetA.getZ());
-        NPC modeSelector = new NPC(player, "Mode Changer", baseLocationA);
+        NPC modeSelector = new NPC(player, Main.getInstance().getConfigManager().getNPCname(), baseLocationA);
         if (NPCManager.getNPC(player) != null)
             NPCManager.removeNPC(NPCManager.getNPC(player), player);
         modeSelector.spawn(player);

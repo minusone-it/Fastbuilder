@@ -52,7 +52,7 @@ public class Timer {
 
     private BukkitRunnable getBukkitRunnable(Player player, UUID uuid) {
         DecimalFormat format = new DecimalFormat("0.000");
-        BukkitRunnable task = new BukkitRunnable() {
+        return new BukkitRunnable() {
             @Override
             public void run() {
                 if (!playerTimers.containsKey(uuid)) {
@@ -63,12 +63,10 @@ public class Timer {
 
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
 
-                double currentTime = playerTimers.get(uuid) * 0.05;
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
-                Main.getInstance().scoreboardManager.updateScoreboard(player, format.format(currentTime).replace(",", "."), bestTime);
+                Main.getInstance().scoreboardManager.updateScoreboard(player, getTimeFormatted(player).replace(",", "."), bestTime);
             }
         };
-        return task;
     }
 
     public void stopTimer(Player player, boolean saveReplay) {
@@ -122,7 +120,7 @@ public class Timer {
         alreadyTeleported.put(player.getUniqueId(), state);
     }
 
-    public void scoreTime(Player player) {
+    public boolean scoreTime(Player player) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
         double time = Main.getInstance().timer.getTime(player);
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
@@ -200,13 +198,13 @@ public class Timer {
                     player.getInventory().setItem(7, new SettingsItem());
                 }
             }, 40L);
-        }
 
-        if (playerBlocks != null) {
             for (Location blockLocation : playerBlocks)
                 blockLocation.getBlock().setType(Material.AIR);
             Main.getInstance().placedBlocks.remove(player.getUniqueId());
+            return true;
         }
+        return false;
     }
 
     private DecimalFormat getFormat() {

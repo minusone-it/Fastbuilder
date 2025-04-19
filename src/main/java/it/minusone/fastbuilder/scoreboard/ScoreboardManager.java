@@ -3,7 +3,10 @@ package it.minusone.fastbuilder.scoreboard;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
+import net.luckperms.api.model.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -42,7 +45,7 @@ public class ScoreboardManager {
             String text = scoreboardCfg.getString(lineNumber, "");
             lines.put(line, text);
         }
-
+        System.out.println(currentTime);
         for (Map.Entry<Integer, String> entry : lines.entrySet()) {
             if (!entry.getValue().contains("%top")) {
                 String lineText = replacePlaceholders(player, entry.getValue(), currentTime, pbTime, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
@@ -101,17 +104,19 @@ public class ScoreboardManager {
             if (topList == null || topList.size() < position) {
                 return "§7-.---";
             }
+
             Main.Entry entry = topList.get(position - 1);
-            return "§7" + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", ".");
+            Player offlinePlayer = Bukkit.getPlayer(entry.player.getUniqueId());
+            String prefix = null;
+            if (Main.getInstance().getConfigManager().isLuckpermsSupportEnabled()) {
+                User user = Main.getInstance().luckpermsApi.getPlayerAdapter(Player.class).getUser(offlinePlayer);
+                prefix = String.valueOf(user.getCachedData().getMetaData().getPrefix().charAt(0)) + user.getCachedData().getMetaData().getPrefix().charAt(1);
+            }
+            return ChatColor.translateAlternateColorCodes('&',
+                    (prefix != null ? prefix : "") + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", ".")
+            );
         } catch (Exception e) {
             return "§7-.---";
-        }
-    }
-
-    public void removeScoreboard(Player player) {
-        BPlayerBoard board = Scoreboard.instance().getBoard(player);
-        if (board != null) {
-            board.delete();
         }
     }
 
@@ -134,5 +139,12 @@ public class ScoreboardManager {
                 "§e",
                 "§f"
         ).get(line);
+    }
+
+    public void removeScoreboard(Player player) {
+        BPlayerBoard board = Scoreboard.instance().getBoard(player);
+        if (board != null) {
+            board.delete();
+        }
     }
 }
