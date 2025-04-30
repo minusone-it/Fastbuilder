@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.command;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.ConfigManager;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
+import it.minusone.fastbuilder.items.LobbyItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
@@ -56,6 +57,8 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(4, new IslandSelectorItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
+        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+            player.getInventory().setItem(8, new LobbyItem());
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         Location baseLocationA = location.clone();
         Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
@@ -285,8 +288,12 @@ public class fastbuilder implements CommandExecutor {
                         return true;
                     }
 
-                    Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
-                    leaveMode(player);
+                    if (Main.getInstance().mapWherePlayerIn.get(player) != null) {
+
+                        Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+
+                        leaveMode(player);
+                    }
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
                 break;

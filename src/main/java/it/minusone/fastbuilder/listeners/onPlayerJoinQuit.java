@@ -2,10 +2,8 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,27 +17,30 @@ public class onPlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
+        e.getPlayer().getInventory().clear();
+
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer());
+
+        for (Hologram h : Hologram.all)
+            h.spawnFor(e.getPlayer());
+
         if (Main.getInstance().getConfigManager().getModes() != null)
             e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
+
         onPlayerClickEntity.injectPacketListener(e.getPlayer());
+
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
+
         if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(e.getPlayer(), new ItemStack(Material.SANDSTONE))) {
             Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.SANDSTONE), e.getPlayer());
             Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.RED_SANDSTONE), e.getPlayer());
             Main.getInstance().getConfigManager().setCurrentPlayerBlock(e.getPlayer(), new ItemStack(Material.SANDSTONE));
         }
+
         if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(e.getPlayer()) == null)
             Main.getInstance().getConfigManager().setCurrentPlayerBlock(e.getPlayer(), new ItemStack(Material.SANDSTONE));
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (Main.getInstance().stats.get(p) != null) {
-                for (Hologram h : Hologram.all) {
-                    h.spawnFor(e.getPlayer());
-                }
-            }
-        }
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
 
     }

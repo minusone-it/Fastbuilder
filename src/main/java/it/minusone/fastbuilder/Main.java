@@ -64,6 +64,7 @@ public final class Main extends JavaPlugin {
     public Timer timer;
     public boolean luckpermsSupport;
     public LuckPerms luckpermsApi;
+    private String newVersion;
 
     public static Main getInstance() {
         return INSTANCE;
@@ -100,6 +101,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
+        newVersion = Main.getInstance().getDescription().getVersion();
         saveDefaultConfig();
         PREFIX = getConfig().getString("prefix");
         printlnColor(PREFIX + "Starting...");
@@ -136,6 +138,10 @@ public final class Main extends JavaPlugin {
         });
     }
 
+    public String getModeOfPlayer(Player player) {
+        return this.mapWherePlayerIn.get(player).split("-")[0];
+    }
+
     private boolean checkLicense() {
         try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -148,6 +154,14 @@ public final class Main extends JavaPlugin {
                 return false;
             }
 
+            out.println("version");
+            String latestVersion = in.readLine();
+            if (!newVersion.equalsIgnoreCase(latestVersion)) {
+                newVersion = latestVersion;
+                printlnColor(PREFIX + "§b" + newVersion + " IS NOW AVAILABLE!");
+                printlnColor(PREFIX + "DOWNLOAD IT ON https://builtbybit.com/resources/fastbuilder.62493/");
+            }
+
         } catch (IOException e) {
             printlnColor(PREFIX + "§cLicense server error: " + e.getClass().getSimpleName());
             Bukkit.getPluginManager().disablePlugin(this);
@@ -157,10 +171,14 @@ public final class Main extends JavaPlugin {
     }
 
     private void initializePlugin() {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null) {
-            this.luckpermsApi = provider.getProvider();
-            this.luckpermsSupport = true;
+        try {
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) {
+                this.luckpermsApi = provider.getProvider();
+                this.luckpermsSupport = true;
+            }
+        } catch (NoClassDefFoundError e) {
+            printlnColor(PREFIX + "§cDidn't find LuckPerms.");
         }
 
         this.timer = new Timer();
@@ -234,9 +252,6 @@ public final class Main extends JavaPlugin {
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.setFoodLevel(20);
-                    if (mapWherePlayerIn.containsKey(p)) {
-                        scoreboardManager.updateScoreboard(p);
-                    }
                 }
             }
         }.runTaskTimer(this, 0L, 1L);

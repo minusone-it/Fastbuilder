@@ -1,15 +1,14 @@
 package it.minusone.fastbuilder.command;
 
 import it.minusone.fastbuilder.Main;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.DecimalFormat;
-
 public class stats implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1 || !(sender instanceof Player)) {
@@ -18,20 +17,13 @@ public class stats implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        Player target = Main.getInstance().getServer().getPlayer(args[0]);
-        if (target == null) target = Main.getInstance().getServer().getOfflinePlayer(args[0]).getPlayer();
-        if (target == null) {
-            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player doesn't exist!");
-            return true;
-        }
-        player.sendMessage(Main.getInstance().PREFIX + target.getName() + "'s stats:");
+        Player target = Bukkit.getServer().getOfflinePlayer(args[0]).getPlayer();
+        player.sendMessage(Main.getInstance().PREFIX + args[0] + "'s stats:");
         player.sendMessage(Main.getInstance().PREFIX + "     §eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
-        player.sendMessage(Main.getInstance().PREFIX + "     §7Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(player));
-        player.sendMessage(Main.getInstance().PREFIX + "     §7Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(player));
-        player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Bests:");
-        for (String mode : Main.getInstance().getConfigManager().getModes()) {
-            player.sendMessage(Main.getInstance().PREFIX + "     " + mode + ": " + (new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode)).replace(",", ".")));
-        }
+        player.sendMessage(Main.getInstance().PREFIX + "     §7Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(target));
+        player.sendMessage(Main.getInstance().PREFIX + "     §7Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(target));
+        player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Best: " + Main.getInstance().getConfigManager().getPB(target.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
         return true;
     }
+
 }

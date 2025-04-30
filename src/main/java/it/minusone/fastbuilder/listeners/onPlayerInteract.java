@@ -5,6 +5,7 @@ import it.minusone.fastbuilder.gui.IslandSelectorGUI;
 import it.minusone.fastbuilder.gui.ReplayGUI;
 import it.minusone.fastbuilder.gui.SettingsGUI;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
+import it.minusone.fastbuilder.items.LobbyItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.ReplayManager;
@@ -57,6 +58,8 @@ public class onPlayerInteract implements Listener {
                     event.getPlayer().getInventory().setItem(4, new IslandSelectorItem());
                     event.getPlayer().getInventory().setItem(6, new ReplayItem());
                     event.getPlayer().getInventory().setItem(7, new SettingsItem());
+                    if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                        event.getPlayer().getInventory().setItem(8, new LobbyItem());
                 }
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Stopped")) {
                 ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 10);
@@ -80,6 +83,8 @@ public class onPlayerInteract implements Listener {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
                 if (replay.getCurrentTick() >= 0)
                     replay.lastTick();
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Leave")) {
+                event.getPlayer().kickPlayer("");
             }
         }
     }

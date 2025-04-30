@@ -2,6 +2,7 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
+import it.minusone.fastbuilder.items.LobbyItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import org.bukkit.GameMode;
@@ -25,7 +26,7 @@ public class onPlayerMove implements Listener {
             try {
                 String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                 String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
-                if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + 4 || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - 4) {
+                if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - Main.getInstance().getConfigManager().getMaxDistance()) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
                     player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                     if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
                         player.getInventory().clear();
@@ -39,6 +40,8 @@ public class onPlayerMove implements Listener {
                         player.getInventory().setItem(4, new IslandSelectorItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
+                        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                            player.getInventory().setItem(8, new LobbyItem());
                         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                         if (playerBlocks != null) {
                             for (Location blockLocation : playerBlocks) {
@@ -60,17 +63,9 @@ public class onPlayerMove implements Listener {
                 if (Main.getInstance().getConfigManager().isJumpPlateEnabled()) {
                     List<Location> locs = new ArrayList<>();
                     for (Location loc : Main.plateAboveLocations) {
-                        Location loc1 = loc.clone().add(0, 1, 0);
-                        Location loc2 = loc.clone().add(0, 2, 0);
-                        Location loc3 = loc.clone().add(0, 3, 0);
-                        Location loc4 = loc.clone().add(0, 4, 0);
-                        Location loc5 = loc.clone().add(0, 5, 0);
-
-                        locs.add(loc1);
-                        locs.add(loc2);
-                        locs.add(loc3);
-                        locs.add(loc4);
-                        locs.add(loc5);
+                        for (int i = 1; i <= 5; i++) {
+                            locs.add(loc.clone().add(0, i, 0));
+                        }
                     }
                     Location playerLoc = player.getLocation();
                     playerLoc.setX(Math.floor(playerLoc.getX()) + 0.5);

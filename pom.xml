@@ -6,7 +6,7 @@
 
     <groupId>it.minusone</groupId>
     <artifactId>fastbuilder</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.5</version>
     <packaging>jar</packaging>
 
     <name>fastbuilder-deobf</name>

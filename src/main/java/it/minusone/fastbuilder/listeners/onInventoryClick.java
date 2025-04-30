@@ -5,6 +5,7 @@ import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.gui.*;
 import it.minusone.fastbuilder.replay.ReplayManager;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
+import java.util.List;
 
 public class onInventoryClick implements Listener {
 
@@ -25,10 +27,9 @@ public class onInventoryClick implements Listener {
         if (clickedInventory != null) {
             Player player = (Player) event.getWhoClicked();
             ItemStack clickedItem = event.getCurrentItem();
-            if (Main.getInstance().mapWherePlayerIn.containsKey(player))
+            if (player.getGameMode() != GameMode.CREATIVE)
                 event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
-                event.setCancelled(true);
                 if (clickedItem != null) {
                     if (clickedItem.getType() == Material.DIAMOND_PICKAXE) {
                         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) >= Main.getInstance().getConfigManager().getCoinsForResetStats()) {
@@ -55,7 +56,6 @@ public class onInventoryClick implements Listener {
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof IslandSelectorGUI) {
-                event.setCancelled(true);
 
                 if (clickedItem != null && clickedItem.getType() == Material.SKULL_ITEM) {
                     ItemMeta itemMeta = clickedItem.getItemMeta();
@@ -71,9 +71,14 @@ public class onInventoryClick implements Listener {
                         player.sendMessage(Main.getInstance().PREFIX + "§cThe island " + islandName + " is occupied by " + playerName + "!");
                 }
             } else if (clickedInventory.getHolder() instanceof ReplayGUI) {
-                event.setCancelled(true);
                 ReplayGUI.handleNavigation(player, clickedItem, player.getUniqueId(), Main.getInstance().page.get(player.getUniqueId()));
                 if (clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
+                    Main.getInstance().timer.stopTimer(player, false);
+                    List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                    if (playerBlocks != null) {
+                        for (Location blockLocation : playerBlocks)
+                            blockLocation.getBlock().setType(Material.AIR);
+                    }
                     if (!clickedItem.getItemMeta().getDisplayName().contains("Last")) {
                         String a = clickedItem.getItemMeta().getDisplayName().replace("Replay: ", "");
                         String b = a + ".replay";
@@ -89,7 +94,6 @@ public class onInventoryClick implements Listener {
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof ModeChangerGUI) {
-                event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
                     String mode = clickedItem.getItemMeta().getDisplayName().replaceAll("§[0-9a-fA-Fk-oK-r]", "");
                     String modeA = Main.getInstance().mapWherePlayerIn.get(player);
@@ -101,7 +105,6 @@ public class onInventoryClick implements Listener {
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof BlockSelectorGUI) {
-                event.setCancelled(true);
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
                     int cost = Integer.parseInt(clickedItem.getItemMeta().getLore().get(0).replace(ChatColor.YELLOW + "Cost:", "").replace("coins", "").replace(" ", ""));
                     if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) > cost) {
@@ -145,7 +148,6 @@ public class onInventoryClick implements Listener {
                     }
                 }
             } else if (event.getClickedInventory().getHolder() instanceof ConfirmGUI) {
-                event.setCancelled(true);
                 if (clickedItem != null) {
                     if (clickedItem.getItemMeta().getDisplayName().contains("Confirm")) {
                         Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");

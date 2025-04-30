@@ -268,12 +268,36 @@ public class ConfigManager {
         return config.getBoolean("blocks-on-water");
     }
 
-    public boolean isLuckpermsSupportEnabled() {
+    public boolean isLuckPermsSupportEnabled() {
         return Main.getInstance().luckpermsSupport && config.getBoolean("luckperms-support");
     }
 
     public String getNPCname() {
         return config.getString("npc-name");
+    }
+
+    public int getMaxDistance() {
+        return config.getInt("max-distance");
+    }
+
+    public boolean isBungeeModeEnabled() {
+        return config.getBoolean("ender-eye");
+    }
+
+    public String getLobbyItemName() {
+        return config.getString("leave-item");
+    }
+
+    public String getSettingsItemName() {
+        return config.getString("settings-item");
+    }
+
+    public String getIslandSelectorItemName() {
+        return config.getString("islandselector-item");
+    }
+
+    public String getReplayItemName() {
+        return config.getString("replay-item");
     }
 
 }

@@ -6,7 +6,6 @@ import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -45,7 +44,6 @@ public class ScoreboardManager {
             String text = scoreboardCfg.getString(lineNumber, "");
             lines.put(line, text);
         }
-        System.out.println(currentTime);
         for (Map.Entry<Integer, String> entry : lines.entrySet()) {
             if (!entry.getValue().contains("%top")) {
                 String lineText = replacePlaceholders(player, entry.getValue(), currentTime, pbTime, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
@@ -108,7 +106,7 @@ public class ScoreboardManager {
             Main.Entry entry = topList.get(position - 1);
             Player offlinePlayer = Bukkit.getPlayer(entry.player.getUniqueId());
             String prefix = null;
-            if (Main.getInstance().getConfigManager().isLuckpermsSupportEnabled()) {
+            if (Main.getInstance().getConfigManager().isLuckPermsSupportEnabled()) {
                 User user = Main.getInstance().luckpermsApi.getPlayerAdapter(Player.class).getUser(offlinePlayer);
                 prefix = String.valueOf(user.getCachedData().getMetaData().getPrefix().charAt(0)) + user.getCachedData().getMetaData().getPrefix().charAt(1);
             }

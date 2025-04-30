@@ -2,6 +2,7 @@ package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
+import it.minusone.fastbuilder.items.LobbyItem;
 import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.Replay;
@@ -28,6 +29,7 @@ public class Timer {
     private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
 
     public void startTimer(Player player) {
+
         UUID uuid = player.getUniqueId();
         setAlreadyTeleported(player, false);
 
@@ -39,8 +41,7 @@ public class Timer {
 
         playerTimers.put(uuid, 0);
         BukkitRunnable task = getBukkitRunnable(player, uuid);
-
-        task.runTaskTimer(Main.getInstance(), 0L, 0L);
+        task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
         Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
         replay.addPlayer(player);
@@ -51,12 +52,17 @@ public class Timer {
     }
 
     private BukkitRunnable getBukkitRunnable(Player player, UUID uuid) {
-        DecimalFormat format = new DecimalFormat("0.000");
         return new BukkitRunnable() {
             @Override
             public void run() {
                 if (!playerTimers.containsKey(uuid)) {
-                    cancel();
+                    if (runningTasks.containsKey(uuid)) {
+                        BukkitRunnable task = runningTasks.get(uuid);
+                        if (task != null && task.getTaskId() != -1) {
+                            task.cancel();
+                            return;
+                        }
+                    }
                     runningTasks.remove(uuid);
                     return;
                 }
@@ -105,7 +111,7 @@ public class Timer {
     }
 
     public double getTime(Player player) {
-        return (playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05) - 0.05;
+        return playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05 - 0.05;
     }
 
     public boolean isPlayerInTimer(Player player) {
@@ -181,6 +187,11 @@ public class Timer {
                 player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "");
             player.getInventory().clear();
             Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                if (Main.getInstance().mapWherePlayerIn.containsKey(p)) {
+                    Main.getInstance().scoreboardManager.updateScoreboard(p);
+                }
+            }
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -196,6 +207,8 @@ public class Timer {
                     player.getInventory().setItem(4, new IslandSelectorItem());
                     player.getInventory().setItem(6, new ReplayItem());
                     player.getInventory().setItem(7, new SettingsItem());
+                    if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                        player.getInventory().setItem(8, new LobbyItem());
                 }
             }, 40L);
 
