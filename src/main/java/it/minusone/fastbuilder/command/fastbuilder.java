@@ -89,6 +89,7 @@ public class fastbuilder implements CommandExecutor {
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
         Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+        Main.getInstance().scoreboardManager.updateScoreboard(player);
     }
 
     private static void leaveMode(Player player) {
