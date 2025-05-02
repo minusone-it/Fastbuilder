@@ -2,8 +2,10 @@ package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -24,9 +26,6 @@ public class onPlayerJoinQuit implements Listener {
         for (Hologram h : Hologram.all)
             h.spawnFor(e.getPlayer());
 
-        if (Main.getInstance().getConfigManager().getModes() != null)
-            e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
-
         onPlayerClickEntity.injectPacketListener(e.getPlayer());
 
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
@@ -43,6 +42,8 @@ public class onPlayerJoinQuit implements Listener {
 
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
 
+        if (Main.getInstance().getConfigManager().getModes() != null)
+            e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
     }
 
     @EventHandler
@@ -66,6 +67,8 @@ public class onPlayerJoinQuit implements Listener {
             Main.getInstance().stats.remove(e.getPlayer());
         }
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
+        for (Player p : Bukkit.getOnlinePlayers())
+            Main.getInstance().scoreboardManager.updateScoreboard(p);
     }
 
 }

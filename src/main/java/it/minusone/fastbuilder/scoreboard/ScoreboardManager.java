@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import xyz.haoshoku.nick.api.NickAPI;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -44,8 +45,9 @@ public class ScoreboardManager {
             String text = scoreboardCfg.getString(lineNumber, "");
             lines.put(line, text);
         }
+
         for (Map.Entry<Integer, String> entry : lines.entrySet()) {
-            if (!entry.getValue().contains("%top")) {
+            if (!entry.getValue().contains("%top") && !entry.getValue().contains(".")) {
                 String lineText = replacePlaceholders(player, entry.getValue(), currentTime, pbTime, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                 board.set(lineText + getChar(entry.getKey()), entry.getKey());
             }
@@ -59,7 +61,6 @@ public class ScoreboardManager {
         ConfigurationSection scoreboardCfg = plugin.getConfig().getConfigurationSection("scoreboard.lines");
         if (scoreboardCfg == null) return;
 
-
         Map<Integer, String> lines = new TreeMap<>((a, b) -> b - a);
 
         for (String lineNumber : scoreboardCfg.getKeys(false)) {
@@ -70,12 +71,15 @@ public class ScoreboardManager {
 
         for (Map.Entry<Integer, String> entry : lines.entrySet()) {
             if (!entry.getValue().contains("%time%") && !entry.getValue().contains("%pb%")) {
-                String lineText = replacePlaceholders(player, entry.getValue(), Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player)), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
-                board.set(lineText + getChar(entry.getKey()), entry.getKey());
+                try {
+                    String lineText = replacePlaceholders(player, entry.getValue(), Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player)), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                    board.set(lineText + getChar(entry.getKey()), entry.getKey());
+                } catch (Exception e) {
+
+                }
             }
         }
     }
-
 
     private String replacePlaceholders(Player player, String text, String currentTime, double pbTime, String mode) {
         return ChatColor.translateAlternateColorCodes('&', text)
@@ -110,9 +114,13 @@ public class ScoreboardManager {
                 User user = Main.getInstance().luckpermsApi.getPlayerAdapter(Player.class).getUser(offlinePlayer);
                 prefix = String.valueOf(user.getCachedData().getMetaData().getPrefix().charAt(0)) + user.getCachedData().getMetaData().getPrefix().charAt(1);
             }
-            return ChatColor.translateAlternateColorCodes('&',
-                    (prefix != null ? prefix : "") + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", ".")
-            );
+            if (!Main.getInstance().getServer().getPluginManager().isPluginEnabled("NickAPI")) {
+                return ChatColor.translateAlternateColorCodes('&',
+                    (prefix != null ? prefix : "") + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", "."));
+            } else {
+                return ChatColor.translateAlternateColorCodes('&',
+                        (prefix != null ? prefix : "") + NickAPI.getName(entry.player) + " §8: §e" + timeFormat.format(entry.time).replace(",", "."));
+            }
         } catch (Exception e) {
             return "§7-.---";
         }

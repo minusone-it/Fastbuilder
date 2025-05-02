@@ -66,7 +66,7 @@ public class onInventoryClick implements Listener {
                             : "N/A";
                     String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                     if (playerName.isEmpty())
-                        fastbuilder.teleportPlayerToIsland(player, mode, islandName);
+                        fastbuilder.teleportPlayerToIslandB(player, mode, islandName);
                     else
                         player.sendMessage(Main.getInstance().PREFIX + "§cThe island " + islandName + " is occupied by " + playerName + "!");
                 }

@@ -104,12 +104,18 @@ public class ConfigManager {
     }
 
     public double getPB(UUID playerId, String mode) {
-        return config.getDouble("best-times." + playerId + "." + mode, 0.0);
+        double path = config.getDouble("best-times." + playerId + "." + mode, 0.0);
+        if (config.get("best-times." + playerId + "." + mode, 0.0) != null)
+            return path;
+        else
+            return 0.000;
     }
 
     public int getCoinsOfPlayer(Player player) {
-        String path = player.getUniqueId().toString();
-        return config.getInt(path + ".coins");
+        if (config.get(player.getUniqueId().toString() + ".coins") != null)
+            return config.getInt(player.getUniqueId().toString() + ".coins");
+        else
+            return 0;
     }
 
     public void addCoinsToPlayer(Player player, int coinsToAdd) {
@@ -240,12 +246,18 @@ public class ConfigManager {
 
     public long getAttempts(Player player) {
         String path = player.getUniqueId().toString() + ".attempts";
-        return config.getLong(path);
+        if (config.get(path) != null)
+            return config.getLong(path);
+        else
+            return 0;
     }
 
     public long getSuccessfulAttempts(Player player) {
         String path = player.getUniqueId().toString() + ".successfulattempts";
-        return config.getLong(path);
+        if (config.get(path) != null)
+            return config.getLong(path);
+        else
+            return 0;
     }
 
     public String getScoreTitle() {

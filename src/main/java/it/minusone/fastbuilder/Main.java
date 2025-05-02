@@ -153,17 +153,18 @@ public final class Main extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }
-
             out.println("version");
             String latestVersion = in.readLine();
             if (!newVersion.equalsIgnoreCase(latestVersion)) {
                 newVersion = latestVersion;
-                printlnColor(PREFIX + "§b" + newVersion + " IS NOW AVAILABLE!");
-                printlnColor(PREFIX + "DOWNLOAD IT ON https://builtbybit.com/resources/fastbuilder.62493/");
+                Bukkit.getScheduler().runTaskLater(this, () -> {
+                    printlnColor(PREFIX + "§b" + newVersion + " IS NOW AVAILABLE!");
+                    printlnColor(PREFIX + "DOWNLOAD IT ON https://builtbybit.com/resources/fastbuilder.62493/");
+                }, 200L);
             }
 
         } catch (IOException e) {
-            printlnColor(PREFIX + "§cLicense server error: " + e.getClass().getSimpleName());
+            printlnColor(PREFIX + "§cError occurred: " + e.getClass().getSimpleName());
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
@@ -171,15 +172,16 @@ public final class Main extends JavaPlugin {
     }
 
     private void initializePlugin() {
-        try {
-            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-            if (provider != null) {
-                this.luckpermsApi = provider.getProvider();
-                this.luckpermsSupport = true;
+            try {
+                RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+                if (provider != null) {
+                    this.luckpermsApi = provider.getProvider();
+                    this.luckpermsSupport = true;
+                }
+            } catch (NoClassDefFoundError e) {
+                if (configManager.isLuckPermsSupportEnabled())
+                    printlnColor(PREFIX + "§cDidn't find LuckPerms.");
             }
-        } catch (NoClassDefFoundError e) {
-            printlnColor(PREFIX + "§cDidn't find LuckPerms.");
-        }
 
         this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager(this);

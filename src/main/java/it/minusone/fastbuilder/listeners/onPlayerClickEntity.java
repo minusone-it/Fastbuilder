@@ -48,7 +48,6 @@ public class onPlayerClickEntity implements Listener {
                 }
                 super.channelRead(ctx, msg);
             }
-
             @Override
             public void channelInactive(ChannelHandlerContext ctx) throws Exception {
                 super.channelInactive(ctx);

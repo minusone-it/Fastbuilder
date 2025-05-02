@@ -25,7 +25,6 @@ it\minusone\fastbuilder\items\LobbyItem.class
 it\minusone\fastbuilder\listeners\onPlayerReceivePacket.class
 it\minusone\fastbuilder\utils\bukkit\listeners\PlayerListener.class
 it\minusone\fastbuilder\replay\ReplayEvents.class
-it\minusone\fastbuilder\scoreboard\helpers\bukkit\PlayerBoard.class
 it\minusone\fastbuilder\replay\recordable\entity\ItemHeldRecordable.class
 it\minusone\fastbuilder\replay\ReplayPlayback.class
 it\minusone\fastbuilder\npc\SkinFetcher.class

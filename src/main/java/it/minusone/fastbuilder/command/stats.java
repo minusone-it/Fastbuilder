@@ -18,11 +18,11 @@ public class stats implements CommandExecutor {
 
         Player player = (Player) sender;
         Player target = Bukkit.getServer().getOfflinePlayer(args[0]).getPlayer();
-        player.sendMessage(Main.getInstance().PREFIX + args[0] + "'s stats:");
-        player.sendMessage(Main.getInstance().PREFIX + "     §eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
-        player.sendMessage(Main.getInstance().PREFIX + "     §7Total Attempts: " + Main.getInstance().getConfigManager().getAttempts(target));
-        player.sendMessage(Main.getInstance().PREFIX + "     §7Successful Attempts: " + Main.getInstance().getConfigManager().getSuccessfulAttempts(target));
-        player.sendMessage(Main.getInstance().PREFIX + "     §aPersonal Best: " + Main.getInstance().getConfigManager().getPB(target.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
+        player.sendMessage(args[0] + "'s stats:");
+        player.sendMessage("§eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
+        player.sendMessage("§7Total Attempts: §e" + Main.getInstance().getConfigManager().getAttempts(target));
+        player.sendMessage("§7Successful Attempts: §e" + Main.getInstance().getConfigManager().getSuccessfulAttempts(target));
+        player.sendMessage("§7Personal Best: §e" + Main.getInstance().getConfigManager().getPB(target.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
         return true;
     }
 

@@ -10,10 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
+public class BPlayerBoard {
 
     private final Player player;
-    private final String name;
     private org.bukkit.scoreboard.Scoreboard scoreboard;
     private Objective objective;
     private Objective buffer;
@@ -31,8 +30,6 @@ public class BPlayerBoard implements PlayerBoard<String, Integer, String> {
                 sb = Bukkit.getScoreboardManager().getNewScoreboard();
             this.scoreboard = sb;
         }
-
-        this.name = name;
 
         String subName = player.getName().length() <= 14
                 ? player.getName()

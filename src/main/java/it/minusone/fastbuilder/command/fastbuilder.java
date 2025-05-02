@@ -29,6 +29,69 @@ public class fastbuilder implements CommandExecutor {
         this.configManager = new ConfigManager(Main.getInstance());
     }
 
+    public static void teleportPlayerToIslandB(Player player, String mode, String island) {
+        Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
+        if (islandPlayer != null) {
+            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Island is already occupied by " + islandPlayer.getName() + "!");
+            return;
+        }
+        leaveModeB(player);
+        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+        if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
+            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
+        if (playerBlocks != null) {
+            for (Location blockLocation : playerBlocks) {
+                blockLocation.getBlock().setType(Material.AIR);
+            }
+            Main.getInstance().getConfigManager().addAttempt(player);
+            Main.getInstance().placedBlocks.remove(player.getUniqueId());
+        }
+        Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
+        player.teleport(location);
+        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "!");
+        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+        block.setAmount(64);
+        player.getInventory().setItem(0, block);
+        player.getInventory().setItem(1, block);
+        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+        player.getInventory().setItem(4, new IslandSelectorItem());
+        player.getInventory().setItem(6, new ReplayItem());
+        player.getInventory().setItem(7, new SettingsItem());
+        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+            player.getInventory().setItem(8, new LobbyItem());
+        Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
+        Location baseLocationA = location.clone();
+        Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);
+        baseLocationA.setWorld(player.getWorld());
+        baseLocationA.add(offsetA.getX(), offsetA.getY(), offsetA.getZ());
+        NPC modeSelector = new NPC(player, Main.getInstance().getConfigManager().getNPCname(), baseLocationA);
+        if (NPCManager.getNPC(player) != null)
+            NPCManager.removeNPC(NPCManager.getNPC(player), player);
+        modeSelector.spawn(player);
+        NPCManager.setNPC(modeSelector, player);
+        Location baseLocationB = location.clone();
+        Location offsetB = Main.getInstance().getConfigManager().getHoloOffset(mode, player.getLocation().getWorld());
+        baseLocationB.setWorld(player.getWorld());
+        baseLocationB.add(offsetB.getX(), offsetB.getY(), offsetB.getZ());
+        HologramStack stats = new HologramStack(
+                Main.getInstance().getConfigManager().getHoloLines(player).length,
+                0.3,
+                true,
+                false,
+                Main.getInstance().getConfigManager().getHoloLines(player)
+        );
+        if (Main.getInstance().stats.containsKey(player)) {
+            Main.getInstance().stats.get(player).despawn();
+            Main.getInstance().stats.get(player).delete();
+            Main.getInstance().stats.remove(player);
+        }
+        stats.setLocation(baseLocationB);
+        stats.spawn();
+        Main.getInstance().stats.put(player, stats);
+        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+        Main.getInstance().scoreboardManager.updateScoreboard(player);
+    }
+
     public static void teleportPlayerToIsland(Player player, String mode, String island) {
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
         if (islandPlayer != null) {
@@ -99,6 +162,42 @@ public class fastbuilder implements CommandExecutor {
             if (currentMode != null && currentIsland != null) {
                 Main.getInstance().timer.stopTimer(player, false);
                 Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                Main.getInstance().mapWherePlayerIn.remove(player);
+                if (NPCManager.getNPC(player) != null) {
+                    NPCManager.removeNPC(NPCManager.getNPC(player), player);
+                }
+
+                List<Location> playerBlocks = new ArrayList<>();
+                if (Main.getInstance().placedBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedBlocks.get(player.getUniqueId()));
+                if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
+                for (Location blockLocation : playerBlocks) {
+                    blockLocation.getBlock().setType(Material.AIR);
+                }
+                Main.getInstance().getConfigManager().addAttempt(player);
+                Main.getInstance().placedBlocks.remove(player.getUniqueId());
+
+                player.getInventory().clear();
+                Location spawn = Main.getInstance().getConfigManager().getSpawnLocation(currentMode, currentIsland);
+                if (spawn != null) {
+                    player.teleport(spawn);
+                }
+                Main.getInstance().stats.get(player).despawn();
+                Main.getInstance().stats.get(player).delete();
+                Main.getInstance().stats.remove(player);
+                for (Player p : Bukkit.getOnlinePlayers())
+                    Main.getInstance().scoreboardManager.updateScoreboard(p);
+            }
+        }
+    }
+
+    private static void leaveModeB(Player player) {
+        if (Main.getInstance().mapWherePlayerIn.get(player) != null) {
+            String currentMode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+            String currentIsland = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
+            if (currentMode != null && currentIsland != null) {
+                Main.getInstance().timer.stopTimer(player, false);
                 Main.getInstance().mapWherePlayerIn.remove(player);
                 if (NPCManager.getNPC(player) != null) {
                     NPCManager.removeNPC(NPCManager.getNPC(player), player);
