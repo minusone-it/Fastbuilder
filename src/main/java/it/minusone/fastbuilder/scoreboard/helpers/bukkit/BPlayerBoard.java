@@ -135,17 +135,6 @@ public class BPlayerBoard {
         }
     }
 
-    private void remove(Integer score) {
-        if (this.deleted)
-            throw new IllegalStateException("The PlayerBoard is deleted!");
-
-        String name = this.lines.get(score);
-        if (name == null) return;
-
-        this.scoreboard.resetScores(name);
-        this.lines.remove(score);
-    }
-
     public void delete() {
         if (this.deleted) return;
 
@@ -164,5 +153,5 @@ public class BPlayerBoard {
         this.deleted = true;
     }
 
-    private enum ObjectiveMode {CREATE, REMOVE, UPDATE}
+    private enum ObjectiveMode {CREATE, REMOVE}
 }

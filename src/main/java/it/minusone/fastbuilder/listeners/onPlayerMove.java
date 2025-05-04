@@ -78,12 +78,16 @@ public class onPlayerMove implements Listener {
                         loc.setX(Math.floor(loc.getX()) + 0.5);
                         loc.setY(Math.floor(loc.getY()));
                         loc.setZ(Math.floor(loc.getZ()) + 0.5);
-                        if (playerLoc.equals(loc) && Main.getInstance().mapWherePlayerIn.containsKey(player) && !Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                            Main.getInstance().timer.scoreTime(player);
-                            Main.getInstance().getConfigManager().addAttempt(player);
-                            Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
-                            for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
-                                Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
+                        if (playerLoc.equals(loc) && Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+                            if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                                Main.getInstance().timer.scoreTime(player, false);
+                                Main.getInstance().getConfigManager().addAttempt(player);
+                                Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
+                                for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
+                                    Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
+                            } else {
+                                Main.getInstance().timer.scoreTime(player, true);
+                            }
                         }
                     }
                 }

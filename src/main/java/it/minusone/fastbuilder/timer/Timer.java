@@ -126,12 +126,12 @@ public class Timer {
         alreadyTeleported.put(player.getUniqueId(), state);
     }
 
-    public boolean scoreTime(Player player) {
+    public boolean scoreTime(Player player, boolean practiceBlocks) {
         String timeFormatted = Main.getInstance().timer.getTimeFormatted(player);
         double time = Main.getInstance().timer.getTime(player);
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
         if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
-            Main.getInstance().timer.stopTimer(player, true);
+            Main.getInstance().timer.stopTimer(player, !practiceBlocks);
             double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
             boolean equalTime = PB == time;
             boolean newPB = time < PB;

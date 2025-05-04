@@ -52,9 +52,9 @@ public class onPlayerReceivePacket extends PacketAdapter {
 
         Material target = loc.getBlock().getType();
         Material targetA = new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getType();
-        if (target == Material.WATER || target == Material.STATIONARY_WATER || target == Material.LAVA || target == Material.STATIONARY_LAVA || targetA == Material.LONG_GRASS || targetA == Material.DOUBLE_PLANT) {
+        if (target == Material.WATER || target == Material.STATIONARY_WATER || target == Material.LAVA || target == Material.STATIONARY_LAVA || targetA == Material.LONG_GRASS || targetA == Material.DOUBLE_PLANT || targetA == Material.VINE) {
             event.setCancelled(true);
-            event.getPlayer().sendBlockChange(new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getLocation(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getType(), (byte) 0);
+            event.getPlayer().sendBlockChange(new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getLocation(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getType(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getData());
             return;
         }
 

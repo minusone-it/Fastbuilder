@@ -1,7 +1,6 @@
 package it.minusone.fastbuilder.utils.eventbus;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +26,6 @@ import java.util.Map;
  */
 public class EventManager {
     public static final Map<Class<?>, List<Object>> Instances = new HashMap<>();
-    public static final Map<Class<?>, List<Integer>> Priorities = new HashMap<>();
     public static final Map<Class<?>, List<Method>> Methods = new HashMap<>();
-
-    public static void createNewEvents(Class<?>... classObjs) {
-        for (Class<?> c : classObjs) {
-            if (!Priorities.containsKey(c)) {
-                Instances.put(c, new ArrayList<>());
-                Priorities.put(c, new ArrayList<>());
-                Methods.put(c, new ArrayList<>());
-            }
-        }
-    }
 
 }

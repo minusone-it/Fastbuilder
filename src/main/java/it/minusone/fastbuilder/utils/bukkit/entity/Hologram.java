@@ -52,25 +52,12 @@ public class Hologram {
         return event;
     }
 
-    public Hologram setClickEvent(Consumer<ClickEvent> e) {
-        armorStand.n(false);
-        this.event = e;
-        return this;
-    }
-
     public void spawnFor(Player player) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutSpawnEntityLiving(this.armorStand));
     }
 
 
     public Hologram addListener(Player... players) {
-        for (Player p : players) {
-            tracker.add(((CraftPlayer) p).getHandle().playerConnection);
-        }
-        return this;
-    }
-
-    public Hologram addListener(Collection<Player> players) {
         for (Player p : players) {
             tracker.add(((CraftPlayer) p).getHandle().playerConnection);
         }

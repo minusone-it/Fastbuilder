@@ -110,16 +110,6 @@ public class Replay {
     }
 
     /**
-     * Removes an entity from replay
-     */
-    public void removeEntity(int id) {
-        if (isRecording()) {
-            record(new EntityRemoveRecordable(id));
-        }
-        recordingEntities.remove(id);
-    }
-
-    /**
      * Adds a player to the replay
      * This also records all the current events of the player
      */
@@ -136,14 +126,6 @@ public class Replay {
         if (player.getItemInHand() != null) {
             record(new ItemHeldRecordable(player.getEntityId(), player.getItemInHand().getType(), player.getItemInHand().getData().getData()));
         }
-    }
-
-    /**
-     * @param id The id of the entity
-     * @return If the entity is in the replay
-     */
-    public boolean hasEntity(int id) {
-        return entityInfo.containsKey(id);
     }
 
     /**

@@ -1,10 +1,7 @@
 package it.minusone.fastbuilder.config;
 
 import it.minusone.fastbuilder.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -276,10 +273,6 @@ public class ConfigManager {
         return c;
     }
 
-    public boolean canPlaceBlocksOnWaterOrLava() {
-        return config.getBoolean("blocks-on-water");
-    }
-
     public boolean isLuckPermsSupportEnabled() {
         return Main.getInstance().luckpermsSupport && config.getBoolean("luckperms-support");
     }
@@ -311,5 +304,113 @@ public class ConfigManager {
     public String getReplayItemName() {
         return config.getString("replay-item");
     }
+
+    public int getCoinsOfPlayer(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".coins";
+        return config.contains(path) ? config.getInt(path) : 0;
+    }
+
+    public void addCoinsToPlayer(OfflinePlayer player, int coinsToAdd) {
+        String path = player.getUniqueId().toString();
+        int totalCoins = getCoinsOfPlayer(player) + coinsToAdd;
+        config.set(path + ".coins", totalCoins);
+        plugin.saveConfig();
+    }
+
+    public void setCoinsOfPlayer(OfflinePlayer player, int coins) {
+        String path = player.getUniqueId().toString();
+        if (config.get(path) == null)
+            config.createSection(path);
+        config.set(path + ".coins", coins);
+        plugin.saveConfig();
+    }
+
+    public void addBlockToPlayer(ItemStack block, OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".blocks";
+        List<String> ownedBlocks = config.getStringList(path);
+        String blockData = block.getType().name() + ":" + block.getDurability();
+
+        if (!ownedBlocks.contains(blockData)) {
+            ownedBlocks.add(blockData);
+            config.set(path, ownedBlocks);
+            plugin.saveConfig();
+        }
+    }
+
+    public boolean hasPlayerGotBlock(OfflinePlayer player, ItemStack block) {
+        String path = player.getUniqueId().toString() + ".blocks";
+        List<String> ownedBlocks = config.getStringList(path);
+        String blockData = block.getType().name() + ":" + block.getDurability();
+        return ownedBlocks.contains(blockData);
+    }
+
+    public ItemStack getCurrentPlayerBlock(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".current-block";
+        String blockData = config.getString(path, "WOOL:0");
+
+        String[] parts = blockData.split(":");
+        Material material = Material.matchMaterial(parts[0]);
+        short durability = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
+
+        if (material == null) {
+            material = Material.WOOL;
+        }
+
+        return new ItemStack(material, 1, durability);
+    }
+
+    public void setCurrentPlayerBlock(OfflinePlayer player, ItemStack block) {
+        String path = player.getUniqueId().toString() + ".current-block";
+        String blockData = block.getType().name() + ":" + block.getDurability();
+        config.set(path, blockData);
+        plugin.saveConfig();
+    }
+
+    public void addAttempt(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".attempts";
+        if (!config.contains(player.getUniqueId().toString())) return;
+
+        config.set(path, config.getInt(path) + 1);
+        plugin.saveConfig();
+    }
+
+    public void addSuccessfulAttempt(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".successfulattempts";
+        if (!config.contains(player.getUniqueId().toString())) return;
+
+        config.set(path, config.getInt(path) + 1);
+        plugin.saveConfig();
+    }
+
+    public long getAttempts(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".attempts";
+        return config.contains(path) ? config.getLong(path) : 0;
+    }
+
+    public long getSuccessfulAttempts(OfflinePlayer player) {
+        String path = player.getUniqueId().toString() + ".successfulattempts";
+        return config.contains(path) ? config.getLong(path) : 0;
+    }
+
+    public String[] getHoloLines(OfflinePlayer player) {
+        List<String> lines = config.getStringList("holo");
+        String[] result = new String[lines.size()];
+        String playerName = player.getName() != null ? player.getName() : "Unknown";
+        String mode = Main.getInstance().mapWherePlayerIn.get(player.getUniqueId()).split("-")[0];
+        double pb = getPB(player.getUniqueId(), mode);
+        String pbFormatted = new DecimalFormat("0.000").format(pb).replace(",", ".");
+        if (pbFormatted.equals("0.000")) pbFormatted = "-.---";
+
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            result[i] = lines.get(i)
+                    .replace("%successful_attempts%", String.valueOf(getSuccessfulAttempts(player)))
+                    .replace("%total_attempts%", String.valueOf(getAttempts(player)))
+                    .replace("%pb%", pbFormatted)
+                    .replace("%player%", playerName)
+                    .replace("&", "§");
+        }
+        return result;
+    }
+
 
 }

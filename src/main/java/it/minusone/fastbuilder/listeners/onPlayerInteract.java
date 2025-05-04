@@ -27,7 +27,7 @@ public class onPlayerInteract implements Listener {
             if (event.getClickedBlock().getType() == Material.GOLD_PLATE) {
                 Player player = event.getPlayer();
                 if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
-                    if (Main.getInstance().timer.scoreTime(player)) {
+                    if (Main.getInstance().timer.scoreTime(player, false)) {
                         try {
                             for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
                                 Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
@@ -36,7 +36,7 @@ public class onPlayerInteract implements Listener {
                         }
                     }
                 } else
-                    Main.getInstance().timer.scoreTime(player);
+                    Main.getInstance().timer.scoreTime(player, true);
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
