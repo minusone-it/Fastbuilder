@@ -223,6 +223,7 @@ public final class Main extends JavaPlugin {
         blocks.put(Material.EMERALD_BLOCK, 1000);
         blocks.put(Material.GOLD_BLOCK, 1000);
         blocks.put(Material.GOLD_ORE, 1000);
+        blocks.put(Material.BARRIER, 5000);
     }
 
     private void loadListeners() {
