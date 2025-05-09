@@ -2,7 +2,7 @@
 prefix: "§3§lFastbuilder §7» "
 
 # You can make it 0 to disable it.
-reset-stats-cost: 50
+reset-stats-cost: 100
 
 # Jump Plate like the Bridger Land one.
 jump-plate: false
@@ -30,6 +30,11 @@ settings-item: "§2Settings §7(Right-Click to use)"
 
 # Ender Eye Item to go to lobby (only supports bungee)
 ender-eye: false
+
+# Time in action bar (leave "" to show nothing in action bar)
+# Placeholders:
+# %time% - Current time in the course;
+action-bar: ""
 
 # Placeholders:
 # %time% - Time of the course;

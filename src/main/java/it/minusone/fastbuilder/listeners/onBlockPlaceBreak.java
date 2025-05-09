@@ -26,8 +26,8 @@ public class onBlockPlaceBreak implements Listener {
         Location spawnLocation = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         Location blockLocation = event.getBlock().getLocation();
 
-        int minX = spawnLocation.getBlockX() - 4;
-        int maxX = spawnLocation.getBlockX() + 4;
+        int minX = spawnLocation.getBlockX() - Main.getInstance().getConfigManager().getMaxDistance();
+        int maxX = spawnLocation.getBlockX() + Main.getInstance().getConfigManager().getMaxDistance();
 
         if (blockLocation.getBlockX() <= minX || blockLocation.getBlockX() >= maxX) {
             event.setCancelled(true);

@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.command;
 
 import it.minusone.fastbuilder.Main;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -21,12 +22,16 @@ public class stats implements CommandExecutor {
 
         Player player = (Player) sender;
         OfflinePlayer target = Bukkit.getServer().getOfflinePlayer(args[0]);
-        System.out.println(target.getUniqueId().toString());
-        player.sendMessage(args[0] + "'s stats:");
-        player.sendMessage("§eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
+        String prefix = "§7";
+        if (Main.getInstance().getConfigManager().isLuckPermsSupportEnabled()) {
+            User user = Main.getInstance().luckpermsApi.getUserManager().getUser(target.getUniqueId());
+            prefix = String.valueOf(user.getCachedData().getMetaData().getPrefix().charAt(0)) + user.getCachedData().getMetaData().getPrefix().charAt(1);
+        }
+        player.sendMessage(prefix + args[0] + "§7's stats:");
+        player.sendMessage("§7Personal Best: §e" + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(target.getUniqueId(), Main.getInstance().getModeOfPlayer(player))).replace(",", ".") );
         player.sendMessage("§7Total Attempts: §e" + Main.getInstance().getConfigManager().getAttempts(target));
         player.sendMessage("§7Successful Attempts: §e" + Main.getInstance().getConfigManager().getSuccessfulAttempts(target));
-        player.sendMessage("§7Personal Best: §e" + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(target.getUniqueId(), Main.getInstance().getModeOfPlayer(player))).replace(",", "."));
+        player.sendMessage("§eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
         return true;
     }
 

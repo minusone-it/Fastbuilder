@@ -70,7 +70,7 @@ public class ScoreboardManager {
         }
 
         for (Map.Entry<Integer, String> entry : lines.entrySet()) {
-            if (!entry.getValue().contains("%time%") && !entry.getValue().contains("%pb%")) {
+            if (!entry.getValue().contains("%time%") && !entry.getValue().contains("%pb%") && !entry.getValue().contains("%blocks%")) {
                 try {
                     String lineText = replacePlaceholders(player, entry.getValue(), Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player)), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                     board.set(lineText + getChar(entry.getKey()), entry.getKey());
@@ -88,7 +88,8 @@ public class ScoreboardManager {
                 .replace("%top_1%", getTopPlayer(1, mode))
                 .replace("%top_2%", getTopPlayer(2, mode))
                 .replace("%top_3%", getTopPlayer(3, mode))
-                .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player)));
+                .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player))
+                .replace("%blocks%", Main.getInstance().placedBlocks.get(player.getUniqueId()) != null ? Main.getInstance().placedBlocks.get(player.getUniqueId()).size() + "" : 0 + ""));
     }
 
     private String replacePlaceholders(Player player, String text, double pbTime, String mode) {

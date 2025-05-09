@@ -7,7 +7,11 @@ import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.Replay;
 import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
+import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -16,6 +20,8 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -71,6 +77,10 @@ public class Timer {
 
                 double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
                 Main.getInstance().scoreboardManager.updateScoreboard(player, getTimeFormatted(player).replace(",", "."), bestTime);
+                if (Main.getInstance().getConfigManager().isActionBarEnabled()) {
+                    CraftPlayer craftPlayer = (CraftPlayer) player;
+                    craftPlayer.getHandle().playerConnection.sendPacket(new PacketPlayOutChat(new ChatComponentText(Main.getInstance().getConfigManager().getActionBarMessage(player)), (byte) 2));
+                }
             }
         };
     }

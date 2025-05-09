@@ -41,6 +41,7 @@ public class onPlayerJoinQuit implements Listener {
             Main.getInstance().getConfigManager().setCurrentPlayerBlock(e.getPlayer(), new ItemStack(Material.SANDSTONE));
 
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
+        Main.getInstance().placedBlocks.put(e.getPlayer().getUniqueId(), new ArrayList<>());
 
         if (Main.getInstance().getConfigManager().getModes() != null)
             e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
@@ -57,8 +58,8 @@ public class onPlayerJoinQuit implements Listener {
             blockLocation.getBlock().setType(Material.AIR);
         Main.getInstance().placedBlocks.remove(e.getPlayer().getUniqueId());
         Main.getInstance().placedPracticeBlocks.remove(e.getPlayer().getUniqueId());
-        Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());
         Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().mapWherePlayerIn.get(e.getPlayer()).split("-")[0]);
+        Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());
         Main.getInstance().mapWherePlayerIn.remove(e.getPlayer());
         Main.getInstance().timer.stopTimer(e.getPlayer(), false);
         if (Main.getInstance().stats.get(e.getPlayer()) != null) {

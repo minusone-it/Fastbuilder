@@ -99,16 +99,14 @@ public class fastbuilder implements CommandExecutor {
             return;
         }
         leaveMode(player);
-        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+        List<Location> playerBlocks = new ArrayList<>();
         if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
             playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
-        if (playerBlocks != null) {
-            for (Location blockLocation : playerBlocks) {
-                blockLocation.getBlock().setType(Material.AIR);
-            }
-            Main.getInstance().getConfigManager().addAttempt(player);
-            Main.getInstance().placedBlocks.remove(player.getUniqueId());
+        for (Location blockLocation : playerBlocks) {
+            blockLocation.getBlock().setType(Material.AIR);
         }
+        Main.getInstance().getConfigManager().addAttempt(player);
+        Main.getInstance().placedBlocks.remove(player.getUniqueId());
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "!");
@@ -293,12 +291,12 @@ public class fastbuilder implements CommandExecutor {
                 break;
 
             case "addmode":
-                if (args.length < 2) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addmode <mode>");
+                if (args.length < 3) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addmode <mode> <isInclined>");
                     return true;
                 }
                 String modeToAdd = args[1];
-                configManager.addMode(modeToAdd);
+                configManager.addMode(modeToAdd, Boolean.parseBoolean(args[2]));
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode added: " + modeToAdd);
                 break;
 

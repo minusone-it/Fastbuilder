@@ -160,7 +160,7 @@ public final class Main extends JavaPlugin {
                 Bukkit.getScheduler().runTaskLater(this, () -> {
                     printlnColor(PREFIX + "§b" + newVersion + " IS NOW AVAILABLE!");
                     printlnColor(PREFIX + "DOWNLOAD IT ON https://builtbybit.com/resources/fastbuilder.62493/");
-                }, 200L);
+                }, 400L);
             }
 
         } catch (IOException e) {
@@ -223,6 +223,7 @@ public final class Main extends JavaPlugin {
         blocks.put(Material.EMERALD_BLOCK, 1000);
         blocks.put(Material.GOLD_BLOCK, 1000);
         blocks.put(Material.GOLD_ORE, 1000);
+        blocks.put(Material.BARRIER, 5000);
     }
 
     private void loadListeners() {

@@ -37,13 +37,17 @@ public class ConfigManager {
         return spawns;
     }
 
-    public void addMode(String mode) {
+    public void addMode(String mode, boolean isInclined) {
         List<String> modes = getModes();
+        List<String> inclinedModes = config.getStringList("inclined-modes");
         if (!modes.contains(mode)) {
             modes.add(mode);
+            if (isInclined)
+                inclinedModes.add(mode);
             setModes(modes);
             createModeWithDefaultNPCSpawn(mode);
             createModeWithDefaultHoloSpawn(mode);
+            config.set("inclined-modes", inclinedModes);
         }
         plugin.saveConfig();
     }
@@ -148,6 +152,21 @@ public class ConfigManager {
             config.set(path, ownedBlocks);
             plugin.saveConfig();
         }
+    }
+
+    public boolean isActionBarEnabled() {
+        return !config.getString("action-bar").isEmpty();
+    }
+
+    public String getActionBarMessage(Player player) {
+        return config.getString("action-bar").replace("%timer%", Main.getInstance().timer.getTimeFormatted(player));
+    }
+
+    public boolean isModeInclined(String mode) {
+        List<String> inclinedModes = config.getStringList("inclined-modes");
+        if (inclinedModes != null)
+            return inclinedModes.contains(mode);
+        return false;
     }
 
     public boolean hasPlayerGotBlock(Player player, ItemStack block) {
