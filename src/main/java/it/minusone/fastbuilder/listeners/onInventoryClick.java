@@ -150,7 +150,7 @@ public class onInventoryClick implements Listener {
             } else if (event.getClickedInventory().getHolder() instanceof ConfirmGUI) {
                 if (clickedItem != null) {
                     if (clickedItem.getItemMeta().getDisplayName().contains("Confirm")) {
-                        Main.getInstance().getConfig().set("best-times." + player.getUniqueId(), "");
+                        Main.getInstance().getConfigManager().deleteStatsOfPlayer(player);
                         Main.getInstance().saveConfig();
                         Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - Main.getInstance().getConfigManager().getCoinsForResetStats());
                         Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", 0.000);

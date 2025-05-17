@@ -9,10 +9,7 @@ import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
 import it.minusone.fastbuilder.npc.NPCManager;
 import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -88,7 +85,7 @@ public class fastbuilder implements CommandExecutor {
         stats.setLocation(baseLocationB);
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
-        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode));
         Main.getInstance().scoreboardManager.updateScoreboard(player);
     }
 
@@ -149,7 +146,7 @@ public class fastbuilder implements CommandExecutor {
         stats.setLocation(baseLocationB);
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
-        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + mode, 0.000));
+        Main.getInstance().scoreboardManager.updateScoreboard(player, "0.000", Main.getInstance().getConfigManager().getPB(player.getUniqueId(), mode));
         Main.getInstance().scoreboardManager.updateScoreboard(player);
     }
 
@@ -238,12 +235,13 @@ public class fastbuilder implements CommandExecutor {
             player.sendMessage(Main.getInstance().PREFIX + "§fBuy it on https://builtbybit.com/resources/fastbuilder.62493/.");
             if (player.hasPermission("fastbuilder.admin")) {
                 player.sendMessage(Main.getInstance().PREFIX + "List of commands:");
-                player.sendMessage("§7/fb join <mode> <island_number> - To join a mode");
-                player.sendMessage("§7/fb addmode <mode> - To add a mode");
-                player.sendMessage("§7/fb removemode <mode> - To remove a mode");
-                player.sendMessage("§7/fb set <mode> <island_number> - To set spawn of an island of a mode");
+                player.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
+                player.sendMessage("§7/fb addmode <mode> - To add a mode.");
+                player.sendMessage("§7/fb removemode <mode> - To remove a mode.");
+                player.sendMessage("§7/fb set <mode> <island_number> - To set spawn of an island of a mode.");
                 player.sendMessage("§7/fb setcoins <player> <coins> - To set coins of a player.");
                 player.sendMessage("§7/fb addcoins <player> <coins> - To add coins to a player.");
+                player.sendMessage("§7/fb wipestats <player> - To wipe the stats of a player.");
                 player.sendMessage("§7/fb reloadconfig - To reload plugin config.");
             }
             return true;
@@ -255,6 +253,7 @@ public class fastbuilder implements CommandExecutor {
             case "addmode":
             case "removemode":
             case "set":
+            case "wipestats":
             case "reloadconfig":
                 if (!player.hasPermission("fastbuilder.admin")) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
@@ -269,9 +268,8 @@ public class fastbuilder implements CommandExecutor {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addcoins <player> <coins>");
                     return true;
                 }
-                Player target = Bukkit.getPlayer(args[1]);
-                if (target == null) target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
-                Main.getInstance().getConfigManager().setCoinsOfPlayer(target, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) + Integer.parseInt(args[2]));
+                OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+                Main.getInstance().getConfigManager().addCoinsToPlayer(target, Integer.parseInt(args[2]));
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Added " + args[2] + " coins to " + args[1] + ".");
                 break;
 
@@ -280,8 +278,7 @@ public class fastbuilder implements CommandExecutor {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder setcoins <player> <coins>");
                     return true;
                 }
-                Player targetA = Bukkit.getPlayer(args[1]);
-                if (targetA == null) targetA = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+                OfflinePlayer targetA = Bukkit.getOfflinePlayer(args[1]);
                 if (targetA == null) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player not found!");
                     return true;
@@ -335,7 +332,7 @@ public class fastbuilder implements CommandExecutor {
                 break;
             case "reloadconfig":
                 player.sendMessage(Main.getInstance().PREFIX + "Reloading config...");
-                Main.getInstance().getConfigManager().reloadConfig();
+                Main.getInstance().getConfigManager().reloadConfigs();
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Config reloaded!");
                 break;
             case "join":
@@ -352,7 +349,7 @@ public class fastbuilder implements CommandExecutor {
                         return true;
                     }
 
-                    String closestIsland = findClosestIsland(joinMode);
+                    String closestIsland = findClosestIslandInMode(joinMode);
                     if (closestIsland == null) {
                         player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "No islands found in this mode!");
                         return true;
@@ -397,6 +394,16 @@ public class fastbuilder implements CommandExecutor {
                 break;
             case "leave":
                 leaveMode(player);
+                break;
+            case "wipestats":
+                if (args.length < 2) {
+                    player.sendMessage(Main.getInstance().PREFIX + "§cUsage: /fb wipestats <player>");
+                    return true;
+                }
+                OfflinePlayer targetB = Bukkit.getOfflinePlayer(args[1]);
+                Main.getInstance().getConfigManager().deleteStatsOfPlayer(targetB);
+                player.sendMessage(Main.getInstance().PREFIX + "§2Successfully wiped " + targetB.getName() + "'s stats!");
+                break;
             default:
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Unknown command! Use /fastbuilder to see list of commands.");
                 break;
@@ -404,8 +411,8 @@ public class fastbuilder implements CommandExecutor {
         return true;
     }
 
-    private String findClosestIsland(String mode) {
-        for (String island : Main.getInstance().getConfig().getConfigurationSection("spawns." + mode).getKeys(false)) {
+    public static String findClosestIslandInMode(String mode) {
+        for (String island : Main.getInstance().getConfigManager().getIslandsOfMod(mode)) {
             if (Main.getInstance().mapWherePlayerIn.containsValue(mode + "-" + island)) {
                 continue; // Skip islands that are already occupied
             }

@@ -3,136 +3,326 @@ package it.minusone.fastbuilder.config;
 import it.minusone.fastbuilder.Main;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.OfflinePlayer;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class ConfigManager {
+
     private final Main plugin;
     private FileConfiguration config;
 
+    private FileConfiguration playersConfig;
+    private FileConfiguration arenasConfig;
+    private FileConfiguration messagesConfig;
+
+    private File playersFile;
+    private File arenasFile;
+    private File messagesFile;
+
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
-        this.plugin.saveDefaultConfig();
+        // default config
+        plugin.saveDefaultConfig();
         this.config = plugin.getConfig();
+
+        // custom files
+        playersFile = new File(plugin.getDataFolder(), "players.yml");
+        arenasFile = new File(plugin.getDataFolder(), "arenas.yml");
+        messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+
+        if (!playersFile.exists()) plugin.saveResource("players.yml", false);
+        if (!arenasFile.exists()) plugin.saveResource("arenas.yml", false);
+        if (!messagesFile.exists()) plugin.saveResource("messages.yml", false);
+
+        playersConfig = YamlConfiguration.loadConfiguration(playersFile);
+        arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
+        messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
     }
 
+    // Save methods
+    private void savePlayersConfig() {
+        try { playersConfig.save(playersFile); } catch (IOException e) { e.printStackTrace(); }
+    }
+    private void saveArenasConfig() {
+        try { arenasConfig.save(arenasFile); } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public void reloadConfigs() {
+        plugin.reloadConfig();
+        this.config = plugin.getConfig();
+        playersConfig = YamlConfiguration.loadConfiguration(playersFile);
+        arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
+        messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+    }
+
+    // -------- ARENAS (arenas.yml) --------
+
     public List<String> getModes() {
-        return config.getStringList("modes");
+        return arenasConfig.getStringList("modes");
     }
 
     public void setModes(List<String> modes) {
-        config.set("modes", modes);
-        plugin.saveConfig();
+        arenasConfig.set("modes", modes);
+        saveArenasConfig();
     }
 
     public List<String> getIslandsOfMod(String mode) {
         List<String> spawns = new ArrayList<>();
-        if (config.contains("spawns." + mode))
-            spawns.addAll(config.getConfigurationSection("spawns." + mode).getKeys(false));
+        if (arenasConfig.contains("spawns." + mode))
+            spawns.addAll(arenasConfig.getConfigurationSection("spawns." + mode).getKeys(false));
         return spawns;
     }
 
     public void addMode(String mode, boolean isInclined) {
         List<String> modes = getModes();
-        List<String> inclinedModes = config.getStringList("inclined-modes");
+        List<String> inclined = arenasConfig.getStringList("inclined-modes");
         if (!modes.contains(mode)) {
             modes.add(mode);
-            if (isInclined)
-                inclinedModes.add(mode);
+            if (isInclined) inclined.add(mode);
             setModes(modes);
+            arenasConfig.set("inclined-modes", inclined);
             createModeWithDefaultNPCSpawn(mode);
             createModeWithDefaultHoloSpawn(mode);
-            config.set("inclined-modes", inclinedModes);
         }
-        plugin.saveConfig();
-    }
-
-    public List<String> getTimeMessage() {
-        return config.getStringList("messages.time");
-    }
-
-    public List<String> getPersonalBestMessage() {
-        return config.getStringList("messages.personal-best");
+        saveArenasConfig();
     }
 
     public void removeMode(String mode) {
         List<String> modes = getModes();
-        if (modes.contains(mode)) {
-            modes.remove(mode);
-            setModes(modes);
-        }
-        plugin.saveConfig();
-    }
-
-    public void reloadConfig() {
-        plugin.reloadConfig();
-        this.config = plugin.getConfig();
-    }
-
-    public Location getSpawnLocation(String mode, String island) {
-        String path = "spawns." + mode + "." + island;
-        if (!config.contains(path)) return null;
-
-        String worldName = config.getString(path + ".world");
-
-        double x = config.getDouble(path + ".x");
-        double y = config.getDouble(path + ".y");
-        double z = config.getDouble(path + ".z");
-        float yaw = (float) config.getDouble(path + ".yaw");
-        float pitch = (float) config.getDouble(path + ".pitch");
-
-        return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
-    }
-
-    public void setSpawnLocation(String mode, String island, Location location) {
-        String path = "spawns." + mode + "." + island;
-        config.set(path + ".world", location.getWorld().getName());
-        config.set(path + ".x", location.getX());
-        config.set(path + ".y", location.getY());
-        config.set(path + ".z", location.getZ());
-        config.set(path + ".yaw", location.getYaw());
-        config.set(path + ".pitch", location.getPitch());
-        plugin.saveConfig();
+        if (modes.remove(mode)) setModes(modes);
+        saveArenasConfig();
     }
 
     public boolean modeExists(String mode) {
         return getModes().contains(mode);
     }
 
-    public double getPB(UUID playerId, String mode) {
-        double path = config.getDouble("best-times." + playerId + "." + mode, 0.0);
-        if (config.get("best-times." + playerId + "." + mode, 0.0) != null)
-            return path;
-        else
-            return 0.000;
+    public boolean isModeInclined(String mode) {
+        return arenasConfig.getStringList("inclined-modes").contains(mode);
     }
 
-    public int getCoinsOfPlayer(Player player) {
-        if (config.get(player.getUniqueId().toString() + ".coins") != null)
-            return config.getInt(player.getUniqueId().toString() + ".coins");
-        else
-            return 0;
+    public Location getSpawnLocation(String mode, String island) {
+        String path = "spawns." + mode + "." + island;
+        if (!arenasConfig.contains(path)) return null;
+        String world = arenasConfig.getString(path + ".world");
+        double x = arenasConfig.getDouble(path + ".x");
+        double y = arenasConfig.getDouble(path + ".y");
+        double z = arenasConfig.getDouble(path + ".z");
+        float yaw = (float) arenasConfig.getDouble(path + ".yaw");
+        float pitch = (float) arenasConfig.getDouble(path + ".pitch");
+        return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
     }
 
-    public void addCoinsToPlayer(Player player, int coinsToAdd) {
-        String path = player.getUniqueId().toString();
-        coinsToAdd += getCoinsOfPlayer(player);
-        config.set(path + ".coins", coinsToAdd);
-        plugin.saveConfig();
+    public void setSpawnLocation(String mode, String island, Location loc) {
+        String p = "spawns." + mode + "." + island;
+        arenasConfig.set(p + ".world", loc.getWorld().getName());
+        arenasConfig.set(p + ".x", loc.getX());
+        arenasConfig.set(p + ".y", loc.getY());
+        arenasConfig.set(p + ".z", loc.getZ());
+        arenasConfig.set(p + ".yaw", loc.getYaw());
+        arenasConfig.set(p + ".pitch", loc.getPitch());
+        saveArenasConfig();
     }
 
-    public void setCoinsOfPlayer(Player player, int coins) {
-        String path = player.getUniqueId().toString();
-        if (config.get(path) == null)
-            config.createSection(path);
-        config.set(path + ".coins", coins);
-        plugin.saveConfig();
+    public Location getNPCOffset(String mode) {
+        String base = "npcs." + mode + ".npc-offset";
+        if (!arenasConfig.contains(base)) return null;
+        double x = arenasConfig.getDouble(base + ".x");
+        double y = arenasConfig.getDouble(base + ".y");
+        double z = arenasConfig.getDouble(base + ".z");
+        float yaw = (float) arenasConfig.getDouble(base + ".yaw");
+        float pitch = (float) arenasConfig.getDouble(base + ".pitch");
+        return new Location(null, x, y, z, yaw, pitch);
     }
+
+    public void createModeWithDefaultNPCSpawn(String mode) {
+        String b = "npcs." + mode + ".npc-offset";
+        if (arenasConfig.contains(b)) return;
+        arenasConfig.set(b + ".x", 1);
+        arenasConfig.set(b + ".y", 0);
+        arenasConfig.set(b + ".z", -1);
+        arenasConfig.set(b + ".yaw", 0);
+        arenasConfig.set(b + ".pitch", 0);
+        saveArenasConfig();
+    }
+
+    public void createModeWithDefaultHoloSpawn(String mode) {
+        String b = "holos." + mode + ".holo";
+        if (arenasConfig.contains(b)) return;
+        arenasConfig.set(b + ".x", -3);
+        arenasConfig.set(b + ".y", 1);
+        arenasConfig.set(b + ".z", 1);
+        saveArenasConfig();
+    }
+
+    public Location getHoloOffset(String mode, World world) {
+        String base = "holos." + mode + ".holo";
+        if (!arenasConfig.contains(base)) return null;
+        return new Location(world,
+                arenasConfig.getDouble(base + ".x"),
+                arenasConfig.getDouble(base + ".y"),
+                arenasConfig.getDouble(base + ".z"),
+                0, 0);
+    }
+
+    // -------- PLAYERS (players.yml) --------
+
+
+    public void saveBestTime(UUID playerId, String mode, double time) {
+        String path = "best-times." + playerId + "." + mode;
+        double currentBest = playersConfig.getDouble(path, 0.0);
+        if (currentBest == 0.0 || time < currentBest) {
+            playersConfig.set(path, time);
+            savePlayersConfig();
+        }
+    }
+
+    public double getPB(UUID id, String mode) {
+        return playersConfig.getDouble("best-times." + id + "." + mode, 0.0);
+    }
+
+    public int getCoinsOfPlayer(Player p) {
+        return playersConfig.getInt(p.getUniqueId() + ".coins", 0);
+    }
+
+    public int getCoinsOfPlayer(OfflinePlayer p) {
+        return playersConfig.getInt(p.getUniqueId() + ".coins", 0);
+    }
+
+    public void setCoinsOfPlayer(Player p, int coins) {
+        String path = p.getUniqueId().toString();
+        if (playersConfig.get(path) == null) playersConfig.createSection(path);
+        playersConfig.set(path + ".coins", coins);
+        savePlayersConfig();
+    }
+
+    public void setCoinsOfPlayer(OfflinePlayer p, int coins) {
+        String path = p.getUniqueId().toString();
+        if (playersConfig.get(path) == null) playersConfig.createSection(path);
+        playersConfig.set(path + ".coins", coins);
+        savePlayersConfig();
+    }
+
+    public void addCoinsToPlayer(Player p, int add) {
+        int total = getCoinsOfPlayer(p) + add;
+        playersConfig.set(p.getUniqueId() + ".coins", total);
+        savePlayersConfig();
+    }
+
+    public void addCoinsToPlayer(OfflinePlayer p, int add) {
+        int total = getCoinsOfPlayer(p) + add;
+        playersConfig.set(p.getUniqueId() + ".coins", total);
+        savePlayersConfig();
+    }
+
+    public void addBlockToPlayer(ItemStack block, Player p) {
+        String path = p.getUniqueId() + ".blocks";
+        List<String> owned = playersConfig.getStringList(path);
+        String data = block.getType().name() + ":" + block.getDurability();
+        if (!owned.contains(data)) {
+            owned.add(data);
+            playersConfig.set(path, owned);
+            savePlayersConfig();
+        }
+    }
+
+    public boolean hasPlayerGotBlock(Player p, ItemStack b) {
+        String path = p.getUniqueId() + ".blocks";
+        return playersConfig.getStringList(path).contains(b.getType().name() + ":" + b.getDurability());
+    }
+
+    public ItemStack getCurrentPlayerBlock(Player p) {
+        String data = playersConfig.getString(p.getUniqueId() + ".current-block", "WOOL:0");
+        String[] parts = data.split(":" );
+        Material m = Material.matchMaterial(parts[0]);
+        short d = (parts.length>1)?Short.parseShort(parts[1]):0;
+        return new ItemStack(m!=null?m:Material.WOOL,1,d);
+    }
+
+    public void setCurrentPlayerBlock(Player p, ItemStack b) {
+        playersConfig.set(p.getUniqueId() + ".current-block",
+                b.getType().name()+":"+b.getDurability());
+        savePlayersConfig();
+    }
+
+    public void addAttempt(Player p) {
+        String path = p.getUniqueId() + ".attempts";
+        if (!playersConfig.contains(p.getUniqueId().toString())) return;
+        playersConfig.set(path, getAttempts(p) + 1);
+        savePlayersConfig();
+    }
+
+    public void addSuccessfulAttempt(Player p) {
+        String path = p.getUniqueId() + ".successfulattempts";
+        if (!playersConfig.contains(p.getUniqueId().toString())) return;
+        playersConfig.set(path, getSuccessfulAttempts(p) + 1);
+        savePlayersConfig();
+    }
+
+    public long getAttempts(Player p) {
+        return playersConfig.getLong(p.getUniqueId() + ".attempts", 0);
+    }
+
+    public long getSuccessfulAttempts(Player p) {
+        return playersConfig.getLong(p.getUniqueId() + ".successfulattempts", 0);
+    }
+
+    public long getAttempts(OfflinePlayer p) {
+        return playersConfig.getLong(p.getUniqueId() + ".attempts", 0);
+    }
+
+    public long getSuccessfulAttempts(OfflinePlayer p) {
+        return playersConfig.getLong(p.getUniqueId() + ".successfulattempts", 0);
+    }
+
+    public void deleteStatsOfPlayer(OfflinePlayer player) {
+        playersConfig.set("best-times." + player.getUniqueId().toString(), "");
+        Main.getInstance().scoreboardManager.updateScoreboard(Bukkit.getPlayer(player.getName()), "0.000", 0.0);
+        for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(Bukkit.getPlayer(player.getName())).length; i++) {
+            Main.getInstance().stats.get(Bukkit.getPlayer(player.getName())).setName(
+                    i,
+                    Main.getInstance().getConfigManager().getHoloLines(Bukkit.getPlayer(player.getName()))[i]
+            );
+        }
+    }
+
+    // -------- MESSAGES (messages.yml) --------
+
+    public List<String> getTimeMessage() {
+        return messagesConfig.getStringList("messages.time");
+    }
+
+    public List<String> getPersonalBestMessage() {
+        return messagesConfig.getStringList("messages.personal-best");
+    }
+
+    public boolean isActionBarEnabled() {
+        return !messagesConfig.getString("action-bar").isEmpty();
+    }
+
+    public String getActionBarMessage(Player p) {
+        return messagesConfig.getString("action-bar").replace("%timer%", Main.getInstance().timer.getTimeFormatted(p));
+    }
+
+    public String getScoreTitle() {
+        return messagesConfig.getString("title");
+    }
+
+    public String getScoreSubTitle() {
+        return messagesConfig.getString("subtitle");
+    }
+
+
+    // -------- DEFAULT CONFIG (config.yml) --------
 
     public int getCoinsForResetStats() {
         return config.getInt("reset-stats-cost");
@@ -142,162 +332,9 @@ public class ConfigManager {
         return config.getBoolean("jump-plate");
     }
 
-    public void addBlockToPlayer(ItemStack block, Player player) {
-        String path = player.getUniqueId().toString() + ".blocks";
-        List<String> ownedBlocks = config.getStringList(path);
-        String blockData = block.getType().name() + ":" + block.getDurability();
-
-        if (!ownedBlocks.contains(blockData)) {
-            ownedBlocks.add(blockData);
-            config.set(path, ownedBlocks);
-            plugin.saveConfig();
-        }
-    }
-
-    public boolean isActionBarEnabled() {
-        return !config.getString("action-bar").isEmpty();
-    }
-
-    public String getActionBarMessage(Player player) {
-        return config.getString("action-bar").replace("%timer%", Main.getInstance().timer.getTimeFormatted(player));
-    }
-
-    public boolean isModeInclined(String mode) {
-        List<String> inclinedModes = config.getStringList("inclined-modes");
-        if (inclinedModes != null)
-            return inclinedModes.contains(mode);
-        return false;
-    }
-
-    public boolean hasPlayerGotBlock(Player player, ItemStack block) {
-        String path = player.getUniqueId().toString() + ".blocks";
-        List<String> ownedBlocks = config.getStringList(path);
-        String blockData = block.getType().name() + ":" + block.getDurability();
-        return ownedBlocks.contains(blockData);
-    }
-
-    public ItemStack getCurrentPlayerBlock(Player player) {
-        String path = player.getUniqueId().toString() + ".current-block";
-        String blockData = config.getString(path, "WOOL:0");
-
-        String[] parts = blockData.split(":");
-        Material material = Material.matchMaterial(parts[0]);
-        short durability = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
-
-        if (material == null) {
-            material = Material.WOOL;
-        }
-
-        return new ItemStack(material, 1, durability);
-    }
-
-    public void setCurrentPlayerBlock(Player player, ItemStack block) {
-        String path = player.getUniqueId().toString() + ".current-block";
-        String blockData = block.getType().name() + ":" + block.getDurability();
-        config.set(path, blockData);
-        plugin.saveConfig();
-    }
-
-    public Location getNPCOffset(String mode) {
-        if (!config.contains("npcs." + mode + ".npc-offset")) return null;
-        int x = config.getInt("npcs." + mode + ".npc-offset.x");
-        int y = config.getInt("npcs." + mode + ".npc-offset.y");
-        int z = config.getInt("npcs." + mode + ".npc-offset.z");
-        float yaw = (float) config.getInt("modes." + mode + ".npc-offset.yaw");
-        float pitch = (float) config.getInt("modes." + mode + ".npc-offset.pitch");
-        return new Location(null, x, y, z, yaw, pitch);
-    }
-
-    public void createModeWithDefaultNPCSpawn(String mode) {
-        String basePath = "npcs." + mode;
-
-        if (config.contains(basePath))
-            return;
-
-        config.set(basePath + ".npc-offset.x", 1);
-        config.set(basePath + ".npc-offset.y", 0);
-        config.set(basePath + ".npc-offset.z", -1);
-        config.set(basePath + ".npc-offset.yaw", 0);
-        config.set(basePath + ".npc-offset.pitch", 0);
-
-        plugin.saveConfig();
-    }
-
-    public void createModeWithDefaultHoloSpawn(String mode) {
-        String basePath = "holos." + mode;
-
-        if (config.contains(basePath))
-            return;
-
-        config.set(basePath + ".holo.x", -3);
-        config.set(basePath + ".holo.y", 1);
-        config.set(basePath + ".holo.z", 1);
-
-        plugin.saveConfig();
-    }
-
-    public Location getHoloOffset(String mode, World world) {
-        if (!config.contains("holos." + mode + ".holo")) return null;
-        int x = config.getInt("holos." + mode + ".holo.x");
-        int y = config.getInt("holos." + mode + ".holo.y");
-        int z = config.getInt("holos." + mode + ".holo.z");
-        return new Location(world, x, y, z, 0, 0);
-    }
-
-    public void addAttempt(Player player) {
-        String path = player.getUniqueId().toString() + ".attempts";
-        if (!config.contains(player.getUniqueId().toString())) return;
-
-        config.set(path, config.getInt(path) + 1);
-        plugin.saveConfig();
-    }
-
-    public void addSuccessfulAttempt(Player player) {
-        String path = player.getUniqueId().toString() + ".successfulattempts";
-        if (!config.contains(player.getUniqueId().toString())) return;
-
-        config.set(path, config.getInt(path) + 1);
-        plugin.saveConfig();
-    }
-
-    public long getAttempts(Player player) {
-        String path = player.getUniqueId().toString() + ".attempts";
-        if (config.get(path) != null)
-            return config.getLong(path);
-        else
-            return 0;
-    }
-
-    public long getSuccessfulAttempts(Player player) {
-        String path = player.getUniqueId().toString() + ".successfulattempts";
-        if (config.get(path) != null)
-            return config.getLong(path);
-        else
-            return 0;
-    }
-
-    public String getScoreTitle() {
-        return config.getString("title");
-    }
-
-    public String getScoreSubTitle() {
-        return config.getString("subtitle");
-    }
-
-    public String[] getHoloLines(Player player) {
-        List<String> a = config.getStringList("holo");
-        String[] c = new String[a.size()];
-        for (int i = a.size(); i > 0; i--)
-            c[i - 1] = a.get(i - 1).replace("%successful_attempts%", "" + getSuccessfulAttempts(player)).replace("%total_attempts%", "" + getAttempts(player)).replace("%pb%", new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".").equals("0.000") ? "-.---" : new DecimalFormat("0.000").format(getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])).replace(",", ".")).replace("%player%", player.getName()).replace("&", "§");
-        return c;
-    }
-
     public boolean isLuckPermsSupportEnabled() {
-        return Main.getInstance().luckpermsSupport && config.getBoolean("luckperms-support");
-    }
-
-    public String getNPCname() {
-        return config.getString("npc-name");
+        return Main.getInstance().luckpermsSupport &&
+                config.getBoolean("luckperms-support");
     }
 
     public int getMaxDistance() {
@@ -306,6 +343,27 @@ public class ConfigManager {
 
     public boolean isBungeeModeEnabled() {
         return config.getBoolean("ender-eye");
+    }
+
+    public String[] getHoloLines(Player p) {
+        List<String> lines = config.getStringList("holo");
+        String[] res = new String[lines.size()];
+        String mode = Main.getInstance().mapWherePlayerIn.get(p).split("-")[0];
+        String pb = new DecimalFormat("0.000").format(getPB(p.getUniqueId(), mode)).replace(",", ".");
+        if (pb.equals("0.000")) pb = "-.---";
+        for (int i=lines.size()-1; i>=0; i--) {
+            res[i] = lines.get(i)
+                    .replace("%successful_attempts%", String.valueOf(getSuccessfulAttempts(p)))
+                    .replace("%total_attempts%", String.valueOf(getAttempts(p)))
+                    .replace("%pb%", pb)
+                    .replace("%player%", p.getName())
+                    .replace("&", "§");
+        }
+        return res;
+    }
+
+    public String getNPCname() {
+        return config.getString("npc-name");
     }
 
     public String getLobbyItemName() {
@@ -324,112 +382,10 @@ public class ConfigManager {
         return config.getString("replay-item");
     }
 
-    public int getCoinsOfPlayer(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".coins";
-        return config.contains(path) ? config.getInt(path) : 0;
+    public String getTopPlayerInModeByIndex(int idx, String mode) {
+        return modeExists(mode)
+                ? config.getStringList("wrs." + mode).get(idx)
+                : null;
     }
-
-    public void addCoinsToPlayer(OfflinePlayer player, int coinsToAdd) {
-        String path = player.getUniqueId().toString();
-        int totalCoins = getCoinsOfPlayer(player) + coinsToAdd;
-        config.set(path + ".coins", totalCoins);
-        plugin.saveConfig();
-    }
-
-    public void setCoinsOfPlayer(OfflinePlayer player, int coins) {
-        String path = player.getUniqueId().toString();
-        if (config.get(path) == null)
-            config.createSection(path);
-        config.set(path + ".coins", coins);
-        plugin.saveConfig();
-    }
-
-    public void addBlockToPlayer(ItemStack block, OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".blocks";
-        List<String> ownedBlocks = config.getStringList(path);
-        String blockData = block.getType().name() + ":" + block.getDurability();
-
-        if (!ownedBlocks.contains(blockData)) {
-            ownedBlocks.add(blockData);
-            config.set(path, ownedBlocks);
-            plugin.saveConfig();
-        }
-    }
-
-    public boolean hasPlayerGotBlock(OfflinePlayer player, ItemStack block) {
-        String path = player.getUniqueId().toString() + ".blocks";
-        List<String> ownedBlocks = config.getStringList(path);
-        String blockData = block.getType().name() + ":" + block.getDurability();
-        return ownedBlocks.contains(blockData);
-    }
-
-    public ItemStack getCurrentPlayerBlock(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".current-block";
-        String blockData = config.getString(path, "WOOL:0");
-
-        String[] parts = blockData.split(":");
-        Material material = Material.matchMaterial(parts[0]);
-        short durability = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
-
-        if (material == null) {
-            material = Material.WOOL;
-        }
-
-        return new ItemStack(material, 1, durability);
-    }
-
-    public void setCurrentPlayerBlock(OfflinePlayer player, ItemStack block) {
-        String path = player.getUniqueId().toString() + ".current-block";
-        String blockData = block.getType().name() + ":" + block.getDurability();
-        config.set(path, blockData);
-        plugin.saveConfig();
-    }
-
-    public void addAttempt(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".attempts";
-        if (!config.contains(player.getUniqueId().toString())) return;
-
-        config.set(path, config.getInt(path) + 1);
-        plugin.saveConfig();
-    }
-
-    public void addSuccessfulAttempt(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".successfulattempts";
-        if (!config.contains(player.getUniqueId().toString())) return;
-
-        config.set(path, config.getInt(path) + 1);
-        plugin.saveConfig();
-    }
-
-    public long getAttempts(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".attempts";
-        return config.contains(path) ? config.getLong(path) : 0;
-    }
-
-    public long getSuccessfulAttempts(OfflinePlayer player) {
-        String path = player.getUniqueId().toString() + ".successfulattempts";
-        return config.contains(path) ? config.getLong(path) : 0;
-    }
-
-    public String[] getHoloLines(OfflinePlayer player) {
-        List<String> lines = config.getStringList("holo");
-        String[] result = new String[lines.size()];
-        String playerName = player.getName() != null ? player.getName() : "Unknown";
-        String mode = Main.getInstance().mapWherePlayerIn.get(player.getUniqueId()).split("-")[0];
-        double pb = getPB(player.getUniqueId(), mode);
-        String pbFormatted = new DecimalFormat("0.000").format(pb).replace(",", ".");
-        if (pbFormatted.equals("0.000")) pbFormatted = "-.---";
-
-        for (int i = lines.size() - 1; i >= 0; i--) {
-            result[i] = lines.get(i)
-                    .replace("%successful_attempts%", String.valueOf(getSuccessfulAttempts(player)))
-                    .replace("%total_attempts%", String.valueOf(getAttempts(player)))
-                    .replace("%pb%", pbFormatted)
-                    .replace("%player%", playerName)
-                    .replace("&", "§");
-        }
-        return result;
-    }
-
 
 }

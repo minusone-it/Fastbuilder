@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.minusone</groupId>
-    <artifactId>fastbuilder</artifactId>
-    <version>1.5.0</version>
+    <artifactId>Fastbuilder</artifactId>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
 
     <name>fastbuilder</name>

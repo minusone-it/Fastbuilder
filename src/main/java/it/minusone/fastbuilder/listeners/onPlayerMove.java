@@ -27,7 +27,7 @@ public class onPlayerMove implements Listener {
                 String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                 String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
                 if (!Main.getInstance().getConfigManager().isModeInclined(mode)) {
-                    if (player.getLocation().getY() < (Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - Main.getInstance().getConfigManager().getMaxDistance()) || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
+                    if ((int) player.getLocation().getY() == Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
                         player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                         if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
                             player.getInventory().clear();
@@ -84,8 +84,12 @@ public class onPlayerMove implements Listener {
                                     Main.getInstance().timer.scoreTime(player, false);
                                     Main.getInstance().getConfigManager().addAttempt(player);
                                     Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
-                                    for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
-                                        Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
+                                    for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                        Main.getInstance().stats.get(player).setName(
+                                                i,
+                                                Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                        );
+                                    }
                                 } else {
                                     Main.getInstance().timer.scoreTime(player, true);
                                 }

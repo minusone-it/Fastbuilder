@@ -147,6 +147,7 @@ public final class Main extends JavaPlugin {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
+            out.println(getConfig().getString("user"));
             out.println(getConfig().getString("license"));
             if (!Boolean.parseBoolean(in.readLine())) {
                 printlnColor(PREFIX + "§cLICENSE NOT VALID. PLEASE BUY A LICENSE ON https://builtbybit.com/resources/fastbuilder.62493/ OR IF YOU BOUGHT THE PLUGIN REQUEST THE LICENSE ON https://discord.gg/CnQGtfEdjj");
@@ -233,11 +234,11 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new onPlayerInteract(), this);
         Bukkit.getPluginManager().registerEvents(new onInventoryClick(), this);
         Bukkit.getPluginManager().registerEvents(new onEntityDamage(), this);
-        Bukkit.getPluginManager().registerEvents(new onPlayerClickEntity(), this);
         Bukkit.getPluginManager().registerEvents(new onPlayerSneak(), this);
         Bukkit.getPluginManager().registerEvents(new onItemDrop(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        protocolManager.addPacketListener(new onPlayerReceivePacket());
+        protocolManager.addPacketListener(new onPlayerBlockPlacePacket());
+        protocolManager.addPacketListener(new onPlayerClickEntity());
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         ReflectionUtils.setStaticField(org.bukkit.enchantments.Enchantment.class, "acceptingNew", true);
@@ -283,15 +284,6 @@ public final class Main extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    public void saveBestTime(UUID playerId, String mode, double time) {
-        String path = "best-times." + playerId + "." + mode;
-        double currentBest = getConfig().getDouble(path, 0.0);
-        if (currentBest == 0.0 || time < currentBest) {
-            getConfig().set(path, time);
-            saveConfig();
-        }
     }
 
     public void updateLeaderboard(Player player, String mode, double time) {

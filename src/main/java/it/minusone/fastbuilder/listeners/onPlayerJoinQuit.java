@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.listeners;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,8 +27,6 @@ public class onPlayerJoinQuit implements Listener {
         for (Hologram h : Hologram.all)
             h.spawnFor(e.getPlayer());
 
-        onPlayerClickEntity.injectPacketListener(e.getPlayer());
-
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
 
@@ -43,7 +42,7 @@ public class onPlayerJoinQuit implements Listener {
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
         Main.getInstance().placedBlocks.put(e.getPlayer().getUniqueId(), new ArrayList<>());
 
-        if (Main.getInstance().getConfigManager().getModes() != null)
+        if (!Main.getInstance().getConfigManager().getModes().isEmpty())
             e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
     }
 

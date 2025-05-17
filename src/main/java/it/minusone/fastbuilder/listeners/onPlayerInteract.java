@@ -31,8 +31,12 @@ public class onPlayerInteract implements Listener {
                         try {
                             Main.getInstance().getConfigManager().addAttempt(player);
                             Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
-                            for (int i = Main.getInstance().stats.get(player).hologramList.size(); i > 0; i--)
-                                Main.getInstance().stats.get(player).setName(i, Main.getInstance().getConfigManager().getHoloLines(player)[i]);
+                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                Main.getInstance().stats.get(player).setName(
+                                        i,
+                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                );
+                            }
                         } catch (Exception e) {
 
                         }

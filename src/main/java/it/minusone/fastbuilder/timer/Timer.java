@@ -1,32 +1,24 @@
 package it.minusone.fastbuilder.timer;
 
 import it.minusone.fastbuilder.Main;
-import it.minusone.fastbuilder.items.IslandSelectorItem;
-import it.minusone.fastbuilder.items.LobbyItem;
-import it.minusone.fastbuilder.items.ReplayItem;
-import it.minusone.fastbuilder.items.SettingsItem;
+import it.minusone.fastbuilder.items.*;
 import it.minusone.fastbuilder.replay.Replay;
 import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
+
 import net.minecraft.server.v1_8_R3.ChatComponentText;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.*;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Timer {
 
@@ -75,7 +67,7 @@ public class Timer {
 
                 playerTimers.put(uuid, playerTimers.get(uuid) + 1);
 
-                double bestTime = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
+                double bestTime = Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
                 Main.getInstance().scoreboardManager.updateScoreboard(player, getTimeFormatted(player).replace(",", "."), bestTime);
                 if (Main.getInstance().getConfigManager().isActionBarEnabled()) {
                     CraftPlayer craftPlayer = (CraftPlayer) player;
@@ -121,7 +113,7 @@ public class Timer {
     }
 
     public double getTime(Player player) {
-        return playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05 - 0.05;
+        return playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05;
     }
 
     public boolean isPlayerInTimer(Player player) {
@@ -142,7 +134,7 @@ public class Timer {
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
         if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
             Main.getInstance().timer.stopTimer(player, !practiceBlocks);
-            double PB = Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000);
+            double PB = Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player));
             boolean equalTime = PB == time;
             boolean newPB = time < PB;
             int baseCoins = (int) (1000 / (time + 1));
@@ -169,8 +161,10 @@ public class Timer {
                     firework.setFireworkMeta(meta);
                 });
             }
+
             List<String> timeMessages = Main.getInstance().getConfigManager().getTimeMessage();
             List<String> pbMessages = Main.getInstance().getConfigManager().getPersonalBestMessage();
+
             DecimalFormat format = this.getFormat();
 
             if (newPB || Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]) == 0.000) {
@@ -191,12 +185,12 @@ public class Timer {
             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
                 player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), Main.getInstance().getConfigManager().getScoreSubTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"));
                 Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
-                Main.getInstance().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
+                Main.getInstance().getConfigManager().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
                 Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
             } else
                 player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "");
             player.getInventory().clear();
-            Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfig().getDouble("best-times." + player.getUniqueId() + "." + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], 0.000));
+            Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (Main.getInstance().mapWherePlayerIn.containsKey(p)) {
                     Main.getInstance().scoreboardManager.updateScoreboard(p);

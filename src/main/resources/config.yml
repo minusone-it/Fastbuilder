@@ -4,6 +4,16 @@ prefix: "§3§lFastbuilder §7» "
 # You can make it 0 to disable it.
 reset-stats-cost: 100
 
+# Available #1, #2, #3... for WRs. This is shown by doing /stats #1, /stats #2, /stats #3...
+wrs:
+  short:
+    # #1
+    - none
+    # #2
+    - none
+    # #3
+    - none
+
 # Jump Plate like the Bridger Land one.
 jump-plate: false
 
@@ -31,33 +41,6 @@ settings-item: "§2Settings §7(Right-Click to use)"
 # Ender Eye Item to go to lobby (only supports bungee)
 ender-eye: false
 
-# Time in action bar (leave "" to show nothing in action bar)
-# Placeholders:
-# %time% - Current time in the course;
-action-bar: ""
-
-# Placeholders:
-# %time% - Time of the course;
-# %pb% - Personal Best;
-# %difference% - Difference between the time and the pb.
-messages:
-  time:
-    - "&8----------------------------------"
-    - "&7You've finished the course!"
-    - ""
-    - "&aTime: &e&l%time%"
-    - "&aPB: &e&l%pb% &8| &e&l%difference%"
-    - "&8----------------------------------"
-  personal-best:
-    - "&8----------------------------------"
-    - "&b&lNEW PERSONAL BEST!"
-    - ""
-    - "&7You've finished the course!"
-    - ""
-    - "&aTime: &e&l%time%"
-    - "&aPB: &e&l%pb% &8| &b&l%difference%"
-    - "&8----------------------------------"
-
 # Holo Lines
 # Placeholders:
 # %player% - Player's name;
@@ -66,16 +49,9 @@ messages:
 # %total_attempts% - Player's total attempts.
 holo:
   - "&b%player%'s stats:"
-  - "Personal Best: %pb%"
-  - "Successful Attempts: %successful_attempts%"
-  - "Total Attempts: %total_attempts%"
-
-# Score Title.
-# Placeholders:
-# %time% - Current time;
-# %coins% - The coins gained of the player.
-title: "&aTime: &e%time%"
-subtitle: "+&e%coins% coins!"
+  - "Personal Best: &e%pb%"
+  - "Successful Attempts: &e%successful_attempts%"
+  - "Total Attempts: &e%total_attempts%"
 
 # Scoreboard Lines.
 # Placeholders:
@@ -84,7 +60,8 @@ subtitle: "+&e%coins% coins!"
 # %top_1 - Session top 1;
 # %top_2 - Session top 2;
 # %top_3 - Session top 3;
-# %coins% - The current coins of the player.
+# %coins% - The current coins of the player;
+# %blocks% - The blocks placed by the player.
 scoreboard:
   title: "&b&lFastBuilder"
   lines:
@@ -105,4 +82,5 @@ scoreboard:
     1:  "&a&8&l|   &7&oexample.net"
 
 # Go get it via https://discord.gg/CnQGtfEdjj
+user: none
 license: none

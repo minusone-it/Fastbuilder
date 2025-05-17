@@ -10,8 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 
-public class onPlayerReceivePacket extends PacketAdapter {
-    public onPlayerReceivePacket() {
+public class onPlayerBlockPlacePacket extends PacketAdapter {
+    public onPlayerBlockPlacePacket() {
         super(Main.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_PLACE);
     }
 

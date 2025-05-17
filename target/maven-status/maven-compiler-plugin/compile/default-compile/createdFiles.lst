@@ -17,12 +17,12 @@ it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard$ObjectiveMode.cla
 it\minusone\fastbuilder\listeners\onPlayerSneak.class
 it\minusone\fastbuilder\scoreboard\helpers\Scoreboard.class
 it\minusone\fastbuilder\timer\Timer$2.class
+it\minusone\fastbuilder\listeners\onPlayerBlockPlacePacket.class
 it\minusone\fastbuilder\utils\utils\collection\Sets.class
 it\minusone\fastbuilder\replay\npc\ActualNPC.class
 it\minusone\fastbuilder\replay\event\PlaybackEndEvent.class
 it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class
 it\minusone\fastbuilder\items\LobbyItem.class
-it\minusone\fastbuilder\listeners\onPlayerReceivePacket.class
 it\minusone\fastbuilder\utils\bukkit\listeners\PlayerListener.class
 it\minusone\fastbuilder\replay\ReplayEvents.class
 it\minusone\fastbuilder\replay\recordable\entity\ItemHeldRecordable.class
@@ -89,4 +89,3 @@ it\minusone\fastbuilder\utils\bukkit\handler\PacketPlayOutHandler.class
 it\minusone\fastbuilder\Main$1.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\PlayInEvent.class
 it\minusone\fastbuilder\replay\ReplayMain.class
-it\minusone\fastbuilder\listeners\onPlayerClickEntity$1.class

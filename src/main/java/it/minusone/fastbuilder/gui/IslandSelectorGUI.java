@@ -33,7 +33,6 @@ public class IslandSelectorGUI implements InventoryHolder {
         }
     }
 
-
     @Override
     public Inventory getInventory() {
         return inventory;
