@@ -1,6 +1,6 @@
 # Time in action bar (leave "" to show nothing in action bar)
 # Placeholders:
-# %time% - Current time in the course;
+# %timer% - Current time in the course;
 action-bar: ""
 
 # Placeholders:

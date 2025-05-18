@@ -23,10 +23,12 @@ public class ConfigManager {
     private FileConfiguration playersConfig;
     private FileConfiguration arenasConfig;
     private FileConfiguration messagesConfig;
+    private FileConfiguration guisConfig;
 
-    private File playersFile;
-    private File arenasFile;
-    private File messagesFile;
+    private final File playersFile;
+    private final File arenasFile;
+    private final File messagesFile;
+    private final File guisFile;
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
@@ -38,22 +40,45 @@ public class ConfigManager {
         playersFile = new File(plugin.getDataFolder(), "players.yml");
         arenasFile = new File(plugin.getDataFolder(), "arenas.yml");
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        guisFile = new File(plugin.getDataFolder(), "guis.yml");
 
         if (!playersFile.exists()) plugin.saveResource("players.yml", false);
         if (!arenasFile.exists()) plugin.saveResource("arenas.yml", false);
         if (!messagesFile.exists()) plugin.saveResource("messages.yml", false);
+        if (!guisFile.exists()) plugin.saveResource("guis.yml", false);
 
         playersConfig = YamlConfiguration.loadConfiguration(playersFile);
         arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+        guisConfig = YamlConfiguration.loadConfiguration(guisFile);
     }
 
     // Save methods
     private void savePlayersConfig() {
-        try { playersConfig.save(playersFile); } catch (IOException e) { e.printStackTrace(); }
+        try {
+            System.out.println(playersConfig.saveToString());
+            playersConfig.save(playersFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
     private void saveArenasConfig() {
-        try { arenasConfig.save(arenasFile); } catch (IOException e) { e.printStackTrace(); }
+        try {
+            System.out.println(arenasConfig.saveToString());
+            arenasConfig.save(arenasFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveGUIsConfig() {
+        try {
+            System.out.println(guisConfig.saveToString());
+            guisConfig.save(guisFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void reloadConfigs() {
@@ -62,6 +87,7 @@ public class ConfigManager {
         playersConfig = YamlConfiguration.loadConfiguration(playersFile);
         arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+        guisConfig = YamlConfiguration.loadConfiguration(guisFile);
     }
 
     // -------- ARENAS (arenas.yml) --------
@@ -310,17 +336,16 @@ public class ConfigManager {
     }
 
     public String getActionBarMessage(Player p) {
-        return messagesConfig.getString("action-bar").replace("%timer%", Main.getInstance().timer.getTimeFormatted(p));
+        return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("action-bar").replace("%timer%", Main.getInstance().timer.getTimeFormatted(p)));
     }
 
     public String getScoreTitle() {
-        return messagesConfig.getString("title");
+        return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("title"));
     }
 
     public String getScoreSubTitle() {
-        return messagesConfig.getString("subtitle");
+        return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("subtitle"));
     }
-
 
     // -------- DEFAULT CONFIG (config.yml) --------
 
@@ -363,23 +388,23 @@ public class ConfigManager {
     }
 
     public String getNPCname() {
-        return config.getString("npc-name");
+        return ChatColor.translateAlternateColorCodes('&', config.getString("npc-name"));
     }
 
     public String getLobbyItemName() {
-        return config.getString("leave-item");
+        return ChatColor.translateAlternateColorCodes('&', config.getString("leave-item"));
     }
 
     public String getSettingsItemName() {
-        return config.getString("settings-item");
+        return ChatColor.translateAlternateColorCodes('&', config.getString("settings-item"));
     }
 
     public String getIslandSelectorItemName() {
-        return config.getString("islandselector-item");
+        return ChatColor.translateAlternateColorCodes('&', config.getString("islandselector-item"));
     }
 
     public String getReplayItemName() {
-        return config.getString("replay-item");
+        return ChatColor.translateAlternateColorCodes('&', config.getString("replay-item"));
     }
 
     public String getTopPlayerInModeByIndex(int idx, String mode) {
