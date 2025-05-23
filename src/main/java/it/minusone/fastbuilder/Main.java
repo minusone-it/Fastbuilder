@@ -173,16 +173,16 @@ public final class Main extends JavaPlugin {
     }
 
     private void initializePlugin() {
-            try {
-                RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-                if (provider != null) {
-                    this.luckpermsApi = provider.getProvider();
-                    this.luckpermsSupport = true;
-                }
-            } catch (NoClassDefFoundError e) {
-                if (configManager.isLuckPermsSupportEnabled())
-                    printlnColor(PREFIX + "§cDidn't find LuckPerms.");
+        try {
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) {
+                this.luckpermsApi = provider.getProvider();
+                this.luckpermsSupport = true;
             }
+        } catch (NoClassDefFoundError e) {
+            if (configManager.isLuckPermsSupportEnabled())
+                printlnColor(PREFIX + "§cDidn't find LuckPerms.");
+        }
 
         this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager(this);
@@ -298,7 +298,6 @@ public final class Main extends JavaPlugin {
         topList.remove(previousEntry);
         topList.add(new Entry(time, player));
         topList.sort(Comparator.comparingDouble(e -> e.time));
-
         if (topList.size() > 10) {
             topList.remove(topList.size() - 1);
         }

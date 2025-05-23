@@ -4,13 +4,17 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
 import net.luckperms.api.model.user.User;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import xyz.haoshoku.nick.api.NickAPI;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ScoreboardManager {
 
@@ -85,7 +89,7 @@ public class ScoreboardManager {
                 .replace("%top_2%", getTopPlayer(2, mode))
                 .replace("%top_3%", getTopPlayer(3, mode))
                 .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player))
-                .replace("%blocks%", Main.getInstance().placedBlocks.get(player.getUniqueId()) != null ? Main.getInstance().placedBlocks.get(player.getUniqueId()).size() + "" : 0 + ""));
+                        .replace("%blocks%", Main.getInstance().placedBlocks.get(player.getUniqueId()) != null ? Main.getInstance().placedBlocks.get(player.getUniqueId()).size() + "" : 0 + ""));
     }
 
     private String replacePlaceholders(Player player, String text, double pbTime, String mode) {
@@ -113,7 +117,7 @@ public class ScoreboardManager {
             }
             if (!Main.getInstance().getServer().getPluginManager().isPluginEnabled("NickAPI")) {
                 return ChatColor.translateAlternateColorCodes('&',
-                    (prefix != null ? prefix : "") + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", "."));
+                        (prefix != null ? prefix : "") + entry.player.getName() + " §8: §e" + timeFormat.format(entry.time).replace(",", "."));
             } else {
                 return ChatColor.translateAlternateColorCodes('&',
                         (prefix != null ? prefix : "") + NickAPI.getName(entry.player) + " §8: §e" + timeFormat.format(entry.time).replace(",", "."));

@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.gui;
 
+import it.minusone.fastbuilder.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -11,7 +12,7 @@ public class ConfirmGUI implements InventoryHolder {
     public Inventory inventory;
 
     public ConfirmGUI() {
-        this.inventory = Bukkit.createInventory(this, 45, "Stats Reset");
+        this.inventory = Bukkit.createInventory(this, 45, Main.getInstance().getConfigManager().getConfirmGuiName());
         ItemStack confirm = new ItemStack(Material.WOOL);
         confirm.setDurability((byte) 5);
         ItemMeta a = confirm.getItemMeta();

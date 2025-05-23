@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.gui;
 
+import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.BlockSelectorItem;
 import it.minusone.fastbuilder.items.PracticeModeItem;
 import it.minusone.fastbuilder.items.ResetItem;
@@ -13,7 +14,7 @@ public class SettingsGUI implements InventoryHolder {
     public Inventory inventory;
 
     public SettingsGUI(Player incomingPlayer) {
-        this.inventory = Bukkit.createInventory(this, 27, "Settings");
+        this.inventory = Bukkit.createInventory(this, 27, Main.getInstance().getConfigManager().getSettingsGuiName());
         this.incomingPlayer = incomingPlayer;
         this.addItems(this.getInventory());
     }

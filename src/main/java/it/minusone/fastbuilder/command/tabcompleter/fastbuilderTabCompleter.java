@@ -13,11 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class fastbuilderTabCompleter implements TabCompleter {
-    private final ConfigManager configManager;
-
-    public fastbuilderTabCompleter() {
-        this.configManager = new ConfigManager(Main.getInstance());
-    }
+    private final ConfigManager configManager = Main.getInstance().getConfigManager();
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -45,6 +41,9 @@ public class fastbuilderTabCompleter implements TabCompleter {
                         players.add(player.getName());
                     completions.addAll(players);
                 }
+            } else {
+                if (args[0].equalsIgnoreCase("join"))
+                    completions.addAll(configManager.getModes());
             }
         }
 

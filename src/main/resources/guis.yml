@@ -1,0 +1,19 @@
+# Block Selector gui's name
+block-selector: "Block Selector"
+
+# Confirm Reset Stats gui's name
+confirm-stats-reset: "Confirm"
+
+# Island Selector gui's name
+island-selector: "Island Selector"
+
+# Mode Changer gui's name
+mode-changer: "Mode Changer"
+
+# Settings gui's name
+settings: "Settings"
+
+# Replays gui's name
+# Placeholder:
+# %page% - The current page of replays
+replays: "Replays - Page %page%"

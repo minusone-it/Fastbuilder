@@ -34,7 +34,12 @@ public class stats implements CommandExecutor {
             player.sendMessage("§7Successful Attempts: §e" + Main.getInstance().getConfigManager().getSuccessfulAttempts(target));
             player.sendMessage("§eCoins: " + Main.getInstance().getConfigManager().getCoinsOfPlayer(target));
         } else {
-            OfflinePlayer targetA = Bukkit.getServer().getOfflinePlayer(Main.getInstance().getConfigManager().getTopPlayerInModeByIndex(Integer.parseInt(args[0].replace("#", "")) - 1, Main.getInstance().getModeOfPlayer(player)));
+            OfflinePlayer targetA;
+            try {
+                targetA = Bukkit.getServer().getOfflinePlayer(Main.getInstance().getConfigManager().getTopPlayerInModeByIndex(Integer.parseInt(args[0].replace("#", "")) - 1, Main.getInstance().getModeOfPlayer(player)));
+            } catch (Exception e) {
+                targetA = Bukkit.getServer().getOfflinePlayer("none");
+            }
             player.sendMessage(prefix + targetA.getName() + "§7's stats:");
             player.sendMessage("§7Personal Best: §e" + new DecimalFormat("0.000").format(Main.getInstance().getConfigManager().getPB(targetA.getUniqueId(), Main.getInstance().getModeOfPlayer(player))).replace(",", "."));
             player.sendMessage("§7Total Attempts: §e" + Main.getInstance().getConfigManager().getAttempts(targetA));

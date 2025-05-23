@@ -15,7 +15,7 @@ public class IslandSelectorGUI implements InventoryHolder {
     private final Player requestedPlayer;
 
     public IslandSelectorGUI(Player requestedPlayer) {
-        this.inventory = Bukkit.createInventory(this, 27, "Island Selector");
+        this.inventory = Bukkit.createInventory(this, 27, Main.getInstance().getConfigManager().getIslandSelectorGuiName());
         this.requestedPlayer = requestedPlayer;
         this.addItems(this.inventory);
     }
@@ -32,7 +32,7 @@ public class IslandSelectorGUI implements InventoryHolder {
                 if (!Bukkit.getServer().getPluginManager().isPluginEnabled("NickAPI"))
                     mapItem = new MapItem(island, isOccupied ? islandPlayer.getName() : "", islandPlayer, isOccupied);
                 else
-                    mapItem = new MapItem(island, isOccupied ?  NickAPI.getName(islandPlayer) : "", islandPlayer, isOccupied);
+                    mapItem = new MapItem(island, isOccupied ? NickAPI.getName(islandPlayer) : "", islandPlayer, isOccupied);
                 inventory.addItem(mapItem);
             }
         }

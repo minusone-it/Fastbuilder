@@ -20,11 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class fastbuilder implements CommandExecutor {
-    private final ConfigManager configManager;
-
-    public fastbuilder() {
-        this.configManager = new ConfigManager(Main.getInstance());
-    }
+    private final ConfigManager configManager = Main.getInstance().getConfigManager();
 
     public static void teleportPlayerToIslandB(Player player, String mode, String island) {
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
@@ -45,7 +41,6 @@ public class fastbuilder implements CommandExecutor {
         }
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
-        player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Joined " + mode + "!");
         ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
         block.setAmount(64);
         player.getInventory().setItem(0, block);
@@ -221,6 +216,18 @@ public class fastbuilder implements CommandExecutor {
         }
     }
 
+    public static String findClosestIslandInMode(String mode) {
+        for (String island : Main.getInstance().getConfigManager().getIslandsOfMod(mode)) {
+            if (Main.getInstance().mapWherePlayerIn.containsValue(mode + "-" + island)) {
+                continue; // Skip islands that are already occupied
+            }
+
+            return island; // Return the first available island in the list
+        }
+
+        return null; // No available island found
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -392,9 +399,6 @@ public class fastbuilder implements CommandExecutor {
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
                 break;
-            case "leave":
-                leaveMode(player);
-                break;
             case "wipestats":
                 if (args.length < 2) {
                     player.sendMessage(Main.getInstance().PREFIX + "§cUsage: /fb wipestats <player>");
@@ -409,18 +413,6 @@ public class fastbuilder implements CommandExecutor {
                 break;
         }
         return true;
-    }
-
-    public static String findClosestIslandInMode(String mode) {
-        for (String island : Main.getInstance().getConfigManager().getIslandsOfMod(mode)) {
-            if (Main.getInstance().mapWherePlayerIn.containsValue(mode + "-" + island)) {
-                continue; // Skip islands that are already occupied
-            }
-
-            return island; // Return the first available island in the list
-        }
-
-        return null; // No available island found
     }
 
 }

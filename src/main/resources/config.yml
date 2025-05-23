@@ -23,24 +23,6 @@ luckperms-support: false
 # The distance from the spawn that teleports back the player to the spawn
 max-distance: 4
 
-# Mode Changer NPC's name
-npc-name: "Mode Changer"
-
-# Leave Fastbuilder item's name
-leave-item: "§cLeave §7(Right-Click to use)"
-
-# Replay item's name
-replay-item: "§5Replay View §7(Right-Click to use)"
-
-# Island Selector item's name
-islandselector-item: "§6Island Selector §7(Right-Click to use)"
-
-# Settings item's name
-settings-item: "§2Settings §7(Right-Click to use)"
-
-# Ender Eye Item to go to lobby (only supports bungee)
-ender-eye: false
-
 # Holo Lines
 # Placeholders:
 # %player% - Player's name;
@@ -71,15 +53,15 @@ scoreboard:
     12: "&a&8&l|"
     11: "&a&8&l| &e&lSession-Top:"
     10: "&a&8&l| &7%top_1%"
-    9:  "&a&8&l| &7%top_2%"
-    8:  "&a&8&l| &7%top_3%"
-    7:  "&a&8&l|"
-    6:  "&a&8&l| &e&lCoins:"
-    5:  "&a&8&l| &e%coins%"
-    4:  "&a&8&l|"
-    3:  "&a&8&l| &a&lTime:"
-    2:  "&a&8&l| &e%time%"
-    1:  "&a&8&l|   &7&oexample.net"
+    9: "&a&8&l| &7%top_2%"
+    8: "&a&8&l| &7%top_3%"
+    7: "&a&8&l|"
+    6: "&a&8&l| &e&lCoins:"
+    5: "&a&8&l| &e%coins%"
+    4: "&a&8&l|"
+    3: "&a&8&l| &a&lTime:"
+    2: "&a&8&l| &e%time%"
+    1: "&a&8&l|   &7&oexample.net"
 
 # Go get it via https://discord.gg/CnQGtfEdjj
 user: none

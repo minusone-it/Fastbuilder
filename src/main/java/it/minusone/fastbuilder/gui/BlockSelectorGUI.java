@@ -18,7 +18,7 @@ public class BlockSelectorGUI implements InventoryHolder {
     private final Player requestedPlayer;
 
     public BlockSelectorGUI(Player requestedPlayer) {
-        this.inventory = Bukkit.createInventory(this, 45, "Block Selector");
+        this.inventory = Bukkit.createInventory(this, 45, Main.getInstance().getConfigManager().getBlockSelectorGuiName());
         this.requestedPlayer = requestedPlayer;
         this.addItems();
     }

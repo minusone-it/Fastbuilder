@@ -17,6 +17,7 @@ public class onPlayerClickEntity extends PacketAdapter {
     public onPlayerClickEntity() {
         super(Main.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY);
     }
+
     @Override
     public void onPacketReceiving(PacketEvent event) {
         PacketPlayInUseEntity packet = (PacketPlayInUseEntity) event.getPacket().getHandle();

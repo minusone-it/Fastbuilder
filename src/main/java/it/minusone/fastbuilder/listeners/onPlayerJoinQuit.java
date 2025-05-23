@@ -24,8 +24,10 @@ public class onPlayerJoinQuit implements Listener {
 
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer());
 
-        for (Hologram h : Hologram.all)
+        for (Hologram h : Hologram.all) {
             h.spawnFor(e.getPlayer());
+            h.addListener(e.getPlayer());
+        }
 
         if (Main.getInstance().getConfigManager().getCoinsOfPlayer(e.getPlayer()) == 0)
             Main.getInstance().getConfigManager().setCoinsOfPlayer(e.getPlayer(), 0);
@@ -43,7 +45,7 @@ public class onPlayerJoinQuit implements Listener {
         Main.getInstance().placedBlocks.put(e.getPlayer().getUniqueId(), new ArrayList<>());
 
         if (!Main.getInstance().getConfigManager().getModes().isEmpty())
-            e.getPlayer().performCommand("fb join " + Main.getInstance().getConfigManager().getModes().get(0));
+            fastbuilder.teleportPlayerToIsland(e.getPlayer(), Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
     }
 
     @EventHandler

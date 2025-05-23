@@ -10,7 +10,7 @@ public class ModeChangerGUI implements InventoryHolder {
     private final Inventory inventory;
 
     public ModeChangerGUI() {
-        this.inventory = Bukkit.createInventory(this, 45, "Mode Changer");
+        this.inventory = Bukkit.createInventory(this, 45, Main.getInstance().getConfigManager().getModeChangerGuiName());
         this.addItems();
     }
 

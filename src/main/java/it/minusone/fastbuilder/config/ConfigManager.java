@@ -6,29 +6,25 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.OfflinePlayer;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ConfigManager {
 
     private final Main plugin;
-    private FileConfiguration config;
-
-    private FileConfiguration playersConfig;
-    private FileConfiguration arenasConfig;
-    private FileConfiguration messagesConfig;
-    private FileConfiguration guisConfig;
-
     private final File playersFile;
     private final File arenasFile;
     private final File messagesFile;
     private final File guisFile;
+    private final File itemsFile;
+    private FileConfiguration config;
+    private FileConfiguration playersConfig;
+    private FileConfiguration arenasConfig;
+    private FileConfiguration messagesConfig;
+    private FileConfiguration guisConfig;
+    private FileConfiguration itemsConfig;
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
@@ -41,42 +37,34 @@ public class ConfigManager {
         arenasFile = new File(plugin.getDataFolder(), "arenas.yml");
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         guisFile = new File(plugin.getDataFolder(), "guis.yml");
+        itemsFile = new File(plugin.getDataFolder(), "items.yml");
 
         if (!playersFile.exists()) plugin.saveResource("players.yml", false);
         if (!arenasFile.exists()) plugin.saveResource("arenas.yml", false);
         if (!messagesFile.exists()) plugin.saveResource("messages.yml", false);
         if (!guisFile.exists()) plugin.saveResource("guis.yml", false);
+        if (!itemsFile.exists()) plugin.saveResource("items.yml", false);
 
         playersConfig = YamlConfiguration.loadConfiguration(playersFile);
         arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
         guisConfig = YamlConfiguration.loadConfiguration(guisFile);
+        itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
     }
 
     // Save methods
     private void savePlayersConfig() {
         try {
-            System.out.println(playersConfig.saveToString());
             playersConfig.save(playersFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void saveArenasConfig() {
         try {
-            System.out.println(arenasConfig.saveToString());
             arenasConfig.save(arenasFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveGUIsConfig() {
-        try {
-            System.out.println(guisConfig.saveToString());
-            guisConfig.save(guisFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -88,6 +76,7 @@ public class ConfigManager {
         arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
         guisConfig = YamlConfiguration.loadConfiguration(guisFile);
+        itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
     }
 
     // -------- ARENAS (arenas.yml) --------
@@ -109,6 +98,7 @@ public class ConfigManager {
     }
 
     public void addMode(String mode, boolean isInclined) {
+        System.out.println(arenasConfig.saveToString());
         List<String> modes = getModes();
         List<String> inclined = arenasConfig.getStringList("inclined-modes");
         if (!modes.contains(mode)) {
@@ -202,7 +192,6 @@ public class ConfigManager {
 
     // -------- PLAYERS (players.yml) --------
 
-
     public void saveBestTime(UUID playerId, String mode, double time) {
         String path = "best-times." + playerId + "." + mode;
         double currentBest = playersConfig.getDouble(path, 0.0);
@@ -268,15 +257,15 @@ public class ConfigManager {
 
     public ItemStack getCurrentPlayerBlock(Player p) {
         String data = playersConfig.getString(p.getUniqueId() + ".current-block", "WOOL:0");
-        String[] parts = data.split(":" );
+        String[] parts = data.split(":");
         Material m = Material.matchMaterial(parts[0]);
-        short d = (parts.length>1)?Short.parseShort(parts[1]):0;
-        return new ItemStack(m!=null?m:Material.WOOL,1,d);
+        short d = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
+        return new ItemStack(m != null ? m : Material.WOOL, 1, d);
     }
 
     public void setCurrentPlayerBlock(Player p, ItemStack b) {
         playersConfig.set(p.getUniqueId() + ".current-block",
-                b.getType().name()+":"+b.getDurability());
+                b.getType().name() + ":" + b.getDurability());
         savePlayersConfig();
     }
 
@@ -347,6 +336,54 @@ public class ConfigManager {
         return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("subtitle"));
     }
 
+    // -------- GUIS CONFIG (guis.yml) --------
+
+    public String getBlockSelectorGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("block-selector"));
+    }
+
+    public String getIslandSelectorGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("island-selector"));
+    }
+
+    public String getModeChangerGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("mode-changer"));
+    }
+
+    public String getConfirmGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("confirm-stats-reset"));
+    }
+
+    public String getSettingsGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("settings"));
+    }
+
+    public String getReplaysGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("replays"));
+    }
+
+    // -------- ITEMS CONFIG (items.yml) --------
+
+    public boolean isBungeeModeEnabled() {
+        return itemsConfig.getBoolean("ender-eye");
+    }
+
+    public String getLobbyItemName() {
+        return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("leave-item"));
+    }
+
+    public String getSettingsItemName() {
+        return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("settings-item"));
+    }
+
+    public String getIslandSelectorItemName() {
+        return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("islandselector-item"));
+    }
+
+    public String getReplayItemName() {
+        return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("replay-item"));
+    }
+
     // -------- DEFAULT CONFIG (config.yml) --------
 
     public int getCoinsForResetStats() {
@@ -366,17 +403,13 @@ public class ConfigManager {
         return config.getInt("max-distance");
     }
 
-    public boolean isBungeeModeEnabled() {
-        return config.getBoolean("ender-eye");
-    }
-
     public String[] getHoloLines(Player p) {
         List<String> lines = config.getStringList("holo");
         String[] res = new String[lines.size()];
         String mode = Main.getInstance().mapWherePlayerIn.get(p).split("-")[0];
         String pb = new DecimalFormat("0.000").format(getPB(p.getUniqueId(), mode)).replace(",", ".");
         if (pb.equals("0.000")) pb = "-.---";
-        for (int i=lines.size()-1; i>=0; i--) {
+        for (int i = lines.size() - 1; i >= 0; i--) {
             res[i] = lines.get(i)
                     .replace("%successful_attempts%", String.valueOf(getSuccessfulAttempts(p)))
                     .replace("%total_attempts%", String.valueOf(getAttempts(p)))
@@ -389,22 +422,6 @@ public class ConfigManager {
 
     public String getNPCname() {
         return ChatColor.translateAlternateColorCodes('&', config.getString("npc-name"));
-    }
-
-    public String getLobbyItemName() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("leave-item"));
-    }
-
-    public String getSettingsItemName() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("settings-item"));
-    }
-
-    public String getIslandSelectorItemName() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("islandselector-item"));
-    }
-
-    public String getReplayItemName() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("replay-item"));
     }
 
     public String getTopPlayerInModeByIndex(int idx, String mode) {

@@ -15,7 +15,12 @@ public class MapItem extends ItemStack {
     public MapItem(String map, String player, Player skullOwner, boolean isOccupied) {
         super(Material.SKULL_ITEM, 1, (short) 3);
 
-        String ownerName = (skullOwner != null && isOccupied) ? skullOwner.getName() : "MHF_Question";
+        if (!isOccupied) {
+            this.setType(Material.STAINED_GLASS_PANE);
+            this.setDurability((short) 14);
+        }
+
+        String ownerName = (skullOwner != null && isOccupied) ? skullOwner.getName() : "";
 
         SkullMeta skullMeta = getCachedSkullMeta(ownerName);
 

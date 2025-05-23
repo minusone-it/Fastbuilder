@@ -25,7 +25,7 @@ public class ReplayGUI implements InventoryHolder {
     private final int page;
 
     public ReplayGUI(UUID playerUUID, int page) {
-        this.inventory = Bukkit.createInventory(this, 54, "Replays - Page " + (page + 1));
+        this.inventory = Bukkit.createInventory(this, 54, Main.getInstance().getConfigManager().getReplaysGuiName().replace("%page%", (page + 1) + ""));
         this.page = page;
 
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
