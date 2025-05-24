@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import it.minusone.fastbuilder.Main;
 import net.minecraft.server.v1_8_R3.PacketPlayInBlockPlace;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -16,6 +17,9 @@ public class onPlayerBlockPlacePacket extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+            return;
+
         PacketPlayInBlockPlace packet = (PacketPlayInBlockPlace) event.getPacket().getHandle();
 
         if (packet.getFace() == 255) return;

@@ -21,6 +21,7 @@ public class onPlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
         e.getPlayer().getInventory().clear();
+        e.getPlayer().getInventory().setHeldItemSlot(0);
 
         Main.getInstance().scoreboardManager.createScoreboard(e.getPlayer());
 
