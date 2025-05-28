@@ -23,11 +23,10 @@ public class onPlayerMove implements Listener {
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-            try {
                 String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                 String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
                 if (!Main.getInstance().getConfigManager().isModeInclined(mode)) {
-                    if ((int) player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4 || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getX() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || (int) player.getLocation().getZ() == (int) Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
+                    if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4 || player.getLocation().getX() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getX() >= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getZ() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
                         player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
                         if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
                             player.getInventory().clear();
@@ -97,9 +96,6 @@ public class onPlayerMove implements Listener {
                         }
                     }
                 }
-            } catch (Exception ignored) {
-
-            }
         }
     }
 }

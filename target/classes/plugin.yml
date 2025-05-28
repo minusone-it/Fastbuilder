@@ -1,5 +1,5 @@
 name: Fastbuilder
-version: '1.6.1-FIX2'
+version: '1.7.0'
 main: it.minusone.fastbuilder.Main
 api-version: '1.8.8'
 authors: [ _MinusOne_ ]

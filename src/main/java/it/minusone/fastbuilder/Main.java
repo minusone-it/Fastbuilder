@@ -158,10 +158,10 @@ public final class Main extends JavaPlugin {
             String latestVersion = in.readLine();
             if (!newVersion.equalsIgnoreCase(latestVersion)) {
                 newVersion = latestVersion;
-                Bukkit.getScheduler().runTaskLater(this, () -> {
+                Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
                     printlnColor(PREFIX + "§b" + newVersion + " IS NOW AVAILABLE!");
                     printlnColor(PREFIX + "DOWNLOAD IT ON https://builtbybit.com/resources/fastbuilder.62493/");
-                }, 400L);
+                }, 400L, 72000L);
             }
 
         } catch (IOException e) {
@@ -318,6 +318,15 @@ public final class Main extends JavaPlugin {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean isPaper() {
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static class Entry {

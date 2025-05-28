@@ -29,16 +29,6 @@ public class fastbuilder implements CommandExecutor {
             return;
         }
         leaveModeB(player);
-        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
-        if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
-            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
-        if (playerBlocks != null) {
-            for (Location blockLocation : playerBlocks) {
-                blockLocation.getBlock().setType(Material.AIR);
-            }
-            Main.getInstance().getConfigManager().addAttempt(player);
-            Main.getInstance().placedBlocks.remove(player.getUniqueId());
-        }
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
         ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
@@ -72,11 +62,6 @@ public class fastbuilder implements CommandExecutor {
                 false,
                 Main.getInstance().getConfigManager().getHoloLines(player)
         );
-        if (Main.getInstance().stats.containsKey(player)) {
-            Main.getInstance().stats.get(player).despawn();
-            Main.getInstance().stats.get(player).delete();
-            Main.getInstance().stats.remove(player);
-        }
         stats.setLocation(baseLocationB);
         stats.spawn();
         Main.getInstance().stats.put(player, stats);
@@ -209,6 +194,7 @@ public class fastbuilder implements CommandExecutor {
                 if (spawn != null) {
                     player.teleport(spawn);
                 }
+
                 Main.getInstance().stats.get(player).despawn();
                 Main.getInstance().stats.get(player).delete();
                 Main.getInstance().stats.remove(player);

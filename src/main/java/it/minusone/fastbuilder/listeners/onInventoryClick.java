@@ -57,7 +57,7 @@ public class onInventoryClick implements Listener {
                 }
             } else if (clickedInventory.getHolder() instanceof IslandSelectorGUI) {
 
-                if (clickedItem != null && clickedItem.getType() == Material.SKULL_ITEM) {
+                if (clickedItem != null) {
                     ItemMeta itemMeta = clickedItem.getItemMeta();
 
                     String islandName = itemMeta.getDisplayName().replace("§r§7Island ", "");

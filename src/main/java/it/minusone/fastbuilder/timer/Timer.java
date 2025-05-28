@@ -8,7 +8,9 @@ import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.Replay;
 import it.minusone.fastbuilder.replay.data.stream.ReplayOutputStream;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
+import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
@@ -44,7 +46,10 @@ public class Timer {
 
         playerTimers.put(uuid, 0);
         BukkitRunnable task = getBukkitRunnable(player, uuid);
-        task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 0L);
+        if (Main.getInstance().isPaper())
+            task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 1L);
+        else
+            task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 0L);
         runningTasks.put(uuid, task);
         Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
         replay.addPlayer(player);
@@ -188,12 +193,12 @@ public class Timer {
                     ));
             }
             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), Main.getInstance().getConfigManager().getScoreSubTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"));
+                sendTitle(player, Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), Main.getInstance().getConfigManager().getScoreSubTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), 0, 70, 20);
                 Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
                 Main.getInstance().getConfigManager().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
                 Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
             } else
-                player.sendTitle(Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "");
+                sendTitle(player, Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "", 0, 70, 20);
             player.getInventory().clear();
             Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -227,6 +232,20 @@ public class Timer {
             return true;
         }
         return false;
+    }
+
+    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + title + "\"}");
+        IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
+
+        PacketPlayOutTitle packetTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON);
+        PacketPlayOutTitle packetSubtitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
+        PacketPlayOutTitle packetTimes = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
+
+        CraftPlayer cp = (CraftPlayer) player;
+        cp.getHandle().playerConnection.sendPacket(packetTimes);
+        cp.getHandle().playerConnection.sendPacket(packetTitle);
+        cp.getHandle().playerConnection.sendPacket(packetSubtitle);
     }
 
     private DecimalFormat getFormat() {

@@ -166,7 +166,7 @@ public class ReplayPlayback {
 
         for (Player player : getListeners()) {
             try {
-                sendActionBar(player, "§3" + decimalFormat.format(currentSeconds) + " / " + decimalFormat.format(maxSeconds - 0.050));
+                sendActionBar(player, "§3" + decimalFormat.format(currentSeconds) + " / " + decimalFormat.format(maxSeconds));
             } catch (Exception e) {
 
             }
