@@ -1,4 +1,4 @@
-# The plugin prefix, called in the commands. Leave a space after the last char.
+# The plugin prefix, called in the commands. Leave a space after the last char. (Use §, not &)
 prefix: "§3§lFastbuilder §7» "
 
 # You can make it 0 to disable it.
@@ -17,7 +17,7 @@ wrs:
 # Jump Plate like the Bridger Land one.
 jump-plate: false
 
-# Luckperms support with the scoreboard.
+# LuckPerms support with the scoreboard.
 luckperms-support: false
 
 # The distance from the spawn that teleports back the player to the spawn
@@ -34,6 +34,9 @@ holo:
   - "Personal Best: &e%pb%"
   - "Successful Attempts: &e%successful_attempts%"
   - "Total Attempts: &e%total_attempts%"
+
+# Mode Changer NPC's name
+npc-name: "&eMode Changer"
 
 # Scoreboard Lines.
 # Placeholders:
@@ -63,6 +66,6 @@ scoreboard:
     2: "&a&8&l| &e%time%"
     1: "&a&8&l|   &7&oexample.net"
 
-# Go get it via https://discord.gg/CnQGtfEdjj
+# Go get it via https://discord.gg/CnQGtfEdjj by opening a ticket and adding the Tebex transaction ID
 user: none
 license: none

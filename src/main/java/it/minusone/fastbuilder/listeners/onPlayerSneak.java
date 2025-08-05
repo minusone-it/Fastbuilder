@@ -37,7 +37,7 @@ public class onPlayerSneak implements Listener {
         }
     }
 
-    private void resetCamera(Player player) {
+    public static void resetCamera(Player player) {
         if (spectating.containsKey(player.getUniqueId())) {
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
                     new PacketPlayOutCamera(((CraftPlayer) player).getHandle())

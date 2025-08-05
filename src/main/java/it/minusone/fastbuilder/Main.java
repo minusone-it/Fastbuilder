@@ -46,7 +46,6 @@ public final class Main extends JavaPlugin {
     public static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
     public static final Map<UUID, ReplayPlayback> currentPlayerReplay = new HashMap<>();
     public static final List<Location> plateAboveLocations = new ArrayList<>();
-    public static final Map<Material, Integer> blocks = new HashMap<>();
     private static Main INSTANCE;
     public final Map<Player, HologramStack> stats = new HashMap<>();
     public final Map<Player, String> mapWherePlayerIn = new HashMap<>();
@@ -181,7 +180,7 @@ public final class Main extends JavaPlugin {
             }
         } catch (NoClassDefFoundError e) {
             if (configManager.isLuckPermsSupportEnabled())
-                printlnColor(PREFIX + "§cDidn't find LuckPerms.");
+                printlnColor(PREFIX + "§cCouldn't find LuckPerms.");
         }
 
         this.timer = new Timer();
@@ -189,7 +188,6 @@ public final class Main extends JavaPlugin {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
 
         ReplayMain.getApi().initialize(this);
-        initBlocks();
         loadListeners();
         loadCommands();
         startRepeatingTasks();
@@ -197,34 +195,6 @@ public final class Main extends JavaPlugin {
         if (configManager.isJumpPlateEnabled()) {
             Bukkit.getWorlds().forEach(a::scanLoadedChunksForPressurePlates);
         }
-    }
-
-    private void initBlocks() {
-        blocks.put(Material.SANDSTONE, 0);
-        blocks.put(Material.RED_SANDSTONE, 0);
-        blocks.put(Material.WOOL, 100);
-        blocks.put(Material.STONE, 100);
-        blocks.put(Material.WOOD, 100);
-        blocks.put(Material.QUARTZ_BLOCK, 200);
-        blocks.put(Material.CLAY, 400);
-        blocks.put(Material.HARD_CLAY, 500);
-        blocks.put(Material.COBBLESTONE, 500);
-        blocks.put(Material.COAL_BLOCK, 600);
-        blocks.put(Material.SNOW_BLOCK, 600);
-        blocks.put(Material.IRON_BLOCK, 700);
-        blocks.put(Material.HAY_BLOCK, 700);
-        blocks.put(Material.ENDER_STONE, 800);
-        blocks.put(Material.NETHER_BRICK, 800);
-        blocks.put(Material.LEAVES, 800);
-        blocks.put(Material.STAINED_GLASS, 800);
-        blocks.put(Material.MELON_BLOCK, 800);
-        blocks.put(Material.PRISMARINE, 800);
-        blocks.put(Material.REDSTONE_BLOCK, 900);
-        blocks.put(Material.OBSIDIAN, 900);
-        blocks.put(Material.EMERALD_BLOCK, 1000);
-        blocks.put(Material.GOLD_BLOCK, 1000);
-        blocks.put(Material.GOLD_ORE, 1000);
-        blocks.put(Material.BARRIER, 5000);
     }
 
     private void loadListeners() {

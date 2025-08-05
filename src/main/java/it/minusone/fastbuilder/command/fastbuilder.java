@@ -36,6 +36,8 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(0, block);
         player.getInventory().setItem(1, block);
         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+        if (Main.getInstance().playersInPracticeMode.containsKey(player.getUniqueId()))
+            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
         player.getInventory().setItem(4, new IslandSelectorItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
@@ -231,6 +233,7 @@ public class fastbuilder implements CommandExecutor {
                 player.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
                 player.sendMessage("§7/fb addmode <mode> - To add a mode.");
                 player.sendMessage("§7/fb removemode <mode> - To remove a mode.");
+                player.sendMessage("§7/fb addisland <mode> - To set spawn of an island of a mode.");
                 player.sendMessage("§7/fb set <mode> <island_number> - To set spawn of an island of a mode.");
                 player.sendMessage("§7/fb setcoins <player> <coins> - To set coins of a player.");
                 player.sendMessage("§7/fb addcoins <player> <coins> - To add coins to a player.");
@@ -248,6 +251,7 @@ public class fastbuilder implements CommandExecutor {
             case "set":
             case "wipestats":
             case "reloadconfig":
+            case "addisland":
                 if (!player.hasPermission("fastbuilder.admin")) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
                     return true;
@@ -303,7 +307,21 @@ public class fastbuilder implements CommandExecutor {
                 configManager.removeMode(modeToRemove);
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode removed: " + modeToRemove);
                 break;
-
+            case "addisland":
+                if (args.length < 2) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder addisland <mode>");
+                    return true;
+                }
+                String modeA = args[1];
+                if (!configManager.modeExists(modeA)) {
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
+                    return true;
+                }
+                Location spawnLocationA = player.getLocation();
+                int islandA = Main.getInstance().getConfigManager().getIslandsOfMod(modeA).size() + 1;
+                Main.getInstance().getConfigManager().setSpawnLocation(modeA, islandA + "", spawnLocationA);
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + modeA + "-" + islandA);
+                break;
             case "set":
                 if (args.length < 3) {
                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Usage: /fastbuilder set <mode> <island>");
@@ -325,8 +343,9 @@ public class fastbuilder implements CommandExecutor {
                 break;
             case "reloadconfig":
                 player.sendMessage(Main.getInstance().PREFIX + "Reloading config...");
+                long milliseconds = System.currentTimeMillis();
                 Main.getInstance().getConfigManager().reloadConfigs();
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Config reloaded!");
+                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Config reloaded in " + (System.currentTimeMillis() - milliseconds) + "!");
                 break;
             case "join":
                 if (args.length < 2) {

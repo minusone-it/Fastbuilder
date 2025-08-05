@@ -256,11 +256,11 @@ public class ConfigManager {
     }
 
     public ItemStack getCurrentPlayerBlock(Player p) {
-        String data = playersConfig.getString(p.getUniqueId() + ".current-block", "WOOL:0");
+        String data = playersConfig.getString(p.getUniqueId() + ".current-block");
         String[] parts = data.split(":");
         Material m = Material.matchMaterial(parts[0]);
         short d = (parts.length > 1) ? Short.parseShort(parts[1]) : 0;
-        return new ItemStack(m != null ? m : Material.WOOL, 1, d);
+        return new ItemStack(m, 1, d);
     }
 
     public void setCurrentPlayerBlock(Player p, ItemStack b) {
@@ -339,23 +339,41 @@ public class ConfigManager {
     // -------- GUIS CONFIG (guis.yml) --------
 
     public String getBlockSelectorGuiName() {
-        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("block-selector"));
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("block-selector.name"));
+    }
+
+    public int getBlockSelectorGuiMaxSlots() {
+        return guisConfig.getInt("block-selector.max-slots");
+    }
+
+    public List<ItemStack> getItemStacksOfBlockSelectorGui() {
+        ArrayList<ItemStack> list = new ArrayList<>();
+        for (guisConfig.getIntegerList(""))
+    }
+
+    public String getModeChangerGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("mode-changer.name"));
+    }
+
+    public int getModeChangerGuiMaxSlots() {
+        return guisConfig.getInt("mode-changer.max-slots");
+    }
+
+    public String getSettingsGuiName() {
+        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("settings.name"));
+    }
+
+    public int getSettingsGuiMaxSlots() {
+        return guisConfig.getInt("settings.max-slots");
     }
 
     public String getIslandSelectorGuiName() {
         return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("island-selector"));
     }
 
-    public String getModeChangerGuiName() {
-        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("mode-changer"));
-    }
 
     public String getConfirmGuiName() {
         return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("confirm-stats-reset"));
-    }
-
-    public String getSettingsGuiName() {
-        return ChatColor.translateAlternateColorCodes('&', guisConfig.getString("settings"));
     }
 
     public String getReplaysGuiName() {
@@ -382,6 +400,10 @@ public class ConfigManager {
 
     public String getReplayItemName() {
         return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("replay-item"));
+    }
+
+    public String getBackendServer() {
+        return itemsConfig.getString("backend-server");
     }
 
     // -------- DEFAULT CONFIG (config.yml) --------

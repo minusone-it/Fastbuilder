@@ -38,7 +38,7 @@ public class onInventoryClick implements Listener {
                             player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough coins to reset stats");
                         }
                     } else if (clickedItem.getType() == Material.SANDSTONE) {
-                        player.openInventory(new BlockSelectorGUI(player).getInventory());
+                        player.openInventory(new BlockSelectorGUI(player, 0).getInventory());
                     } else if (clickedItem.getType() == Material.STAINED_CLAY) {
                         if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
                             player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
@@ -56,7 +56,6 @@ public class onInventoryClick implements Listener {
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof IslandSelectorGUI) {
-
                 if (clickedItem != null) {
                     ItemMeta itemMeta = clickedItem.getItemMeta();
 

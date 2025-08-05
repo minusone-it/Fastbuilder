@@ -1,6 +1,3 @@
-# Mode Changer NPC's name
-npc-name: "&eMode Changer"
-
 # Leave Fastbuilder item's name
 leave-item: "&cLeave &7(Right-Click to use)"
 
@@ -15,3 +12,17 @@ settings-item: "&2Settings &7(Right-Click to use)"
 
 # Ender Eye Item to go to lobby (only supports bungee)
 ender-eye: false
+backend-server: lobby
+
+# Change Page item
+change-page:
+  next-page:
+    material: DYE:10
+    name: "&aNext Page"
+    lore:
+      - ""
+  previous-page:
+    material: DYE:1
+    name: "&cPrevious Page"
+    lore:
+      - ""

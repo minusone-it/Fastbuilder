@@ -206,6 +206,7 @@ public class Timer {
                     Main.getInstance().scoreboardManager.updateScoreboard(p);
                 }
             }
+
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), new BukkitRunnable() {
                 @Override
                 public void run() {

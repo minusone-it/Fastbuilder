@@ -28,6 +28,7 @@ public class fastbuilderTabCompleter implements TabCompleter {
                 if ("addcoins".startsWith(args[0].toLowerCase())) completions.add("addcoins");
                 if ("setcoins".startsWith(args[0].toLowerCase())) completions.add("setcoins");
                 if ("reloadconfig".startsWith(args[0].toLowerCase())) completions.add("reloadconfig");
+                if ("addisland".startsWith(args[0].toLowerCase())) completions.add("addisland");
             }
         } else if (args.length == 2) {
             if (sender.hasPermission("fastbuilder.admin")) {

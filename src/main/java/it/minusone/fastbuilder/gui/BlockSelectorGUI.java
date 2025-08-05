@@ -16,32 +16,17 @@ public class BlockSelectorGUI implements InventoryHolder {
 
     private final Inventory inventory;
     private final Player requestedPlayer;
+    private int page;
 
-    public BlockSelectorGUI(Player requestedPlayer) {
-        this.inventory = Bukkit.createInventory(this, 45, Main.getInstance().getConfigManager().getBlockSelectorGuiName());
+    public BlockSelectorGUI(Player requestedPlayer, int page) {
+        this.inventory = Bukkit.createInventory(this, Main.getInstance().getConfigManager().getBlockSelectorGuiMaxSlots(), Main.getInstance().getConfigManager().getBlockSelectorGuiName());
+        this.page = page;
         this.requestedPlayer = requestedPlayer;
         this.addItems();
     }
 
     private void addItems() {
-        int slot = 0;
-
-        List<Material> sortedMaterials = new ArrayList<>(Main.blocks.keySet());
-        sortedMaterials.sort(Comparator.comparingInt(Main.blocks::get));
-
-        for (Material material : sortedMaterials) {
-            if (material == Material.WOOL) {
-                for (byte i = 0; i < 16; i++) {
-                    inventory.setItem(slot, new BlockItem(material, requestedPlayer, Main.blocks.get(material), i));
-                    slot++;
-                    if (slot >= inventory.getSize()) return;
-                }
-            } else {
-                inventory.setItem(slot, new BlockItem(material, requestedPlayer, Main.blocks.get(material)));
-                slot++;
-                if (slot >= inventory.getSize()) return;
-            }
-        }
+        
     }
 
     @Override
