@@ -2,14 +2,19 @@ package it.minusone.fastbuilder.config;
 
 import it.minusone.fastbuilder.Main;
 import org.bukkit.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import xyz.haoshoku.nick.api.NickAPI;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class ConfigManager {
 
@@ -313,11 +318,11 @@ public class ConfigManager {
     // -------- MESSAGES (messages.yml) --------
 
     public List<String> getTimeMessage() {
-        return messagesConfig.getStringList("messages.time");
+        return messagesConfig.getStringList("end-messages.time");
     }
 
     public List<String> getPersonalBestMessage() {
-        return messagesConfig.getStringList("messages.personal-best");
+        return messagesConfig.getStringList("end-messages.personal-best");
     }
 
     public boolean isActionBarEnabled() {
@@ -336,6 +341,43 @@ public class ConfigManager {
         return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("subtitle"));
     }
 
+    public String getIslandOccupiedMessage(Player playerThatOccupies, String islandNumber) {
+        if (Bukkit.getPluginManager().isPluginEnabled("NickAPI"))
+            return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("messages.island-already-occupied")).replace("%island_player%", NickAPI.getName(playerThatOccupies)).replace("%island_number%", islandNumber).replace("%prefix%", Main.getInstance().PREFIX);
+        else
+            return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("messages.island-already-occupied")).replace("%island_player%", playerThatOccupies.getDisplayName()).replace("%island_number%", islandNumber).replace("%prefix%", Main.getInstance().PREFIX);
+    }
+
+    public String getUsageMessage(CommandType type) {
+        String message = ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("messages.usage")).replace("%command%", "").replace("%prefix%", Main.getInstance().PREFIX);
+        switch (type) {
+            case JOIN:
+                return message + "/fb join <mode>";
+            case SET:
+                return message + "/fb set <mode> <island> <isInclined>";
+            case ADDMODE:
+                return message + "/fb addmode <name>";
+            case ADDCOINS:
+                return message + "/fb addcoins <player> <amount>";
+            case SETCOINS:
+                return message + "/fb setcoins <player> <amount>";
+            case ADDISLAND:
+                return message + "/fb addisland <mode> <isInclined>";
+            case WIPESTATS:
+                return message + "/fb wipestats <player>";
+            case SEEREPLAY:
+                return message + "/fb seereplay <player> <mode> <id>";
+            case REMOVEMODE:
+                return message + "/fb removemode <mode>";
+            default:
+                return "";
+        }
+    }
+
+    public String getJoinMessage() {
+        return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("messages.joined-mode"));
+    }
+
     // -------- GUIS CONFIG (guis.yml) --------
 
     public String getBlockSelectorGuiName() {
@@ -346,9 +388,109 @@ public class ConfigManager {
         return guisConfig.getInt("block-selector.max-slots");
     }
 
-    public List<ItemStack> getItemStacksOfBlockSelectorGui() {
+    public List<ItemStack> getItemStacksOfSettingsGui(Player player) {
         ArrayList<ItemStack> list = new ArrayList<>();
-        for (guisConfig.getIntegerList(""))
+
+        ConfigurationSection section = guisConfig.getConfigurationSection("settings-gui-slots");
+        if (section != null) {
+            for (int i = 0; i < getSettingsGuiMaxSlots() - 1; i++)
+                list.add(new ItemStack(Material.AIR));
+            for (String key : section.getKeys(false)) {
+                int i = Integer.parseInt(key);
+                String name = "§r" + guisConfig.getString("settings-gui-slots." + i + ".name").replace("&", "§");
+                Material material = Material.getMaterial(guisConfig.getString("settings-gui-slots." + i + ".material").split(":")[0]);
+                short data = Short.parseShort(guisConfig.getString("settings-gui-slots." + i + ".material").split(":")[1]);
+
+                ItemStack item = new ItemStack(Material.AIR);
+                if (material == null)
+                    material = Material.getMaterial(Integer.parseInt(guisConfig.getString("settings-gui-slots." + i + ".material").split(":")[0]));
+                if (material != null) {
+                    item.setType(material);
+
+                    item.setDurability(data);
+                    List<String> configLore = guisConfig.getStringList("settings-gui-slots." + i + ".lore");
+                    ItemMeta meta = getItemMeta(configLore, item, name, player);
+                    item.setItemMeta(meta);
+                }
+
+                list.set(i - 1, item);
+            }
+        }
+        return list;
+    }
+
+    private ItemMeta getItemMeta(List<String> configLore, ItemStack item, String name, Player player) {
+        ArrayList<String> lore = new ArrayList<>();
+        for (int idx = 0; idx < configLore.size(); idx++) {
+            String s = configLore.get(idx);
+            if (idx == 0 && s.trim().isEmpty()) {
+                continue;
+            }
+            lore.add(s.replace("&", "§").replace("%price%", String.valueOf(getCoinsForResetStats())).replace("%practice_mode_enabled%", Main.getInstance().playersInPracticeMode.get(player.getUniqueId()) ? "§aEnabled" : "§cDisabled"));
+        }
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(lore);
+        meta.setDisplayName(name);
+        return meta;
+    }
+
+    public List<ItemStack> getItemStacksOfBlockSelectorGui(Player player, int page) {
+        ArrayList<ItemStack> list = new ArrayList<>();
+
+        ConfigurationSection section = guisConfig.getConfigurationSection("block-selector-slots." + page);
+        if (section != null) {
+            for (int i = 0; i < getBlockSelectorGuiMaxSlots() - 1; i++)
+                list.add(new ItemStack(Material.AIR));
+            for (String key : section.getKeys(false)) {
+                int i = Integer.parseInt(key);
+                String name = "§r" + guisConfig.getString("block-selector-slots." + page + "." + i + ".name").replace("&", "§");
+                Material material = Material.getMaterial(guisConfig.getString("block-selector-slots." + page + "." + i + ".material").split(":")[0]);
+                short data = Short.parseShort(guisConfig.getString("block-selector-slots." + page + "." + i + ".material").split(":")[1]);
+                int price = guisConfig.getInt("block-selector-slots." + page + "." + i + ".price");
+
+                ItemStack item = new ItemStack(Material.AIR);
+                if (material == null)
+                    material = Material.getMaterial(Integer.parseInt(guisConfig.getString("block-selector-slots." + page + "." + i + ".material").split(":")[0]));
+                if (material != null) {
+                    item.setType(material);
+
+                    item.setDurability(data);
+                    List<String> lore = new ArrayList<>();
+                    lore.addAll(getLoreFormatted(
+                            guisConfig.getStringList("block-selector-slots." + page + "." + i + ".lore"),
+                            price, player, item
+                    ));
+
+                    ItemMeta meta = item.getItemMeta();
+                    meta.setLore(lore);
+                    meta.setDisplayName(name);
+                    item.setItemMeta(meta);
+                }
+
+                list.set(i - 1, item);
+            }
+        }
+        return list;
+    }
+
+    public int getPriceOfBlock(Material block) {
+        for (int i : guisConfig.getIntegerList("block-selector-slots")) {
+            for (int j : guisConfig.getIntegerList("block-selector-slots." + i)) {
+                Material material = Material.getMaterial(guisConfig.getString("block-selector-slots." + i + "." + j + ".material").split(":")[0]);
+                if (material == block) {
+                    return guisConfig.getInt("block-selector-slots." + i + "." + j + ".price");
+                }
+            }
+        }
+        return 0;
+    }
+
+    public int getMaxPageOfBlockSelectorGui() {
+        return guisConfig.getConfigurationSection("block-selector-slots").getKeys(false).size();
+    }
+
+    public int getMaxPageOfModeChangerGui() {
+        return guisConfig.getConfigurationSection("mode-changer-slots").getKeys(false).size();
     }
 
     public String getModeChangerGuiName() {
@@ -357,6 +499,55 @@ public class ConfigManager {
 
     public int getModeChangerGuiMaxSlots() {
         return guisConfig.getInt("mode-changer.max-slots");
+    }
+
+    public List<ItemStack> getItemStacksOfModeChangerGui(int page) {
+        ArrayList<ItemStack> list = new ArrayList<>();
+
+        ConfigurationSection section = guisConfig.getConfigurationSection("mode-changer-slots." + page);
+        if (section != null) {
+            for (int i = 0; i < getModeChangerGuiMaxSlots() - 1; i++)
+                list.add(new ItemStack(Material.AIR));
+            for (String key : section.getKeys(false)) {
+                int i = Integer.parseInt(key);
+                String name = "§r" + guisConfig.getString("mode-changer-slots." + page + "." + i + ".name").replace("&", "§");
+                Material material = Material.getMaterial(guisConfig.getString("mode-changer-slots." + page + "." + i + ".material").split(":")[0]);
+                short data = Short.parseShort(guisConfig.getString("mode-changer-slots." + page + "." + i + ".material").split(":")[1]);
+                ItemStack item = new ItemStack(Material.AIR);
+                if (material == null)
+                    material = Material.getMaterial(Integer.parseInt(guisConfig.getString("mode-changer-slots." + page + "." + i + ".material").split(":")[0]));
+                if (material != null) {
+                    item.setType(material);
+
+                    item.setDurability(data);
+                    List<String> lore = new ArrayList<>();
+                    lore.addAll(
+                            getLoreOfModeChangerGui(page, i)
+                    );
+
+                    ItemMeta meta = item.getItemMeta();
+                    meta.setLore(lore);
+                    meta.setDisplayName(name);
+                    item.setItemMeta(meta);
+                }
+
+                list.set(i - 1, item);
+            }
+        }
+        return list;
+    }
+
+    public ArrayList<String> getLoreOfModeChangerGui(int page, int i) {
+        List<String> configLore = guisConfig.getStringList("mode-changer-slots." + page + "." + i + ".lore");
+        ArrayList<String> lore = new ArrayList<>();
+        for (int idx = 0; idx < configLore.size(); idx++) {
+            String s = configLore.get(idx);
+            if (idx == 0 && s.trim().isEmpty()) {
+                continue;
+            }
+            lore.add(s.replace("&", "§"));
+        }
+        return lore;
     }
 
     public String getSettingsGuiName() {
@@ -383,31 +574,109 @@ public class ConfigManager {
     // -------- ITEMS CONFIG (items.yml) --------
 
     public boolean isBungeeModeEnabled() {
-        return itemsConfig.getBoolean("ender-eye");
+        return itemsConfig.getBoolean("leave-item-toggled");
     }
 
     public String getLobbyItemName() {
         return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("leave-item"));
     }
 
+    public Material getMaterialOfLobbyItem() {
+        return Material.getMaterial(itemsConfig.getString("leave-item-material").split(":")[0]);
+    }
+
+    public short getDurabilityOfLobbyItem() {
+        return Short.parseShort(itemsConfig.getString("leave-item-material").split(":")[1]);
+    }
+
     public String getSettingsItemName() {
         return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("settings-item"));
+    }
+
+    public Material getMaterialOfSettingsItem() {
+        return Material.getMaterial(itemsConfig.getString("settings-item-material").split(":")[0]);
+    }
+
+    public short getDurabilityOfSettingsItem() {
+        return Short.parseShort(itemsConfig.getString("settings-item-material").split(":")[1]);
     }
 
     public String getIslandSelectorItemName() {
         return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("islandselector-item"));
     }
 
+    public Material getMaterialOfIslandSelectorItem() {
+        return Material.getMaterial(itemsConfig.getString("islandselector-item-material").split(":")[0]);
+    }
+
+    public short getDurabilityOfIslandSelectorItem() {
+        return Short.parseShort(itemsConfig.getString("islandselector-item-material").split(":")[1]);
+    }
+
     public String getReplayItemName() {
         return ChatColor.translateAlternateColorCodes('&', itemsConfig.getString("replay-item"));
+    }
+
+    public Material getMaterialOfReplayItem() {
+        return Material.getMaterial(itemsConfig.getString("replay-item-material").split(":")[0]);
+    }
+
+    public short getDurabilityOfReplayItem() {
+        return Short.parseShort(itemsConfig.getString("replay-item-material").split(":")[1]);
     }
 
     public String getBackendServer() {
         return itemsConfig.getString("backend-server");
     }
 
+    public ItemStack nextPage() {
+        ItemStack item = new ItemStack(Material.getMaterial(itemsConfig.getString("change-page.next-page.material").split(":")[0]));
+        short durability = Short.parseShort(itemsConfig.getString("change-page.next-page.material").split(":")[1]);
+        item.setDurability(durability);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("change-page.next-page.name").replace("&", "§"));
+        List<String> configLore = itemsConfig.getStringList("change-page.next-page.lore");
+        List<String> lore = new ArrayList<>();
+
+        for (int i = 0; i < configLore.size(); i++) {
+            String s = configLore.get(i);
+            if (i == 0 && s.trim().isEmpty()) {
+                continue;
+            }
+            lore.add(s.replace("&", "§"));
+        }
+
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public ItemStack previousPage() {
+        ItemStack item = new ItemStack(Material.getMaterial(itemsConfig.getString("change-page.previous-page.material").split(":")[0]));
+        short durability = Short.parseShort(itemsConfig.getString("change-page.previous-page.material").split(":")[1]);
+        item.setDurability(durability);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("change-page.previous-page.name").replace("&", "§"));
+        ArrayList<String> lore = new ArrayList<>();
+        List<String> configLore = itemsConfig.getStringList("change-page.previous-page.lore");
+        for (int i = 0; i < configLore.size(); i++) {
+            String s = configLore.get(i);
+            if (i == 0 && s.trim().isEmpty()) {
+                continue;
+            }
+            lore.add(s.replace("&", "§"));
+        }
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     // -------- DEFAULT CONFIG (config.yml) --------
 
+    public List<String> modesWithJumpPlate() {
+       return config.getStringList("jump-plate-modes");
+    }
     public int getCoinsForResetStats() {
         return config.getInt("reset-stats-cost");
     }
@@ -442,14 +711,41 @@ public class ConfigManager {
         return res;
     }
 
-    public String getNPCname() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("npc-name"));
-    }
-
     public String getTopPlayerInModeByIndex(int idx, String mode) {
         return modeExists(mode)
                 ? config.getStringList("wrs." + mode).get(idx)
                 : null;
+    }
+
+    public String getNPCname() {
+        return ChatColor.translateAlternateColorCodes('&', config.getString("npc-name"));
+    }
+
+    public boolean npcsToggled() {
+        return config.getBoolean("npcs");
+    }
+
+    public boolean holosToggled() {
+        return config.getBoolean("holos");
+    }
+
+    // UTILS
+
+    public List<String> getLoreFormatted(List<String> lore, int price, Player player, ItemStack item) {
+        List<String> loreFormatted = new ArrayList<>();
+        for (String s : lore) {
+            loreFormatted.add(s.replace("%price%", "" + price).
+                    replace("%block_status%", hasPlayerGotBlock(player, item) ? guisConfig.getString("block-status.purchased") : guisConfig.getString("block-status.not-purchased")).replace("&", "§"));
+        }
+        return loreFormatted;
+    }
+
+    public String modeOfItem(int idx, int page) {
+        return guisConfig.getString("mode-changer-slots." + page + "." + idx + ".mode");
+    }
+    
+    public String guiOfItem(int idx) {
+        return guisConfig.getString("settings-gui-slots." + idx + ".gui");
     }
 
 }

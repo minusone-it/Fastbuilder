@@ -22,6 +22,13 @@ public class onPlayerSneak implements Listener {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 
+    public static void resetCamera(Player player) {
+        if (spectating.containsKey(player.getUniqueId())) {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
+                    new PacketPlayOutCamera(((CraftPlayer) player).getHandle())
+            );
+        }
+    }
 
     @EventHandler
     public void onPlayerSneakEvent(PlayerToggleSneakEvent event) {
@@ -34,14 +41,6 @@ public class onPlayerSneak implements Listener {
             resetCamera(player);
 
             spectating.remove(player.getUniqueId());
-        }
-    }
-
-    public static void resetCamera(Player player) {
-        if (spectating.containsKey(player.getUniqueId())) {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
-                    new PacketPlayOutCamera(((CraftPlayer) player).getHandle())
-            );
         }
     }
 

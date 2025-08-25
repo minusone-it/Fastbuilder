@@ -1,6 +1,7 @@
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\fastbuilder.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\stats.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.java
+C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\config\CommandType.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\config\ConfigManager.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gui\BlockSelectorGUI.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gui\ConfirmGUI.java
@@ -8,15 +9,10 @@ C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gu
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gui\ModeChangerGUI.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gui\ReplayGUI.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\gui\SettingsGUI.java
-C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\BlockItem.java
-C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\BlockSelectorItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\IslandSelectorItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\LobbyItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\MapItem.java
-C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\ModeItem.java
-C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\PracticeModeItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\ReplayItem.java
-C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\ResetItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\SettingsItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onBlockPlaceBreak.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onEntityDamage.java
@@ -79,6 +75,7 @@ C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\ut
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\bukkit\handler\PacketPlayOutHandler.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\bukkit\listeners\PlayerListener.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\bukkit\packetwrapper\OutScoreboardTeam.java
+C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\c.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\eventbus\Event.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\eventbus\EventManager.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\utils\utils\collection\Sets.java

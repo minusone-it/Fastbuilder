@@ -30,9 +30,9 @@ public class IslandSelectorGUI implements InventoryHolder {
                 boolean isOccupied = islandPlayer != null;
                 MapItem mapItem;
                 if (!Bukkit.getServer().getPluginManager().isPluginEnabled("NickAPI"))
-                    mapItem = new MapItem(island, isOccupied ? islandPlayer.getName() : "", islandPlayer, isOccupied);
+                    mapItem = new MapItem(island, isOccupied ? islandPlayer.getName() : "", isOccupied);
                 else
-                    mapItem = new MapItem(island, isOccupied ? NickAPI.getName(islandPlayer) : "", islandPlayer, isOccupied);
+                    mapItem = new MapItem(island, isOccupied ? NickAPI.getName(islandPlayer) : "", isOccupied);
                 inventory.addItem(mapItem);
             }
         }

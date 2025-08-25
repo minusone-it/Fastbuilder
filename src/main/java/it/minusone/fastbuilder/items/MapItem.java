@@ -10,24 +10,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class MapItem extends ItemStack {
-    public MapItem(String map, String player, Player skullOwner, boolean isOccupied) {
-        super(Objects.requireNonNull(b.itemWithBase64(b.createSkull(), a.getPlayerSkinBase64((skullOwner != null && isOccupied) ? skullOwner.getName() : "MHF_Question"))));
-
-        if (Bukkit.getOnlineMode()) {
-            SkullMeta skullMeta = (SkullMeta) this.getItemMeta();
-
-            skullMeta.setDisplayName("§r§7Island " + map);
-            skullMeta.setLore(Collections.singletonList(
-                    isOccupied ? "§r§cOccupied by " + player : "§r§2Not occupied!"
-            ));
-            this.setItemMeta(skullMeta);
-        } else {
-            this.setType(Material.STAINED_GLASS_PANE);
+    public MapItem(String map, String player, boolean isOccupied) {
+        super(Material.STAINED_GLASS_PANE);
             ItemMeta meta = this.getItemMeta();
             meta.setDisplayName("§r§7Island " + map);
             if (isOccupied) {
@@ -43,5 +30,4 @@ public class MapItem extends ItemStack {
             }
             this.setItemMeta(meta);
         }
-    }
 }

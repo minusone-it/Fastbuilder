@@ -7,6 +7,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.ModeChangerGUI;
+import it.minusone.fastbuilder.utils.c;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -47,7 +48,8 @@ public class NPC {
                 @Override
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                     if (cause instanceof CancelledPacketHandleException) {
-                        player.openInventory(new ModeChangerGUI().getInventory());
+                        c.pagesOfModeChanger.put(player, 0);
+                        player.openInventory(new ModeChangerGUI(0).getInventory());
                         return;
                     }
                     ctx.fireExceptionCaught(cause);

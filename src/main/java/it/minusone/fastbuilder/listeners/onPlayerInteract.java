@@ -12,12 +12,12 @@ import it.minusone.fastbuilder.items.ReplayItem;
 import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.replay.ReplayManager;
 import it.minusone.fastbuilder.replay.ReplayPlayback;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -48,7 +48,7 @@ public class onPlayerInteract implements Listener {
                     Main.getInstance().timer.scoreTime(player, true);
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Island Selector"))
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Selector"))
                 event.getPlayer().openInventory(new IslandSelectorGUI(event.getPlayer()).getInventory());
             if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
                 event.getPlayer().openInventory(new SettingsGUI(event.getPlayer()).getInventory());
@@ -99,6 +99,32 @@ public class onPlayerInteract implements Listener {
                 out.writeUTF(Main.getInstance().getConfigManager().getBackendServer());
 
                 event.getPlayer().sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBreakEvent(BlockBreakEvent event) {
+        if (event.getBlock() != null) {
+            if (event.getBlock().getType().equals(Material.BED_BLOCK)) {
+                Player player = event.getPlayer();
+                if (!Main.getInstance().playersInPracticeMode.get(event.getPlayer().getUniqueId())) {
+                    if (Main.getInstance().timer.scoreTime(player, false)) {
+                        try {
+                            Main.getInstance().getConfigManager().addAttempt(player);
+                            Main.getInstance().getConfigManager().addSuccessfulAttempt(player);
+                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                Main.getInstance().stats.get(player).setName(
+                                        i,
+                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                );
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                } else
+                    Main.getInstance().timer.scoreTime(player, true);
             }
         }
     }

@@ -33,6 +33,20 @@ public class Timer {
     private final HashMap<UUID, BukkitRunnable> runningTasks = new HashMap<>();
     private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
 
+    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + title + "\"}");
+        IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
+
+        PacketPlayOutTitle packetTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON);
+        PacketPlayOutTitle packetSubtitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
+        PacketPlayOutTitle packetTimes = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
+
+        CraftPlayer cp = (CraftPlayer) player;
+        cp.getHandle().playerConnection.sendPacket(packetTimes);
+        cp.getHandle().playerConnection.sendPacket(packetTitle);
+        cp.getHandle().playerConnection.sendPacket(packetSubtitle);
+    }
+
     public void startTimer(Player player) {
 
         UUID uuid = player.getUniqueId();
@@ -233,20 +247,6 @@ public class Timer {
             return true;
         }
         return false;
-    }
-
-    public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + title + "\"}");
-        IChatBaseComponent subtitleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + subtitle + "\"}");
-
-        PacketPlayOutTitle packetTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, titleJSON);
-        PacketPlayOutTitle packetSubtitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, subtitleJSON);
-        PacketPlayOutTitle packetTimes = new PacketPlayOutTitle(fadeIn, stay, fadeOut);
-
-        CraftPlayer cp = (CraftPlayer) player;
-        cp.getHandle().playerConnection.sendPacket(packetTimes);
-        cp.getHandle().playerConnection.sendPacket(packetTitle);
-        cp.getHandle().playerConnection.sendPacket(packetSubtitle);
     }
 
     private DecimalFormat getFormat() {

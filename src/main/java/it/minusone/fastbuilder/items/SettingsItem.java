@@ -7,7 +7,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class SettingsItem extends ItemStack {
     public SettingsItem() {
-        super(Material.EMERALD);
+        super(Main.getInstance().getConfigManager().getMaterialOfSettingsItem());
+        this.setDurability(Main.getInstance().getConfigManager().getDurabilityOfSettingsItem());
         ItemMeta itemMeta = this.getItemMeta();
         itemMeta.setDisplayName(Main.getInstance().getConfigManager().getSettingsItemName());
         this.setItemMeta(itemMeta);

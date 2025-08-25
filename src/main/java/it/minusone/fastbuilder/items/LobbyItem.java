@@ -7,7 +7,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class LobbyItem extends ItemStack {
     public LobbyItem() {
-        super(Material.EYE_OF_ENDER);
+        super(Main.getInstance().getConfigManager().getMaterialOfLobbyItem());
+        this.setDurability(Main.getInstance().getConfigManager().getDurabilityOfLobbyItem());
         ItemMeta meta = this.getItemMeta();
         meta.setDisplayName(Main.getInstance().getConfigManager().getLobbyItemName());
         this.setItemMeta(meta);

@@ -4,6 +4,7 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.gui.*;
 import it.minusone.fastbuilder.replay.ReplayManager;
+import it.minusone.fastbuilder.utils.c;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -31,28 +32,41 @@ public class onInventoryClick implements Listener {
                 event.setCancelled(true);
             if (clickedInventory.getHolder() instanceof SettingsGUI) {
                 if (clickedItem != null) {
-                    if (clickedItem.getType() == Material.DIAMOND_PICKAXE) {
-                        if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) >= Main.getInstance().getConfigManager().getCoinsForResetStats()) {
-                            player.openInventory(new ConfirmGUI().getInventory());
-                        } else {
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough coins to reset stats");
-                        }
-                    } else if (clickedItem.getType() == Material.SANDSTONE) {
-                        player.openInventory(new BlockSelectorGUI(player, 0).getInventory());
-                    } else if (clickedItem.getType() == Material.STAINED_CLAY) {
-                        if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
-                            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), true);
-                        } else {
-                            player.getInventory().setItem(3, null);
-                            if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null) {
-                                for (Location loc : Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()))
-                                    loc.getBlock().setType(Material.AIR);
+                    switch (Main.getInstance().getConfigManager().guiOfItem(event.getSlot() + 1)) {
+                        case "block_selector":
+                            c.pagesOfBlockSelector.put(player, 0);
+                            player.openInventory(new BlockSelectorGUI(player).getInventory());
+                            break;
+                        case "reset_stats":
+                            if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) >= Main.getInstance().getConfigManager().getCoinsForResetStats()) {
+                                player.openInventory(new ConfirmGUI().getInventory());
+                            } else {
+                                player.closeInventory();
+                                player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough coins to reset stats");
                             }
-                            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
-                            player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
-                        }
-                        player.closeInventory();
+                            break;
+                        case "practice_mode":
+                            if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                                player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                                Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), true);
+                            } else {
+                                player.getInventory().setItem(3, null);
+                                if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null) {
+                                    for (Location loc : Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()))
+                                        loc.getBlock().setType(Material.AIR);
+                                }
+                                Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+                                player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
+                            }
+                            player.closeInventory();
+                            break;
+                        case "island_selector":
+                            player.openInventory(new IslandSelectorGUI(player).getInventory());
+                            break;
+                        case "mode_changer":
+                            c.pagesOfModeChanger.put(player, 0);
+                            player.openInventory(new ModeChangerGUI(0).getInventory());
+                            break;
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof IslandSelectorGUI) {
@@ -94,30 +108,45 @@ public class onInventoryClick implements Listener {
                 }
             } else if (clickedInventory.getHolder() instanceof ModeChangerGUI) {
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
-                    String mode = clickedItem.getItemMeta().getDisplayName().replaceAll("§[0-9a-fA-Fk-oK-r]", "");
-                    String modeA = Main.getInstance().mapWherePlayerIn.get(player);
-                    if (modeA != null) {
-                        if (!modeA.split("-")[0].equals(mode))
-                            player.performCommand("fb join " + mode);
-                        else
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You are already in this mode!");
+                    if (!ModeChangerGUI.handleNavigation(player, clickedItem)) {
+                        String mode = Main.getInstance().getConfigManager().modeOfItem(event.getSlot() + 1, c.pagesOfModeChanger.get(player) + 1);
+                        String modeA = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+                        if (modeA != null) {
+                            if (!modeA.equals(mode))
+                                player.performCommand("fb join " + mode);
+                            else
+                                player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You are already in this mode!");
+                        }
                     }
                 }
             } else if (clickedInventory.getHolder() instanceof BlockSelectorGUI) {
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
-                    int cost = Integer.parseInt(clickedItem.getItemMeta().getLore().get(0).replace(ChatColor.YELLOW + "Cost:", "").replace("coins", "").replace(" ", ""));
-                    if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) > cost) {
-                        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
-                            player.closeInventory();
-                            short damageValue = clickedItem.getDurability();
-                            Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - cost);
-                            Main.getInstance().getConfigManager().addBlockToPlayer(clickedItem, player);
-                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
-                            ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);
-                            block.setDurability(damageValue);
-                            player.getInventory().setItem(0, block);
-                            player.getInventory().setItem(1, block);
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You successfully bought the block.");
+                    if (clickedItem.getType() != Material.ARROW) {
+                        int cost = Main.getInstance().getConfigManager().getPriceOfBlock(clickedItem.getType());
+                        if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) > cost) {
+                            if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
+                                player.closeInventory();
+                                short damageValue = clickedItem.getDurability();
+                                Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - cost);
+                                Main.getInstance().getConfigManager().addBlockToPlayer(clickedItem, player);
+                                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
+                                ItemStack block = new ItemStack(clickedItem.getType());
+                                block.setDurability(damageValue);
+                                player.getInventory().setItem(0, block);
+                                player.getInventory().setItem(1, block);
+                                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You successfully bought the block.");
+                            } else {
+                                if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
+                                    Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
+                                    player.closeInventory();
+                                    short damageValue = clickedItem.getDurability();
+                                    ItemStack block = new ItemStack(clickedItem.getType());
+                                    block.setDurability(damageValue);
+                                    player.getInventory().setItem(0, block);
+                                    player.getInventory().setItem(1, block);
+                                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + clickedItem.getItemMeta().getDisplayName() + ChatColor.GREEN + " as your current block.");
+                                }
+                            }
                         } else {
                             if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
                                 Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
@@ -128,23 +157,13 @@ public class onInventoryClick implements Listener {
                                 player.getInventory().setItem(0, block);
                                 player.getInventory().setItem(1, block);
                                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")) + " as your current block.");
+                            } else {
+                                player.closeInventory();
+                                player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough money to buy it!");
                             }
                         }
-                    } else {
-                        if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
-                            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
-                            player.closeInventory();
-                            short damageValue = clickedItem.getDurability();
-                            ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);
-                            block.setDurability(damageValue);
-                            player.getInventory().setItem(0, block);
-                            player.getInventory().setItem(1, block);
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")) + " as your current block.");
-                        } else {
-                            player.closeInventory();
-                            player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You don't have enough money to buy it!");
-                        }
-                    }
+                    } else
+                        BlockSelectorGUI.handleNavigation(player, clickedItem);
                 }
             } else if (event.getClickedInventory().getHolder() instanceof ConfirmGUI) {
                 if (clickedItem != null) {

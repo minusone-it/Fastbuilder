@@ -1,6 +1,6 @@
 it\minusone\fastbuilder\utils\bukkit\entity\Hologram.class
 it\minusone\fastbuilder\utils\bukkit\packetwrapper\OutScoreboardTeam.class
-it\minusone\fastbuilder\items\ResetItem.class
+it\minusone\fastbuilder\utils\c.class
 it\minusone\fastbuilder\config\ConfigManager.class
 it\minusone\fastbuilder\npc\NPC$1.class
 it\minusone\fastbuilder\items\MapItem.class
@@ -13,19 +13,17 @@ it\minusone\fastbuilder\listeners\onPlayerBlockPlacePacket.class
 it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class
 it\minusone\fastbuilder\replay\recordable\entity\ItemHeldRecordable.class
 it\minusone\fastbuilder\timer\Timer.class
-it\minusone\fastbuilder\items\BlockItem.class
 it\minusone\fastbuilder\Main$Entry.class
 it\minusone\fastbuilder\utils\bukkit\entity\NPC.class
 it\minusone\fastbuilder\scoreboard\ScoreboardManager.class
 it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.class
 it\minusone\fastbuilder\gui\ConfirmGUI.class
-it\minusone\fastbuilder\items\PracticeModeItem.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\PlayOutEvent.class
 it\minusone\fastbuilder\replay\recordable\UndoRecordable.class
 it\minusone\fastbuilder\replay\recordable\entity\GamemodeRecordable.class
-it\minusone\fastbuilder\items\ModeItem.class
 it\minusone\fastbuilder\replay\event\PlaybackStateChangeEvent.class
 it\minusone\fastbuilder\replay\ReplayEvents$1.class
+it\minusone\fastbuilder\config\CommandType.class
 it\minusone\fastbuilder\timer\Timer$1.class
 it\minusone\fastbuilder\replay\data\stream\ReplayInputStream.class
 it\minusone\fastbuilder\gui\ReplayGUI.class
@@ -39,6 +37,7 @@ it\minusone\fastbuilder\replay\npc\ReplayNPC.class
 it\minusone\fastbuilder\utils\bukkit\entity\HologramStack.class
 it\minusone\fastbuilder\listeners\onPlayerClickEntity.class
 it\minusone\fastbuilder\replay\recordable\entity\EntityRemoveRecordable.class
+it\minusone\fastbuilder\config\ConfigManager$1.class
 it\minusone\fastbuilder\gui\BlockSelectorGUI.class
 it\minusone\fastbuilder\replay\recordable\entity\ArmorRecordable.class
 it\minusone\fastbuilder\replay\Replay.class
@@ -63,7 +62,6 @@ it\minusone\fastbuilder\replay\ReplayEvents.class
 it\minusone\fastbuilder\replay\ReplayPlayback.class
 it\minusone\fastbuilder\npc\SkinFetcher.class
 it\minusone\fastbuilder\scoreboard\helpers\bukkit\BPlayerBoard.class
-it\minusone\fastbuilder\items\BlockSelectorItem.class
 it\minusone\fastbuilder\listeners\onBlockPlaceBreak.class
 it\minusone\fastbuilder\replay\recordable\entity\MessageRecordable.class
 it\minusone\fastbuilder\replay\enums\PlaybackState.class

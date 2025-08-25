@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.ModeChangerGUI;
 import it.minusone.fastbuilder.npc.NPCManager;
+import it.minusone.fastbuilder.utils.c;
 import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,7 +38,8 @@ public class onPlayerClickEntity extends PacketAdapter {
             if (NPCManager.getNPC(player) != null) {
                 if (entityId == NPCManager.getNPC(player).getNpc().getId()
                         && !Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
-                    player.openInventory(new ModeChangerGUI().getInventory());
+                    c.pagesOfModeChanger.put(player, 0);
+                    player.openInventory(new ModeChangerGUI(0).getInventory());
                 } else if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
                     if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId()
                             && player.getItemInHand().getType() == Material.AIR) {

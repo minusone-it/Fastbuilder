@@ -25,20 +25,30 @@ public class ReplayGUI implements InventoryHolder {
     private final int page;
 
     public ReplayGUI(UUID playerUUID, int page) {
-        this.inventory = Bukkit.createInventory(this, 54, Main.getInstance().getConfigManager().getReplaysGuiName().replace("%page%", (page + 1) + ""));
-        this.page = page;
-
         File replayFolder = new File(Main.getPlugin(Main.class).getDataFolder(),
-                "replays" + File.separator + playerUUID.toString() + File.separator + Main.getInstance().mapWherePlayerIn.get(Bukkit.getPlayer(playerUUID)).split("-")[0]);
+                "replays" + File.separator + playerUUID.toString() + File.separator +
+                        Main.getInstance().mapWherePlayerIn.get(Bukkit.getPlayer(playerUUID)).split("-")[0]);
 
         if (!replayFolder.exists()) replayFolder.mkdirs();
 
         List<File> replayFiles = new ArrayList<>(Arrays.asList(Objects.requireNonNull(replayFolder.listFiles())));
         replayFiles.sort(Comparator.comparingLong(File::lastModified).reversed());
 
+        int maxPage = replayFiles.isEmpty() ? 1 : (int) Math.ceil((double) replayFiles.size() / ITEMS_PER_PAGE);
+
+        this.inventory = Bukkit.createInventory(
+                this,
+                54,
+                Main.getInstance().getConfigManager().getReplaysGuiName()
+                        .replace("%page%", String.valueOf(page + 1))
+                        .replace("%max_page%", String.valueOf(maxPage))
+        );
+        this.page = page;
+
         addItems(replayFiles);
         Main.getInstance().page.put(playerUUID, page);
     }
+
 
     public static String unixToDate(long unixTime) {
         LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTime), ZoneId.systemDefault());
@@ -48,9 +58,9 @@ public class ReplayGUI implements InventoryHolder {
 
     public static void handleNavigation(Player player, ItemStack clickedItem, UUID playerUUID, int currentPage) {
         if (clickedItem.getType() == Material.ARROW) {
-            if (clickedItem.getItemMeta().getDisplayName().contains("Previous Page")) {
+            if (clickedItem.getItemMeta().getDisplayName().contains(Main.getInstance().getConfigManager().previousPage().getItemMeta().getDisplayName())) {
                 player.openInventory(new ReplayGUI(playerUUID, currentPage - 1).getInventory());
-            } else if (clickedItem.getItemMeta().getDisplayName().contains("Next Page")) {
+            } else if (clickedItem.getItemMeta().getDisplayName().contains(Main.getInstance().getConfigManager().nextPage().getItemMeta().getDisplayName())) {
                 player.openInventory(new ReplayGUI(playerUUID, currentPage + 1).getInventory());
             }
         }
@@ -93,11 +103,11 @@ public class ReplayGUI implements InventoryHolder {
         }
 
         if (page > 0) {
-            inventory.setItem(45, createItem(Material.ARROW, "§cPrevious Page"));
+            inventory.setItem(45, Main.getInstance().getConfigManager().previousPage());
         }
 
         if (replayFiles.size() > (page + 1) * ITEMS_PER_PAGE) {
-            inventory.setItem(53, createItem(Material.ARROW, "§aNext Page"));
+            inventory.setItem(53, Main.getInstance().getConfigManager().nextPage());
         }
     }
 }
