@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,13 @@ public class onPlayerMove implements Listener {
                         player.getInventory().setItem(0, block);
                         player.getInventory().setItem(1, block);
                         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
-                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                            ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
+                            ItemMeta meta = item.getItemMeta();
+                            meta.setDisplayName("§rPractice Blocks");
+                            item.setItemMeta(meta);
+                            player.getInventory().setItem(3, item);
+                        }
                         player.getInventory().setItem(4, new IslandSelectorItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());

@@ -49,7 +49,7 @@ public class onInventoryClick implements Listener {
                             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
                                 ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
                                 ItemMeta meta = item.getItemMeta();
-                                meta.setDisplayName("Practice Blocks");
+                                meta.setDisplayName("§rPractice Blocks");
                                 item.setItemMeta(meta);
                                 player.getInventory().setItem(3, item);
                                 Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), true);
@@ -69,7 +69,7 @@ public class onInventoryClick implements Listener {
                             break;
                         case "mode_changer":
                             c.pagesOfModeChanger.put(player, 0);
-                            player.openInventory(new ModeChangerGUI(0).getInventory());
+                            player.openInventory(new ModeChangerGUI(player).getInventory());
                             break;
                     }
                 }

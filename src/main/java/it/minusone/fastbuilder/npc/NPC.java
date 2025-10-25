@@ -49,7 +49,7 @@ public class NPC {
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                     if (cause instanceof CancelledPacketHandleException) {
                         c.pagesOfModeChanger.put(player, 0);
-                        player.openInventory(new ModeChangerGUI(0).getInventory());
+                        player.openInventory(new ModeChangerGUI(player).getInventory());
                         return;
                     }
                     ctx.fireExceptionCaught(cause);

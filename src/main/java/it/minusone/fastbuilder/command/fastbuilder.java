@@ -17,6 +17,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -42,8 +43,13 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(0, block);
         player.getInventory().setItem(1, block);
         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-        if (Main.getInstance().playersInPracticeMode.containsKey(player.getUniqueId()))
-            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+            ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName("§rPractice Blocks");
+            item.setItemMeta(meta);
+            player.getInventory().setItem(3, item);
+        }
         player.getInventory().setItem(4, new IslandSelectorItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
@@ -242,9 +248,9 @@ public class fastbuilder implements CommandExecutor {
             if (player.hasPermission("fastbuilder.admin")) {
                 player.sendMessage(Main.getInstance().PREFIX + "List of commands:");
                 player.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
-                player.sendMessage("§7/fb addmode <name> - To add a mode.");
+                player.sendMessage("§7/fb addmode <name> <isInclined(true | false)> - To add a mode.");
                 player.sendMessage("§7/fb removemode <mode> - To remove a mode.");
-                player.sendMessage("§7/fb addisland <mode> <isInclined> - To set spawn of an island of a mode.");
+                player.sendMessage("§7/fb addisland <mode>- To set spawn of an island of a mode.");
                 player.sendMessage("§7/fb set <mode> <island_number> <isInclined> - To set spawn of an island of a mode.");
                 player.sendMessage("§7/fb setcoins <player> <amount> - To set coins of a player.");
                 player.sendMessage("§7/fb addcoins <player> <amount> - To add coins to a player.");
@@ -350,7 +356,7 @@ public class fastbuilder implements CommandExecutor {
                 }
                 String modeA = args[1];
                 if (!configManager.modeExists(modeA)) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> <isInclined(true|false)> first.");
                     return true;
                 }
                 Location spawnLocationA = player.getLocation();
@@ -368,7 +374,7 @@ public class fastbuilder implements CommandExecutor {
                 String island = args[2];
 
                 if (!configManager.modeExists(mode)) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> first.");
+                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist! Use /fastbuilder addmode <mode> <isInclined(true | false)> first.");
                     return true;
                 }
 

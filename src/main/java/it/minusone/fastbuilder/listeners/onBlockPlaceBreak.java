@@ -34,10 +34,10 @@ public class onBlockPlaceBreak implements Listener {
             return;
         }
 
-        if (!event.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Practice Blocks"))
-            Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
-        else
+        if (event.getItemInHand().getItemMeta() != null && event.getItemInHand().getItemMeta().getDisplayName() != null && event.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("§rPractice Blocks"))
             Main.getInstance().placedPracticeBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
+        else
+            Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
 
         if (!Main.getInstance().timer.isPlayerInTimer(player)) {
             Main.getInstance().timer.startTimer(player);
