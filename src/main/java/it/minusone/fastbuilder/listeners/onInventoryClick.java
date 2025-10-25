@@ -47,7 +47,11 @@ public class onInventoryClick implements Listener {
                             break;
                         case "practice_mode":
                             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                                player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                                ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
+                                ItemMeta meta = item.getItemMeta();
+                                meta.setDisplayName("Practice Blocks");
+                                item.setItemMeta(meta);
+                                player.getInventory().setItem(3, item);
                                 Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), true);
                             } else {
                                 player.getInventory().setItem(3, null);

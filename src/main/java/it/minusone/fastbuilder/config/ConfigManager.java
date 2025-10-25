@@ -474,14 +474,30 @@ public class ConfigManager {
     }
 
     public int getPriceOfBlock(Material block) {
-        for (int i : guisConfig.getIntegerList("block-selector-slots")) {
-            for (int j : guisConfig.getIntegerList("block-selector-slots." + i)) {
-                Material material = Material.getMaterial(guisConfig.getString("block-selector-slots." + i + "." + j + ".material").split(":")[0]);
+        ConfigurationSection pagesSection = guisConfig.getConfigurationSection("block-selector-slots");
+        if (pagesSection == null) return 0;
+
+        for (String pageKey : pagesSection.getKeys(false)) {
+            ConfigurationSection pageSection = pagesSection.getConfigurationSection(pageKey);
+            if (pageSection == null) continue;
+
+            for (String slotKey : pageSection.getKeys(false)) {
+                ConfigurationSection blockSection = pageSection.getConfigurationSection(slotKey);
+                if (blockSection == null) continue;
+
+                String materialString = blockSection.getString("material");
+                if (materialString == null) continue;
+
+                String[] split = materialString.split(":");
+                Material material = Material.getMaterial(split[0]);
+                if (material == null) continue;
+
                 if (material == block) {
-                    return guisConfig.getInt("block-selector-slots." + i + "." + j + ".price");
+                    return blockSection.getInt("price", 0);
                 }
             }
         }
+
         return 0;
     }
 

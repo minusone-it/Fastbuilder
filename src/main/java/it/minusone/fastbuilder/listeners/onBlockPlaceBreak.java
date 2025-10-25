@@ -34,7 +34,7 @@ public class onBlockPlaceBreak implements Listener {
             return;
         }
 
-        if (event.getBlock().getType() != Material.STAINED_CLAY)
+        if (!event.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase("Practice Blocks"))
             Main.getInstance().placedBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);
         else
             Main.getInstance().placedPracticeBlocks.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>()).add(blockLocation);

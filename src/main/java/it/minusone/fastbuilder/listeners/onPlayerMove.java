@@ -60,6 +60,42 @@ public class onPlayerMove implements Listener {
                         Main.getInstance().timer.setAlreadyTeleported(player, true);
                     }
                 }
+            } else {
+                if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) {
+                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
+                    if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
+                        player.getInventory().clear();
+                        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+                        block.setAmount(64);
+                        player.getInventory().setItem(0, block);
+                        player.getInventory().setItem(1, block);
+                        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
+                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                        player.getInventory().setItem(4, new IslandSelectorItem());
+                        player.getInventory().setItem(6, new ReplayItem());
+                        player.getInventory().setItem(7, new SettingsItem());
+                        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                            player.getInventory().setItem(8, new LobbyItem());
+                        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                        if (playerBlocks != null) {
+                            for (Location blockLocation : playerBlocks) {
+                                blockLocation.getBlock().setType(Material.AIR);
+                            }
+                            Main.getInstance().getConfigManager().addAttempt(player);
+                            Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                Main.getInstance().stats.get(player).setName(
+                                        i,
+                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                );
+                            }
+                        }
+                        Main.getInstance().timer.stopTimer(player, false);
+                        Main.getInstance().timer.setAlreadyTeleported(player, true);
+                    }
+                }
+            }
                 if (Main.getInstance().getConfigManager().isJumpPlateEnabled() && Main.getInstance().getConfigManager().modesWithJumpPlate().contains(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])) {
                     List<Location> locs = new ArrayList<>();
                     for (Location loc : Main.plateAboveLocations) {
@@ -95,7 +131,6 @@ public class onPlayerMove implements Listener {
                         }
                     }
                 }
-            }
         }
     }
 }
