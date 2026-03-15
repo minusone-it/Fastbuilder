@@ -19,8 +19,9 @@ public class a {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < world.getMaxHeight(); y++) {
                         Block block = chunk.getBlock(x, y, z);
-                        if (isPressurePlate(block))
+                        if (isPressurePlate(block)) {
                             Main.plateAboveLocations.add(block.getLocation());
+                        }
                     }
                 }
             }

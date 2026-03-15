@@ -9,6 +9,8 @@ public enum CommandType {
     SETCOINS,
     ADDCOINS,
     WIPESTATS,
-    SEEREPLAY
+    SEEREPLAY,
+    SPECTATE,
+    SEEREPLAYS
 
 }

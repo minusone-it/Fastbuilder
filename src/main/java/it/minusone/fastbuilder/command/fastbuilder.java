@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.command;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.config.CommandType;
 import it.minusone.fastbuilder.config.ConfigManager;
+import it.minusone.fastbuilder.gui.ReplayGUI;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.LobbyItem;
 import it.minusone.fastbuilder.items.ReplayItem;
@@ -21,10 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager = Main.getInstance().getConfigManager();
@@ -51,6 +49,8 @@ public class fastbuilder implements CommandExecutor {
             player.getInventory().setItem(3, item);
         }
         player.getInventory().setItem(4, new IslandSelectorItem());
+        if (Main.getInstance().getConfigManager().isBedItemEnabled())
+            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
         if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
@@ -112,6 +112,8 @@ public class fastbuilder implements CommandExecutor {
         player.getInventory().setItem(1, block);
         player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
         player.getInventory().setItem(4, new IslandSelectorItem());
+        if (Main.getInstance().getConfigManager().isBedItemEnabled())
+            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
         if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
@@ -235,31 +237,44 @@ public class fastbuilder implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(Main.getInstance().PREFIX + "§cYou must be a player to execute this command.");
-            return true;
-        }
-
-        Player player = (Player) sender;
-
         if (args.length == 0) {
-            player.sendMessage(Main.getInstance().PREFIX + "§fRunning Fastbuilder V" + Main.getInstance().getDescription().getVersion() + " by _MinusOne_.");
-            player.sendMessage(Main.getInstance().PREFIX + "§fBuy it on https://builtbybit.com/resources/fastbuilder.62493/.");
-            if (player.hasPermission("fastbuilder.admin")) {
-                player.sendMessage(Main.getInstance().PREFIX + "List of commands:");
-                player.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
-                player.sendMessage("§7/fb addmode <name> <isInclined(true | false)> - To add a mode.");
-                player.sendMessage("§7/fb removemode <mode> - To remove a mode.");
-                player.sendMessage("§7/fb addisland <mode>- To set spawn of an island of a mode.");
-                player.sendMessage("§7/fb set <mode> <island_number> <isInclined> - To set spawn of an island of a mode.");
-                player.sendMessage("§7/fb setcoins <player> <amount> - To set coins of a player.");
-                player.sendMessage("§7/fb addcoins <player> <amount> - To add coins to a player.");
-                player.sendMessage("§7/fb wipestats <player> - To wipe the stats of a player.");
-                player.sendMessage("§7/fb watchreplay <player> <mode> <replay_id> - To see the replay of a player.");
-                player.sendMessage("§7/fb reloadconfig - To reload plugin config.");
+            sender.sendMessage(Main.getInstance().PREFIX + "§fRunning Fastbuilder V" + Main.getInstance().getDescription().getVersion() + " by _MinusOne_.");
+            sender.sendMessage(Main.getInstance().PREFIX + "§fhttps://builtbybit.com/resources/fastbuilder.62493/.");
+            if (sender.hasPermission("fastbuilder.admin")) {
+                sender.sendMessage(Main.getInstance().PREFIX + "List of commands:");
+                if (sender instanceof Player)
+                    sender.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
+                sender.sendMessage("§7/fb addmode <name> <isInclined(true | false)> - To add a mode.");
+                sender.sendMessage("§7/fb removemode <mode> - To remove a mode.");
+                if (sender instanceof Player) {
+                    sender.sendMessage("§7/fb addisland <mode>- To set spawn of an island of a mode.");
+                    sender.sendMessage("§7/fb set <mode> <island_number>- To set spawn of an island of a mode.");
+                }
+                sender.sendMessage("§7/fb setcoins <player> <amount> - To set coins of a sender.");
+                sender.sendMessage("§7/fb addcoins <player> <amount> - To add coins to a sender.");
+                sender.sendMessage("§7/fb wipestats <player> - To wipe the stats of a sender.");
+                if (sender instanceof Player) {
+                    sender.sendMessage("§7/fb watchreplay <player> <mode> <replay_id> - To see the replay of a sender.");
+                    sender.sendMessage("§7/fb seereplays <player> <mode> - To see the replay of a sender.");
+                }
+                sender.sendMessage("§7/fb reloadconfig - To reload plugin config.");
             }
             return true;
         }
+
+        switch (args[0].toLowerCase()) {
+            case "join":
+            case "addisland":
+            case "set":
+            case "watchreplay":
+            case "seereplays":
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(Main.getInstance().PREFIX + "§cYou must be a player to execute this command.");
+                    return true;
+                }
+                break;
+        }
+
 
         switch (args[0].toLowerCase()) {
             case "addcoins":
@@ -271,14 +286,88 @@ public class fastbuilder implements CommandExecutor {
             case "reloadconfig":
             case "addisland":
             case "watchreplay":
-                if (!player.hasPermission("fastbuilder.admin")) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
+            case "seereplays":
+                if (!sender.hasPermission("fastbuilder.admin")) {
+                    sender.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
                     return true;
                 }
                 break;
         }
 
         switch (args[0].toLowerCase()) {
+            case "reloadconfig":
+                sender.sendMessage(Main.getInstance().PREFIX + "Reloading config...");
+                long milliseconds = System.currentTimeMillis();
+                Main.getInstance().getConfigManager().reloadConfigs();
+                sender.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Config reloaded in " + (System.currentTimeMillis() - milliseconds) + "ms!");
+                return true;
+            case "addcoins":
+                if (args.length < 3) {
+                    sender.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.ADDCOINS));
+                    return true;
+                }
+                OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
+                Main.getInstance().getConfigManager().addCoinsToPlayer(target, Integer.parseInt(args[2]));
+                sender.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Added " + args[2] + " coins to " + args[1] + ".");
+                return true;
+
+            case "setcoins":
+                if (args.length < 3) {
+                    sender.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.SETCOINS));
+                    return true;
+                }
+                OfflinePlayer targetA = Bukkit.getOfflinePlayer(args[1]);
+                if (targetA == null) {
+                    sender.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player not found!");
+                    return true;
+                }
+                Main.getInstance().getConfigManager().setCoinsOfPlayer(targetA, Integer.parseInt(args[2]));
+                sender.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + args[2] + " coins to " + args[1] + ".");
+                return true;
+
+            case "addmode":
+                if (args.length < 3) {
+                    sender.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.ADDMODE));
+                    return true;
+                }
+                String modeToAdd = args[1];
+                configManager.addMode(modeToAdd, Boolean.parseBoolean(args[2]));
+                sender.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode added: " + modeToAdd);
+                return true;
+
+            case "removemode":
+                if (args.length < 2) {
+                    sender.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.REMOVEMODE));
+                    return true;
+                }
+                String modeToRemove = args[1];
+                if (!configManager.modeExists(modeToRemove)) {
+                    sender.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
+                    return true;
+                }
+                configManager.removeMode(modeToRemove);
+                sender.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode removed: " + modeToRemove);
+                return true;
+            case "wipestats":
+                if (args.length < 2) {
+                    sender.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.WIPESTATS));
+                    return true;
+                }
+                OfflinePlayer targetB = Bukkit.getOfflinePlayer(args[1]);
+                Main.getInstance().getConfigManager().deleteStatsOfPlayer(targetB);
+                sender.sendMessage(Main.getInstance().PREFIX + "§2Successfully wiped " + targetB.getName() + "'s stats!");
+                return true;
+        }
+        Player player = (Player) sender; 
+        switch (args[0].toLowerCase()) {
+            case "seereplays":
+                if (args.length < 4) {
+                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.SEEREPLAYS));
+                    return true;
+                }
+                UUID targetUUID = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+                player.openInventory(new ReplayGUI(player, targetUUID, Integer.parseInt(args[3]), args[2]).getInventory());
+                break;
             case "watchreplay":
                 if (args.length < 4) {
                     player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.SEEREPLAY));
@@ -290,64 +379,16 @@ public class fastbuilder implements CommandExecutor {
                     List<File> replayFiles = new ArrayList<>(Arrays.asList(Objects.requireNonNull(replayFolder.listFiles())));
                     for (File file : replayFiles) {
                         if (Paths.get(file.getPath()).getFileName().toString().replace(".replay", "").equalsIgnoreCase(args[3])) {
-                            if (!Objects.equals(Main.getInstance().getModeOfPlayer(player), args[3]))
-                                player.performCommand("/fb join " + args[3]);
+                            if (!Objects.equals(Main.getInstance().getModeOfPlayer(player), args[2]))
+                                player.performCommand("fb join " + args[2]);
                             player.getInventory().clear();
                             ReplayManager.playReplay(player, file);
-                            break;
+                            return true;
                         }
                     }
-                    player.sendMessage(Main.getInstance().PREFIX + "§cReplay not found.");
                 } else {
                     player.sendMessage(Main.getInstance().PREFIX + "§cReplay not found.");
                 }
-                break;
-            case "addcoins":
-                if (args.length < 3) {
-                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.ADDCOINS));
-                    return true;
-                }
-                OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
-                Main.getInstance().getConfigManager().addCoinsToPlayer(target, Integer.parseInt(args[2]));
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Added " + args[2] + " coins to " + args[1] + ".");
-                break;
-
-            case "setcoins":
-                if (args.length < 3) {
-                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.SETCOINS));
-                    return true;
-                }
-                OfflinePlayer targetA = Bukkit.getOfflinePlayer(args[1]);
-                if (targetA == null) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Player not found!");
-                    return true;
-                }
-                Main.getInstance().getConfigManager().setCoinsOfPlayer(targetA, Integer.parseInt(args[2]));
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + args[2] + " coins to " + args[1] + ".");
-                break;
-
-            case "addmode":
-                if (args.length < 3) {
-                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.ADDMODE));
-                    return true;
-                }
-                String modeToAdd = args[1];
-                configManager.addMode(modeToAdd, Boolean.parseBoolean(args[2]));
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode added: " + modeToAdd);
-                break;
-
-            case "removemode":
-                if (args.length < 2) {
-                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.REMOVEMODE));
-                    return true;
-                }
-                String modeToRemove = args[1];
-                if (!configManager.modeExists(modeToRemove)) {
-                    player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Mode does not exist!");
-                    return true;
-                }
-                configManager.removeMode(modeToRemove);
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Mode removed: " + modeToRemove);
                 break;
             case "addisland":
                 if (args.length < 2) {
@@ -382,12 +423,6 @@ public class fastbuilder implements CommandExecutor {
                 Main.getInstance().getConfigManager().setSpawnLocation(mode, island, spawnLocation);
 
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Spawn set for " + mode + "-" + island);
-                break;
-            case "reloadconfig":
-                player.sendMessage(Main.getInstance().PREFIX + "Reloading config...");
-                long milliseconds = System.currentTimeMillis();
-                Main.getInstance().getConfigManager().reloadConfigs();
-                player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Config reloaded in " + (System.currentTimeMillis() - milliseconds) + "ms!");
                 break;
             case "join":
                 if (args.length < 2) {
@@ -445,15 +480,6 @@ public class fastbuilder implements CommandExecutor {
                     }
                     teleportPlayerToIsland(player, joinMode, joinIsland);
                 }
-                break;
-            case "wipestats":
-                if (args.length < 2) {
-                    player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.WIPESTATS));
-                    return true;
-                }
-                OfflinePlayer targetB = Bukkit.getOfflinePlayer(args[1]);
-                Main.getInstance().getConfigManager().deleteStatsOfPlayer(targetB);
-                player.sendMessage(Main.getInstance().PREFIX + "§2Successfully wiped " + targetB.getName() + "'s stats!");
                 break;
             default:
                 player.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "Unknown command! Use /fastbuilder to see list of commands.");

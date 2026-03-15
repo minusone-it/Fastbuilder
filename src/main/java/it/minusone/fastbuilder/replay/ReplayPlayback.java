@@ -79,7 +79,6 @@ public class ReplayPlayback {
         if (info.hasSkin()) {
             npc.setSkin(info.getSkin());
         }
-
         npc.setLocation(origin);
         npc.spawn();
 

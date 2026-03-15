@@ -7,6 +7,7 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.gui.ModeChangerGUI;
+import it.minusone.fastbuilder.utils.b;
 import it.minusone.fastbuilder.utils.c;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
@@ -24,7 +25,7 @@ public class NPC {
     private final String name;
 
     public NPC(Player player, String name, Location location) {
-        this.name = ChatColor.translateAlternateColorCodes('&', name);
+        this.name = b.parsePlaceholders(player, ChatColor.translateAlternateColorCodes('&', name));
 
         MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
@@ -48,7 +49,6 @@ public class NPC {
                 @Override
                 public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
                     if (cause instanceof CancelledPacketHandleException) {
-                        c.pagesOfModeChanger.put(player, 0);
                         player.openInventory(new ModeChangerGUI(player).getInventory());
                         return;
                     }

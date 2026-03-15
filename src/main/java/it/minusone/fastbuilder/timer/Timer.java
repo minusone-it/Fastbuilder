@@ -1,5 +1,11 @@
 package it.minusone.fastbuilder.timer;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.items.IslandSelectorItem;
 import it.minusone.fastbuilder.items.LobbyItem;
@@ -12,6 +18,7 @@ import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import org.bukkit.*;
+import org.bukkit.FireworkEffect;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -26,12 +33,128 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Timer {
 
-    private final HashMap<UUID, Integer> playerTimers = new HashMap<>();
+    /**
+     * Timer "client-based": numero di movement packets contati (1 = 1 "client tick").
+     * NOTA: viene aggiornato SOLO sul main thread tramite commitTask (1 volta per server tick).
+     */
+    private final ConcurrentHashMap<UUID, Integer> playerTimers = new ConcurrentHashMap<>();
+
+    /**
+     * Incrementi accumulati dal thread di ProtocolLib, committati una volta per tick sul main thread.
+     */
+    private final ConcurrentHashMap<UUID, AtomicInteger> pendingIncrements = new ConcurrentHashMap<>();
+
+    /**
+     * Anti-spam/anti-cheat: per ogni player contiamo quanti movement packets abbiamo accettato
+     * nel tick server corrente.
+     */
+    private final ConcurrentHashMap<UUID, Integer> lastServerTickSeen = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Integer> countedThisServerTick = new ConcurrentHashMap<>();
+
+    /**
+     * Task che aggiornano scoreboard/actionbar (NON più responsabili del tempo).
+     */
     private final HashMap<UUID, BukkitRunnable> runningTasks = new HashMap<>();
+
     private final HashMap<UUID, Boolean> alreadyTeleported = new HashMap<>();
+
+    /**
+     * Tick server corrente (incrementato sync ogni tick).
+     */
+    private final AtomicInteger serverTick = new AtomicInteger(0);
+
+    /**
+     * Task sync unico che committa gli incrementi (pendingIncrements) dentro playerTimers ogni tick.
+     */
+    private BukkitRunnable commitTask;
+
+    /**
+     * Quanti movement packets massimo contare dentro 1 tick server (per evitare spam/cheat).
+     * Se vuoi più "strict", metti 2 o 3.
+     */
+    private static final int MAX_PACKETS_PER_SERVER_TICK = 5;
+
+    public Timer() {
+        startServerTickCounter();
+        startCommitTask();
+        registerPacketListener();
+    }
+
+    private void startServerTickCounter() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                serverTick.incrementAndGet();
+            }
+        }.runTaskTimer(Main.getInstance(), 0L, 1L);
+    }
+
+    private void startCommitTask() {
+        commitTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (UUID uuid : playerTimers.keySet()) {
+                    AtomicInteger pending = pendingIncrements.get(uuid);
+                    if (pending == null) continue;
+
+                    int add = pending.getAndSet(0);
+                    if (add <= 0) continue;
+
+                    playerTimers.compute(uuid, (k, v) -> (v == null ? 0 : v) + add);
+                }
+            }
+        };
+        commitTask.runTaskTimer(Main.getInstance(), 0L, 1L);
+    }
+
+    private void registerPacketListener() {
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+
+        protocolManager.addPacketListener(new PacketAdapter(
+                Main.getInstance(),
+                ListenerPriority.NORMAL,
+                PacketType.Play.Client.FLYING,
+                PacketType.Play.Client.LOOK,
+                PacketType.Play.Client.POSITION,
+                PacketType.Play.Client.POSITION_LOOK
+        ) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                if (event.isCancelled()) return;
+
+                Player player = event.getPlayer();
+                if (player == null) return;
+
+                UUID uuid = player.getUniqueId();
+
+                // Timer non attivo
+                if (!playerTimers.containsKey(uuid)) return;
+
+                int nowServerTick = serverTick.get();
+
+                // Se cambia il tick server, resettiamo il conteggio per-tick
+                Integer prev = lastServerTickSeen.put(uuid, nowServerTick);
+                if (prev == null || prev != nowServerTick) {
+                    countedThisServerTick.put(uuid, 0);
+                }
+
+                int counted = countedThisServerTick.getOrDefault(uuid, 0);
+                if (counted >= MAX_PACKETS_PER_SERVER_TICK) {
+                    return;
+                }
+
+                countedThisServerTick.put(uuid, counted + 1);
+
+                // Accumula 1 "client tick" senza schedulare task per ogni packet
+                pendingIncrements.computeIfAbsent(uuid, k -> new AtomicInteger(0)).incrementAndGet();
+            }
+        });
+    }
 
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         IChatBaseComponent titleJSON = IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + title + "\"}");
@@ -55,17 +178,29 @@ public class Timer {
         if (runningTasks.containsKey(uuid)) {
             runningTasks.get(uuid).cancel();
             runningTasks.remove(uuid);
-            playerTimers.remove(uuid);
         }
 
+        // Reset timer state
         playerTimers.put(uuid, 0);
+        pendingIncrements.put(uuid, new AtomicInteger(0));
+        lastServerTickSeen.remove(uuid);
+        countedThisServerTick.remove(uuid);
+
         BukkitRunnable task = getBukkitRunnable(player, uuid);
-        if (Main.getInstance().isPaper())
-            task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 1L);
-        else
-            task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 0L);
+
+        /**
+         * NOTA: nel tuo codice originale era ASYNC. Questo è rischioso perché usi Bukkit API + NMS.
+         * Se vuoi mantenere IDENTICO comportamento, lo lascio ASYNC come prima.
+         * (Consiglio: renderlo sync più avanti.)
+         */
+        task.runTaskTimerAsynchronously(Main.getInstance(), 0L, 1L);
+
         runningTasks.put(uuid, task);
-        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
+
+        Replay replay = new Replay(Main.getInstance().getConfigManager().getSpawnLocation(
+                Main.getInstance().mapWherePlayerIn.get(player).split("-")[0],
+                Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]
+        ));
         replay.addPlayer(player);
         replay.addRecording();
         replay.start();
@@ -89,13 +224,25 @@ public class Timer {
                     return;
                 }
 
-                playerTimers.put(uuid, playerTimers.get(uuid) + 1);
+                double bestTime = Main.getInstance().getConfigManager().getPB(
+                        player.getUniqueId(),
+                        Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]
+                );
 
-                double bestTime = Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
-                Main.getInstance().scoreboardManager.updateScoreboard(player, getTimeFormatted(player).replace(",", "."), bestTime);
+                Main.getInstance().scoreboardManager.updateScoreboard(
+                        player,
+                        getTimeFormatted(player).replace(",", "."),
+                        bestTime
+                );
+
                 if (Main.getInstance().getConfigManager().isActionBarEnabled()) {
                     CraftPlayer craftPlayer = (CraftPlayer) player;
-                    craftPlayer.getHandle().playerConnection.sendPacket(new PacketPlayOutChat(new ChatComponentText(Main.getInstance().getConfigManager().getActionBarMessage(player)), (byte) 2));
+                    craftPlayer.getHandle().playerConnection.sendPacket(
+                            new PacketPlayOutChat(
+                                    new ChatComponentText(Main.getInstance().getConfigManager().getActionBarMessage(player)),
+                                    (byte) 2
+                            )
+                    );
                 }
             }
         };
@@ -103,24 +250,38 @@ public class Timer {
 
     public void stopTimer(Player player, boolean saveReplay) {
         UUID uuid = player.getUniqueId();
+
+        // Remove timer state
         playerTimers.remove(uuid);
+        pendingIncrements.remove(uuid);
+        lastServerTickSeen.remove(uuid);
+        countedThisServerTick.remove(uuid);
+
         if (runningTasks.containsKey(uuid)) {
             runningTasks.get(uuid).cancel();
             runningTasks.remove(uuid);
         }
+
         Replay replay = Main.getInstance().replays.get(uuid);
         if (replay != null) {
             replay.removeRecording();
             replay.end();
         }
+
         if (!isAlreadyTeleported(player)) {
             if (saveReplay) {
                 try {
-                    File replayFolder = new File(Main.getInstance().getDataFolder() + File.separator + "replays" + File.separator + player.getUniqueId() + File.separator + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                    File replayFolder = new File(
+                            Main.getInstance().getDataFolder()
+                                    + File.separator + "replays"
+                                    + File.separator + player.getUniqueId()
+                                    + File.separator + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]
+                    );
                     if (!replayFolder.exists()) replayFolder.mkdirs();
-                    File replayFile = new File(replayFolder.toPath() + File.separator + System.currentTimeMillis() + ".replay");
-                    ReplayOutputStream replayOutputStream = new ReplayOutputStream(Files.newOutputStream(replayFile.toPath()));
-                    assert replay != null;
+                    File replayFile = new File(replayFolder.toPath()
+                            + File.separator + System.currentTimeMillis() + ".replay");
+                    ReplayOutputStream replayOutputStream =
+                            new ReplayOutputStream(Files.newOutputStream(replayFile.toPath()));
                     replayOutputStream.writeReplay(replay);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -128,6 +289,7 @@ public class Timer {
                 }
             }
         }
+
         Main.getInstance().replays.remove(uuid, replay);
         setAlreadyTeleported(player, false);
     }
@@ -136,6 +298,10 @@ public class Timer {
         return new DecimalFormat("0.000").format(getTime(player)).replace(",", ".");
     }
 
+    /**
+     * Tempo = tick * 0.05s (20 tick = 1 secondo).
+     * Qui tick = numero di movement packets contati.
+     */
     public double getTime(Player player) {
         return playerTimers.getOrDefault(player.getUniqueId(), 0) * 0.05;
     }
@@ -158,7 +324,10 @@ public class Timer {
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
         if (!timeFormatted.equalsIgnoreCase("0.000") && !timeFormatted.equalsIgnoreCase("-0.050")) {
             Main.getInstance().timer.stopTimer(player, !practiceBlocks);
-            double PB = Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player));
+            double PB = Main.getInstance().getConfigManager().getPB(
+                    player.getUniqueId(),
+                    Main.getInstance().getModeOfPlayer(player)
+            );
             boolean equalTime = PB == time;
             boolean newPB = time < PB;
             int baseCoins = (int) (1000 / (time + 1));
@@ -191,7 +360,10 @@ public class Timer {
 
             DecimalFormat format = this.getFormat();
 
-            if (newPB || Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]) == 0.000) {
+            if (newPB || Main.getInstance().getConfigManager().getPB(
+                    player.getUniqueId(),
+                    Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]
+            ) == 0.000) {
                 for (String msg : pbMessages)
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg
                             .replace("%pb%", format.format(PB))
@@ -207,14 +379,50 @@ public class Timer {
                     ));
             }
             if (!Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                sendTitle(player, Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), Main.getInstance().getConfigManager().getScoreSubTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), 0, 70, 20);
+                sendTitle(
+                        player,
+                        Main.getInstance().getConfigManager().getScoreTitle()
+                                .replace("%time%", timeFormatted)
+                                .replace("%coins%", "" + coins)
+                                .replace("&", "§"),
+                        Main.getInstance().getConfigManager().getScoreSubTitle()
+                                .replace("%time%", timeFormatted)
+                                .replace("%coins%", "" + coins)
+                                .replace("&", "§"),
+                        0, 70, 20
+                );
                 Main.getInstance().getConfigManager().addCoinsToPlayer(player, coins);
-                Main.getInstance().getConfigManager().saveBestTime(player.getUniqueId(), Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
-                Main.getInstance().updateLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], time);
-            } else
-                sendTitle(player, Main.getInstance().getConfigManager().getScoreTitle().replace("%time%", timeFormatted).replace("%coins%", "" + coins).replace("&", "§"), "", 0, 70, 20);
+                Main.getInstance().getConfigManager().saveBestTime(
+                        player.getUniqueId(),
+                        Main.getInstance().mapWherePlayerIn.get(player).split("-")[0],
+                        time
+                );
+                Main.getInstance().updateLeaderboard(
+                        player,
+                        Main.getInstance().mapWherePlayerIn.get(player).split("-")[0],
+                        time
+                );
+            } else {
+                sendTitle(
+                        player,
+                        Main.getInstance().getConfigManager().getScoreTitle()
+                                .replace("%time%", timeFormatted)
+                                .replace("%coins%", "" + coins)
+                                .replace("&", "§"),
+                        "",
+                        0, 70, 20
+                );
+            }
+
             player.getInventory().clear();
-            Main.getInstance().scoreboardManager.updateScoreboard(player, timeFormatted, Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player)));
+            Main.getInstance().scoreboardManager.updateScoreboard(
+                    player,
+                    timeFormatted,
+                    Main.getInstance().getConfigManager().getPB(
+                            player.getUniqueId(),
+                            Main.getInstance().getModeOfPlayer(player)
+                    )
+            );
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (Main.getInstance().mapWherePlayerIn.containsKey(p)) {
                     Main.getInstance().scoreboardManager.updateScoreboard(p);
@@ -225,7 +433,10 @@ public class Timer {
                 @Override
                 public void run() {
                     if (!isAlreadyTeleported(player))
-                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
+                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(
+                                Main.getInstance().mapWherePlayerIn.get(player).split("-")[0],
+                                Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]
+                        ));
                     ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
                     block.setAmount(64);
                     player.getInventory().setItem(0, block);
@@ -252,5 +463,4 @@ public class Timer {
     private DecimalFormat getFormat() {
         return new DecimalFormat("0.000");
     }
-
 }

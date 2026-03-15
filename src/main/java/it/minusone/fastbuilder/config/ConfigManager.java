@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.config;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.utils.b;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -103,7 +104,6 @@ public class ConfigManager {
     }
 
     public void addMode(String mode, boolean isInclined) {
-        System.out.println(arenasConfig.saveToString());
         List<String> modes = getModes();
         List<String> inclined = arenasConfig.getStringList("inclined-modes");
         if (!modes.contains(mode)) {
@@ -315,6 +315,8 @@ public class ConfigManager {
         }
     }
 
+
+
     // -------- MESSAGES (messages.yml) --------
 
     public List<String> getTimeMessage() {
@@ -354,9 +356,9 @@ public class ConfigManager {
             case JOIN:
                 return message + "/fb join <mode>";
             case SET:
-                return message + "/fb set <mode> <island> <isInclined>";
+                return message + "/fb set <mode> <island>";
             case ADDMODE:
-                return message + "/fb addmode <name>";
+                return message + "/fb addmode <name> <isInclined(true | false)>";
             case ADDCOINS:
                 return message + "/fb addcoins <player> <amount>";
             case SETCOINS:
@@ -366,9 +368,13 @@ public class ConfigManager {
             case WIPESTATS:
                 return message + "/fb wipestats <player>";
             case SEEREPLAY:
-                return message + "/fb seereplay <player> <mode> <id>";
+                return message + "/fb watchreplay <player> <mode> <id>";
             case REMOVEMODE:
                 return message + "/fb removemode <mode>";
+            case SEEREPLAYS:
+                return message + "/fb seereplays <player> <mode> <page>";
+            case SPECTATE:
+                return message + "/spectate <player>";
             default:
                 return "";
         }
@@ -376,6 +382,43 @@ public class ConfigManager {
 
     public String getJoinMessage() {
         return ChatColor.translateAlternateColorCodes('&', messagesConfig.getString("messages.joined-mode"));
+    }
+
+    public boolean isPlaceholdersEnabled() {
+        return messagesConfig.getBoolean("placeholders.enabled");
+    }
+
+    public int getPlaceholdersSize() {
+        int size = 0;
+        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        for (String key : section.getKeys(false)) {
+            if (!(key.equalsIgnoreCase("enabled")))
+                size++;
+        }
+        return size;
+    }
+
+    /*public String getPlaceholder(int idx) {
+        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        for (String key : section.getKeys(false)) {
+            return "placeholders." + key + ".placeholder";
+        }
+        return null;
+    }*/
+    public boolean messageContainsPlaceholder(String message) {
+        
+    }
+    public String getPlaceholderReplacedFromIdx(int idx, Player player, String message) {
+        int i = 0;
+        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        for (String key : section.getKeys(false)) {
+            if (idx == i) {
+
+                return
+            }
+            i++;
+        }
+        return null;
     }
 
     // -------- GUIS CONFIG (guis.yml) --------
@@ -688,6 +731,63 @@ public class ConfigManager {
         return item;
     }
 
+    public ItemStack getStopReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.stopped_replay.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.stopped_replay.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.stopped_replay.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack getStartReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.started_replay.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.started_replay.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.started_replay.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack getNextTickReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.next_tick.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.next_tick.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.next_tick.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack getPrevTickReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.prev_tick.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.prev_tick.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.prev_tick.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack getExitReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.cancel.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.cancel.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.cancel.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack bedItem() {
+        ItemStack item = new ItemStack(Material.getMaterial(itemsConfig.getString("reset_item.material").split(":")[0]), 1, Short.parseShort(itemsConfig.getString("reset_item.material").split(":")[1]));
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("reset_item.name").replace("&", "§"));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public boolean isBedItemEnabled() {
+        return itemsConfig.getBoolean("reset_item.enabled");
+    }
+
     // -------- DEFAULT CONFIG (config.yml) --------
 
     public List<String> modesWithJumpPlate() {
@@ -717,12 +817,12 @@ public class ConfigManager {
         String pb = new DecimalFormat("0.000").format(getPB(p.getUniqueId(), mode)).replace(",", ".");
         if (pb.equals("0.000")) pb = "-.---";
         for (int i = lines.size() - 1; i >= 0; i--) {
-            res[i] = lines.get(i)
+            res[i] = b.parsePlaceholders(p, lines.get(i)
                     .replace("%successful_attempts%", String.valueOf(getSuccessfulAttempts(p)))
                     .replace("%total_attempts%", String.valueOf(getAttempts(p)))
                     .replace("%pb%", pb)
                     .replace("%player%", p.getName())
-                    .replace("&", "§");
+                    .replace("&", "§"));
         }
         return res;
     }
@@ -763,5 +863,4 @@ public class ConfigManager {
     public String guiOfItem(int idx) {
         return guisConfig.getString("settings-gui-slots." + idx + ".gui");
     }
-
 }

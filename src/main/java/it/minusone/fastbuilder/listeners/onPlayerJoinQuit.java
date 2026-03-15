@@ -4,6 +4,7 @@ import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.command.fastbuilder;
 import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,7 +45,7 @@ public class onPlayerJoinQuit implements Listener {
 
         Main.getInstance().playersInPracticeMode.put(e.getPlayer().getUniqueId(), false);
         Main.getInstance().placedBlocks.put(e.getPlayer().getUniqueId(), new ArrayList<>());
-
+        e.getPlayer().setGameMode(GameMode.SURVIVAL);
         if (!Main.getInstance().getConfigManager().getModes().isEmpty())
             fastbuilder.teleportPlayerToIsland(e.getPlayer(), Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
     }
@@ -59,6 +60,7 @@ public class onPlayerJoinQuit implements Listener {
         for (Location blockLocation : playerBlocks)
             blockLocation.getBlock().setType(Material.AIR);
         Main.getInstance().placedBlocks.remove(e.getPlayer().getUniqueId());
+        Main.getInstance().replays.remove(e.getPlayer().getUniqueId());
         Main.getInstance().placedPracticeBlocks.remove(e.getPlayer().getUniqueId());
         Main.getInstance().removePlayerFromLeaderboard(e.getPlayer(), Main.getInstance().mapWherePlayerIn.get(e.getPlayer()).split("-")[0]);
         Main.getInstance().scoreboardManager.removeScoreboard(e.getPlayer());

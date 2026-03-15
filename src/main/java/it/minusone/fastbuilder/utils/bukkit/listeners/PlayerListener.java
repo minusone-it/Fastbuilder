@@ -119,7 +119,6 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-//        System.out.println(t - System.currentTimeMillis());
     }
 
     private void addHologram(Player player, Hologram hologram) {

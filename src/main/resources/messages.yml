@@ -38,6 +38,21 @@ messages:
 # Score Title.
 # Placeholders:
 # %time% - Current time;
-# %coins% - The coins gained of the player.
+# %coins% - The coins gained by the player.
 title: "&aTime: &e%time%"
 subtitle: "+&e%coins% coins!"
+
+# These work like Bridger Land
+# Placeholders:
+# %mode% - Shows the player's current mode;
+# %pb% - Shows the player's current mode pb;
+# %coins% - Shows how many coins the player has got;
+# %blocks% - Shows how many blocks the player has got.
+placeholders:
+  enabled: true
+  pb:
+    placeholder: "[pb]"
+    message: "&d&l%pb%"
+  coins:
+    placeholder: "[coins]"
+    message: "&6&l%coins%"

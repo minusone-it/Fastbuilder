@@ -3,6 +3,7 @@ package it.minusone.fastbuilder;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import it.minusone.fastbuilder.command.fastbuilder;
+import it.minusone.fastbuilder.command.spectate;
 import it.minusone.fastbuilder.command.stats;
 import it.minusone.fastbuilder.command.tabcompleter.fastbuilderTabCompleter;
 import it.minusone.fastbuilder.config.ConfigManager;
@@ -140,6 +141,10 @@ public final class Main extends JavaPlugin {
         return this.mapWherePlayerIn.get(player).split("-")[0];
     }
 
+    public String getIslandOfPlayer(Player player) {
+        return this.mapWherePlayerIn.get(player).split("-")[1];
+    }
+
     private boolean checkLicense() {
         try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -217,6 +222,7 @@ public final class Main extends JavaPlugin {
         getCommand("fastbuilder").setExecutor(new fastbuilder());
         getCommand("fastbuilder").setTabCompleter(new fastbuilderTabCompleter());
         getCommand("stats").setExecutor(new stats());
+        getCommand("spectate").setExecutor(new spectate());
     }
 
     private void startRepeatingTasks() {
@@ -287,15 +293,6 @@ public final class Main extends JavaPlugin {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
-    }
-
-    public boolean isPaper() {
-        try {
-            Class.forName("com.destroystokyo.paper.PaperConfig");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     public static class Entry {

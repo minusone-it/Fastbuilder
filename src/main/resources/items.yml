@@ -18,6 +18,25 @@ settings-item: "&2Settings &7(Right-Click to use)"
 
 settings-item-material: EMERALD:0
 
+replays:
+  cancel:
+    material: BARRIER:0
+    name: "&cCancel &7(Right-Click to use)"
+  next_tick:
+    material: BLAZE_ROD:0
+    name: "&a+1 Tick &7(Right-Click to use)"
+  prev_tick:
+    material: STICK:0
+    name: "&a-1 Tick &7(Right-Click to use)"
+  stopped_replay:
+    material: INK_SACK:1
+    name: "&cStopped &7(Right-Click to use)"
+  started_replay:
+    material: INK_SACK:10
+    name: "&aRunning &7(Right-Click to use)"
+  restart_replay:
+    material: INK_SACK:14
+    name: "&6Restart &7(Right-Click to use)"
 # Ender Eye Item to go to lobby (only supports bungee)
 leave-item-toggled: false
 backend-server: lobby
@@ -34,3 +53,9 @@ change-page:
     name: "&cPrevious Page"
     lore:
       - ""
+
+# Reset Item (like the bed on Bridger Land)
+reset_item:
+  enabled: true
+  name: "&cRespawn &7(Right-Click to use)"
+  material: BED:0

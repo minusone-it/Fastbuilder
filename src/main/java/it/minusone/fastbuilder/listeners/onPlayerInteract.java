@@ -48,13 +48,13 @@ public class onPlayerInteract implements Listener {
                     Main.getInstance().timer.scoreTime(player, true);
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Selector"))
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getIslandSelectorItemName()))
                 event.getPlayer().openInventory(new IslandSelectorGUI(event.getPlayer()).getInventory());
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Settings"))
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getSettingsItemName()))
                 event.getPlayer().openInventory(new SettingsGUI(event.getPlayer()).getInventory());
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Replay"))
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getReplayItemName()))
                 event.getPlayer().openInventory(new ReplayGUI(event.getPlayer().getUniqueId(), 0).getInventory());
-            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Cancel")) {
+            if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getExitReplayItem().getItemMeta().getDisplayName())) {
                 if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
                     onPlayerSneak.resetCamera(event.getPlayer());
                     ReplayManager.endReplay(event.getPlayer());
@@ -66,30 +66,32 @@ public class onPlayerInteract implements Listener {
                     event.getPlayer().getInventory().setItem(1, block);
                     event.getPlayer().getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
                     event.getPlayer().getInventory().setItem(4, new IslandSelectorItem());
+                    if (Main.getInstance().getConfigManager().isBedItemEnabled())
+                        event.getPlayer().getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                     event.getPlayer().getInventory().setItem(6, new ReplayItem());
                     event.getPlayer().getInventory().setItem(7, new SettingsItem());
                     if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
                         event.getPlayer().getInventory().setItem(8, new LobbyItem());
                 }
-            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Stopped")) {
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getStopReplayItem().getItemMeta().getDisplayName())) {
                 ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 10);
                 ItemMeta meta = start_stop.getItemMeta();
                 meta.setDisplayName("§aRunning §7(Right-Click to use)");
                 start_stop.setItemMeta(meta);
                 event.getPlayer().getInventory().setItem(4, start_stop);
                 ReplayManager.runReplay(event.getPlayer());
-            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Running")) {
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getStartReplayItem().getItemMeta().getDisplayName())) {
                 ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
                 ItemMeta meta = start_stop.getItemMeta();
                 meta.setDisplayName("§cStopped §7(Right-Click to use)");
                 start_stop.setItemMeta(meta);
                 event.getPlayer().getInventory().setItem(4, start_stop);
                 ReplayManager.pauseReplay(event.getPlayer());
-            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("+1 Tick")) {
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getNextTickReplayItem().getItemMeta().getDisplayName())) {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
                 if (replay.getCurrentTick() <= replay.getReplay().getLength())
                     replay.nextTick();
-            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("-1 Tick")) {
+            } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getPrevTickReplayItem().getItemMeta().getDisplayName())) {
                 ReplayPlayback replay = Main.currentPlayerReplay.get(event.getPlayer().getUniqueId());
                 if (replay.getCurrentTick() >= 0)
                     replay.lastTick();
@@ -99,6 +101,8 @@ public class onPlayerInteract implements Listener {
                 out.writeUTF(Main.getInstance().getConfigManager().getBackendServer());
 
                 event.getPlayer().sendPluginMessage(Main.getInstance(), "BungeeCord", out.toByteArray());
+            } else if (event.getItem() != null && event.getItem().getItemMeta().equals(Main.getInstance().getConfigManager().bedItem().getItemMeta()) && event.getItem().getType().equals(Main.getInstance().getConfigManager().bedItem().getType())) {
+                event.getPlayer().teleport(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().getModeOfPlayer(event.getPlayer()), Main.getInstance().getIslandOfPlayer(event.getPlayer())));
             }
         }
     }

@@ -38,7 +38,6 @@ public class onPlayerClickEntity extends PacketAdapter {
             if (NPCManager.getNPC(player) != null) {
                 if (entityId == NPCManager.getNPC(player).getNpc().getId()
                         && !Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
-                    c.pagesOfModeChanger.put(player, 0);
                     player.openInventory(new ModeChangerGUI(player).getInventory());
                 } else if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
                     if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId()

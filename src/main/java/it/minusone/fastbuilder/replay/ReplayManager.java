@@ -19,34 +19,24 @@ public class ReplayManager {
     public static void playReplay(Player player, File replayFile) {
         player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
+        String island = Main.getInstance().getIslandOfPlayer(player);
+        String mode = Main.getInstance().getModeOfPlayer(player);
         try (ReplayInputStream replayInputStream = new ReplayInputStream(Files.newInputStream(replayFile.toPath()))) {
-            Replay replay = replayInputStream.readReplay(Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
-            ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, Main.getInstance().getConfigManager().getSpawnLocation(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], Main.getInstance().mapWherePlayerIn.get(player).split("-")[1]));
+            Replay replay = replayInputStream.readReplay(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
+            ReplayPlayback playback = new ReplayPlayback(Main.getInstance(), replay, Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
             playback.addListener(player);
             playback.setup();
             Main.currentPlayerReplay.put(player.getUniqueId(), playback);
-            ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
-            ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
-            ItemStack cancel = new ItemStack(Material.BARRIER, 1);
-            ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
-            ItemMeta meta = start_stop.getItemMeta();
-            meta.setDisplayName("§cStopped §7(Right-Click to use)");
-            start_stop.setItemMeta(meta);
-            ItemMeta meta1 = cancel.getItemMeta();
-            meta1.setDisplayName("§cCancel §7(Right-Click to use)");
-            cancel.setItemMeta(meta1);
-            ItemMeta meta2 = oneTickBack.getItemMeta();
-            ItemMeta meta3 = oneTickForward.getItemMeta();
-            meta2.setDisplayName("§a-1 Tick §7(Right-Click to use)");
-            meta3.setDisplayName("§a+1 Tick §7(Right-Click to use)");
-            oneTickBack.setItemMeta(meta2);
-            oneTickForward.setItemMeta(meta3);
-            player.getInventory().setItem(8, cancel);
-            player.getInventory().setItem(4, start_stop);
-            player.getInventory().setItem(3, oneTickBack);
-            player.getInventory().setItem(5, oneTickForward);
+            player.getInventory().setItem(8, Main.getInstance().getConfigManager().getExitReplayItem());
+            player.getInventory().setItem(4, Main.getInstance().getConfigManager().getStopReplayItem());
+            player.getInventory().setItem(3, Main.getInstance().getConfigManager().getPrevTickReplayItem());
+            player.getInventory().setItem(5, Main.getInstance().getConfigManager().getNextTickReplayItem());
         } catch (Exception e) {
             e.printStackTrace();
+            Main.currentPlayerReplay.remove(player.getUniqueId());
+            player.performCommand("fb join " + mode + " " + island);
+            player.setGameMode(GameMode.SURVIVAL);
+            player.setAllowFlight(false);
         }
     }
 
@@ -62,26 +52,10 @@ public class ReplayManager {
         playback.addListener(player);
         playback.setup();
         Main.currentPlayerReplay.put(player.getUniqueId(), playback);
-        ItemStack oneTickBack = new ItemStack(Material.STICK, 1);
-        ItemStack oneTickForward = new ItemStack(Material.BLAZE_ROD, 1);
-        ItemStack cancel = new ItemStack(Material.BARRIER, 1);
-        ItemStack start_stop = new ItemStack(Material.INK_SACK, 1, (short) 1);
-        ItemMeta meta = start_stop.getItemMeta();
-        meta.setDisplayName("§cStopped §7(Right-Click to use)");
-        start_stop.setItemMeta(meta);
-        ItemMeta meta1 = cancel.getItemMeta();
-        meta1.setDisplayName("§cCancel §7(Right-Click to use)");
-        cancel.setItemMeta(meta1);
-        ItemMeta meta2 = oneTickBack.getItemMeta();
-        ItemMeta meta3 = oneTickForward.getItemMeta();
-        meta2.setDisplayName("§a-1 Tick §7(Right-Click to use)");
-        meta3.setDisplayName("§a+1 Tick §7(Right-Click to use)");
-        oneTickBack.setItemMeta(meta2);
-        oneTickForward.setItemMeta(meta3);
-        player.getInventory().setItem(8, cancel);
-        player.getInventory().setItem(4, start_stop);
-        player.getInventory().setItem(3, oneTickBack);
-        player.getInventory().setItem(5, oneTickForward);
+        player.getInventory().setItem(8, Main.getInstance().getConfigManager().getExitReplayItem());
+        player.getInventory().setItem(4, Main.getInstance().getConfigManager().getStopReplayItem());
+        player.getInventory().setItem(3, Main.getInstance().getConfigManager().getPrevTickReplayItem());
+        player.getInventory().setItem(5, Main.getInstance().getConfigManager().getNextTickReplayItem());
     }
 
     public static void runReplay(Player player) {

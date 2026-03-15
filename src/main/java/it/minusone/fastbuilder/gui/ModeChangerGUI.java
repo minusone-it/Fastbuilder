@@ -15,6 +15,7 @@ public class ModeChangerGUI implements InventoryHolder {
 
     public ModeChangerGUI(Player requestedPlayer)
     {
+        c.pagesOfModeChanger.put(requestedPlayer, 0);
         ModeChangerGUI.page = c.pagesOfModeChanger.get(requestedPlayer);
         this.inventory = Bukkit.createInventory(this, Main.getInstance().getConfigManager().getModeChangerGuiMaxSlots(), Main.getInstance().getConfigManager().getModeChangerGuiName().replace("%page%", String.valueOf(ModeChangerGUI.page + 1)));
         this.addItems();

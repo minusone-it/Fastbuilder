@@ -50,9 +50,9 @@ npc-name: "&eMode Changer"
 # Placeholders:
 # %time% - Current time;
 # %pb% - Personal Best;
-# %top_1 - Session top 1;
-# %top_2 - Session top 2;
-# %top_3 - Session top 3;
+# %top_1% - Session top 1;
+# %top_2% - Session top 2;
+# %top_3% - Session top 3;
 # %coins% - The current coins of the player;
 # %blocks% - The blocks placed by the player.
 scoreboard:

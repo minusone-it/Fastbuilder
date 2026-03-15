@@ -1,5 +1,5 @@
 name: Fastbuilder
-version: '2.0.0-FIX1'
+version: '2.1.0'
 main: it.minusone.fastbuilder.Main
 api-version: '1.8.8'
 authors: [ _MinusOne_ ]
@@ -18,9 +18,15 @@ commands:
       - fb
   stats:
     description:
-      Command to see stats of another player
+      Command to see stats of another player.
     aliases:
       - statistics
+  spectate:
+    description:
+      Command to spectate another player.
+    aliases:
+      - spect
+      - watch
 permissions:
   fastbuilder.admin:
     default: op

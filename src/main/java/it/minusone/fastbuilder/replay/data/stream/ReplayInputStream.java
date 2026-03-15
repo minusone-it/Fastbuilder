@@ -80,10 +80,6 @@ public class ReplayInputStream extends DataInputStream {
         Map<Integer, Class<? extends SaveRecordable>> idToRecordable = ReplayMain.getApi().getIdToRecordableMap();
         Class<? extends SaveRecordable> clazz = idToRecordable.get(id);
 
-        if (clazz == null) {
-            System.out.println("[!] Replay API null class: " + id);
-        }
-
         SaveRecordable recordable = clazz.newInstance();
         recordable.read(this, world);
 

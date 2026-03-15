@@ -42,11 +42,11 @@ public class NPC {
     private float spawnBodyYaw;
     private ItemStack itemInHand;
 
-    public NPC(String name, UUID uuid, boolean enableOuterLayerSkin, boolean everyoneCanSee, boolean autoSpawn) {
+    public NPC(String name, UUID uuid, boolean enableOuterLayerSkin, boolean everyoneCanSee, boolean autoSpawn, Location location) {
         this.everyoneCanSee = everyoneCanSee;
         this.autoSpawn = autoSpawn;
         this.requestedPlayer = Bukkit.getPlayer(name);
-        WorldServer world = ((CraftWorld) Bukkit.getServer().getPlayer(name).getLocation().getWorld()).getHandle();
+        WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
         entityPlayer = new EntityPlayer(((CraftServer) Bukkit.getServer()).getServer(), world, new GameProfile(uuid == null ? UUID.randomUUID() : uuid, name), new PlayerInteractManager(world));
         if (enableOuterLayerSkin)
             entityPlayer.getDataWatcher().watch(10, (byte) 127);

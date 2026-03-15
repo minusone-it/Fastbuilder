@@ -44,6 +44,8 @@ public class onPlayerMove implements Listener {
                             player.getInventory().setItem(3, item);
                         }
                         player.getInventory().setItem(4, new IslandSelectorItem());
+                        if (Main.getInstance().getConfigManager().isBedItemEnabled())
+                            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
                         if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
@@ -79,6 +81,8 @@ public class onPlayerMove implements Listener {
                         if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
                             player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
                         player.getInventory().setItem(4, new IslandSelectorItem());
+                        if (Main.getInstance().getConfigManager().isBedItemEnabled())
+                            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
                         if (Main.getInstance().getConfigManager().isBungeeModeEnabled())

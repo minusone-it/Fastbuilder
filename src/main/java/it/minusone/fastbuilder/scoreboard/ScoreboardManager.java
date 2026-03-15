@@ -3,6 +3,7 @@ package it.minusone.fastbuilder.scoreboard;
 import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.scoreboard.helpers.Scoreboard;
 import it.minusone.fastbuilder.scoreboard.helpers.bukkit.BPlayerBoard;
+import it.minusone.fastbuilder.utils.b;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -82,23 +83,23 @@ public class ScoreboardManager {
     }
 
     private String replacePlaceholders(Player player, String text, String currentTime, double pbTime, String mode) {
-        return ChatColor.translateAlternateColorCodes('&', text)
+        return b.parsePlaceholders(player, ChatColor.translateAlternateColorCodes('&', text)
                 .replace("%time%", currentTime)
                 .replace("%pb%", pbTime > 0 ? timeFormat.format(pbTime).replace(",", ".") : "§7-.---")
                 .replace("%top_1%", getTopPlayer(1, mode))
                 .replace("%top_2%", getTopPlayer(2, mode))
                 .replace("%top_3%", getTopPlayer(3, mode))
                 .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player)))
-                .replace("%blocks%", Main.getInstance().placedBlocks.get(player.getUniqueId()) != null ? String.valueOf(Main.getInstance().placedBlocks.get(player.getUniqueId()).size()) : String.valueOf(0));
+                .replace("%blocks%", Main.getInstance().placedBlocks.get(player.getUniqueId()) != null ? String.valueOf(Main.getInstance().placedBlocks.get(player.getUniqueId()).size()) : String.valueOf(0)));
     }
 
     private String replacePlaceholders(Player player, String text, double pbTime, String mode) {
-        return ChatColor.translateAlternateColorCodes('&', text)
+        return b.parsePlaceholders(player, ChatColor.translateAlternateColorCodes('&', text)
                 .replace("%pb%", pbTime > 0 ? timeFormat.format(pbTime).replace(",", ".") : "§7-.---")
                 .replace("%top_1%", getTopPlayer(1, mode))
                 .replace("%top_2%", getTopPlayer(2, mode))
                 .replace("%top_3%", getTopPlayer(3, mode))
-                .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player)));
+                .replace("%coins%", String.valueOf(plugin.getConfigManager().getCoinsOfPlayer(player))));
     }
 
     private String getTopPlayer(int position, String mode) {

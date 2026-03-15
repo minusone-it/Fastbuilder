@@ -1,4 +1,5 @@
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\fastbuilder.java
+C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\spectate.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\stats.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\command\tabcompleter\fastbuilderTabCompleter.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\config\CommandType.java
@@ -15,6 +16,7 @@ C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\it
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\ReplayItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\items\SettingsItem.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onBlockPlaceBreak.java
+C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onChatEvent.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onEntityDamage.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onInventoryClick.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onItemDrop.java

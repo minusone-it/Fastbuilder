@@ -19,7 +19,7 @@ public class ActualNPC implements ReplayNPC {
 
     public ActualNPC(ReplayPlayback playback, String name) {
         this.playback = playback;
-        this.npc = new NPC(name, UUID.randomUUID(), true, false, false);
+        this.npc = new NPC(name, UUID.randomUUID(), true, false, false, playback.getOrigin());
     }
 
     @Override

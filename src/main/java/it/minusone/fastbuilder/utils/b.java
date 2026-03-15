@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -33,6 +34,33 @@ public class b {
     private static Field blockProfileField;
     private static Method metaSetProfileMethod;
     private static Field metaProfileField;
+    private static Method papiMethod;
+    private static boolean checked = false;
+
+    public static String parsePlaceholders(Player player, String text) {
+        if (text == null) return null;
+
+        if (!checked) {
+            checked = true;
+            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                try {
+                    Class<?> papiClass = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+                    papiMethod = papiClass.getMethod("setPlaceholders", Player.class, String.class);
+                } catch (Exception e) {
+                    papiMethod = null;
+                }
+            }
+        }
+
+        if (papiMethod == null) return text;
+
+        try {
+            return (String) papiMethod.invoke(null, player, text);
+        } catch (Exception e) {
+            return text;
+        }
+    }
+
     private b() {
     }
 

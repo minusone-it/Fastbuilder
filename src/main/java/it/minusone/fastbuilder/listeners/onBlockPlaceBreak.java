@@ -29,7 +29,7 @@ public class onBlockPlaceBreak implements Listener {
         int minX = spawnLocation.getBlockX() - Main.getInstance().getConfigManager().getMaxDistance();
         int maxX = spawnLocation.getBlockX() + Main.getInstance().getConfigManager().getMaxDistance();
 
-        if (blockLocation.getBlockX() <= minX || blockLocation.getBlockX() >= maxX) {
+        if (blockLocation.getBlockX() <= minX || blockLocation.getBlockX() >= maxX || (event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getItemMeta().equals(Main.getInstance().getConfigManager().bedItem().getItemMeta()) && event.getPlayer().getItemInHand().getType().equals(Main.getInstance().getConfigManager().bedItem().getType()))) {
             event.setCancelled(true);
             return;
         }

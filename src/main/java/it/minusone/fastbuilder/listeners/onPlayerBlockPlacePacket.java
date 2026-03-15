@@ -12,7 +12,7 @@ import org.bukkit.Material;
 
 public class onPlayerBlockPlacePacket extends PacketAdapter {
     public onPlayerBlockPlacePacket() {
-        super(Main.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.BLOCK_PLACE);
+        super(Main.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.BLOCK_PLACE);
     }
 
     @Override
@@ -60,10 +60,8 @@ public class onPlayerBlockPlacePacket extends PacketAdapter {
             event.getPlayer().sendBlockChange(new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getLocation(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getType(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getData());
             return;
         }
-
-        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId())) {
+        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId()))
             event.setCancelled(true);
-        }
     }
 
 }

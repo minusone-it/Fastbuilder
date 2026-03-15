@@ -68,7 +68,6 @@ public class onInventoryClick implements Listener {
                             player.openInventory(new IslandSelectorGUI(player).getInventory());
                             break;
                         case "mode_changer":
-                            c.pagesOfModeChanger.put(player, 0);
                             player.openInventory(new ModeChangerGUI(player).getInventory());
                             break;
                     }
@@ -89,27 +88,6 @@ public class onInventoryClick implements Listener {
                 }
             } else if (clickedInventory.getHolder() instanceof ReplayGUI) {
                 ReplayGUI.handleNavigation(player, clickedItem, player.getUniqueId(), Main.getInstance().page.get(player.getUniqueId()));
-                if (clickedItem.getItemMeta() != null && clickedItem.getItemMeta().getDisplayName().contains("Replay")) {
-                    Main.getInstance().timer.stopTimer(player, false);
-                    List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
-                    if (playerBlocks != null) {
-                        for (Location blockLocation : playerBlocks)
-                            blockLocation.getBlock().setType(Material.AIR);
-                    }
-                    if (!clickedItem.getItemMeta().getDisplayName().contains("Last")) {
-                        String a = clickedItem.getItemMeta().getDisplayName().replace("Replay: ", "");
-                        String b = a + ".replay";
-                        File replayFile = new File("plugins/Fastbuilder/replays/" + player.getUniqueId() + "/" + Main.getInstance().mapWherePlayerIn.get(player).split("-")[0], b);
-                        if (replayFile.exists()) {
-                            player.closeInventory();
-                            player.getInventory().clear();
-                            ReplayManager.playReplay(player, replayFile);
-                        }
-                    } else {
-                        player.closeInventory();
-                        ReplayManager.playReplay(player, Main.getInstance().lastReplay.get(player.getUniqueId()));
-                    }
-                }
             } else if (clickedInventory.getHolder() instanceof ModeChangerGUI) {
                 if (clickedItem != null && clickedItem.getItemMeta() != null) {
                     if (!ModeChangerGUI.handleNavigation(player, clickedItem)) {
