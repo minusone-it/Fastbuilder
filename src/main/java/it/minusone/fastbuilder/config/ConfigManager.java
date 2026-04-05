@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import xyz.haoshoku.nick.api.NickAPI;
@@ -389,7 +390,7 @@ public class ConfigManager {
     }
 
     public int getPlaceholdersSize() {
-        int size = 0;
+        int size = 1;
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
         for (String key : section.getKeys(false)) {
             if (!(key.equalsIgnoreCase("enabled")))
@@ -398,27 +399,50 @@ public class ConfigManager {
         return size;
     }
 
-    /*public String getPlaceholder(int idx) {
+    public String getPlaceholder(int idx) {
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        int i = 1;
         for (String key : section.getKeys(false)) {
-            return "placeholders." + key + ".placeholder";
-        }
-        return null;
-    }*/
-    public boolean messageContainsPlaceholder(String message) {
-        
-    }
-    public String getPlaceholderReplacedFromIdx(int idx, Player player, String message) {
-        int i = 0;
-        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
-        for (String key : section.getKeys(false)) {
-            if (idx == i) {
-
-                return
-            }
+            if (idx == i && !(key.equalsIgnoreCase("enabled")))
+                return messagesConfig.getString("placeholders." + key + ".placeholder");
             i++;
         }
         return null;
+    }
+
+    public boolean messageContainsPlaceholder(String message) {
+        for (int i = 1; i < getPlaceholdersSize(); i++) {
+            if (message.contains(getPlaceholder(i)))
+                return true;
+        }
+        return false;
+    }
+
+    public String getMessagePlaceholderReplaced(PlayerChatEvent event) {
+        int i = 1;
+        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        for (String key : section.getKeys(false)) {
+            if (!(key.equalsIgnoreCase("enabled")) && event.getMessage().contains(messagesConfig.getString("placeholders." + key + ".placeholder")))
+                return event.getMessage().replace(messagesConfig.getString("placeholders." + key + ".placeholder"), getMessageConfigReplaced(i, event.getPlayer()));
+            i++;
+        }
+        return null;
+    }
+
+    public String getMessageConfigReplaced(int idx, Player player) {
+        int i = 1;
+        ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
+        for (String key : section.getKeys(false)) {
+            if (!(key.equalsIgnoreCase("enabled"))) {
+                if (idx == i) {
+                    String message = messagesConfig.getString("placeholders." + key + ".message");
+                    message.replace("%mode%", Main.getInstance().getModeOfPlayer(player))
+                            .replace("%pb%", Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player)))
+                    )
+                }
+            }
+            i++;
+        }
     }
 
     // -------- GUIS CONFIG (guis.yml) --------

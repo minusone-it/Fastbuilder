@@ -52,7 +52,7 @@ placeholders:
   enabled: true
   pb:
     placeholder: "[pb]"
-    message: "&d&l%pb%"
+    message: "&d&l%pb% %mode%"
   coins:
     placeholder: "[coins]"
     message: "&6&l%coins%"
