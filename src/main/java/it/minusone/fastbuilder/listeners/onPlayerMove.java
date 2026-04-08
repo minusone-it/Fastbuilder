@@ -48,7 +48,7 @@ public class onPlayerMove implements Listener {
                             player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
-                        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                        if (Main.getInstance().getConfigManager().isLobbyToggled())
                             player.getInventory().setItem(8, new LobbyItem());
                         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                         if (playerBlocks != null) {
@@ -85,7 +85,7 @@ public class onPlayerMove implements Listener {
                             player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                         player.getInventory().setItem(6, new ReplayItem());
                         player.getInventory().setItem(7, new SettingsItem());
-                        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                        if (Main.getInstance().getConfigManager().isLobbyToggled())
                             player.getInventory().setItem(8, new LobbyItem());
                         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
                         if (playerBlocks != null) {

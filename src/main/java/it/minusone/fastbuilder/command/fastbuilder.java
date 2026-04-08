@@ -11,6 +11,7 @@ import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.npc.NPC;
 import it.minusone.fastbuilder.npc.NPCManager;
 import it.minusone.fastbuilder.replay.ReplayManager;
+import it.minusone.fastbuilder.utils.bukkit.entity.Hologram;
 import it.minusone.fastbuilder.utils.bukkit.entity.HologramStack;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -28,6 +29,36 @@ public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager = Main.getInstance().getConfigManager();
 
     public static void teleportPlayerToIslandB(Player player, String mode, String island) {
+        if (!Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+            player.getInventory().clear();
+            player.getInventory().setHeldItemSlot(0);
+
+            Main.getInstance().scoreboardManager.createScoreboard(player);
+
+            for (Hologram h : Hologram.all) {
+                h.spawnFor(player);
+                h.addListener(player);
+            }
+
+            if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) == 0)
+                Main.getInstance().getConfigManager().setCoinsOfPlayer(player, 0);
+
+            if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, new ItemStack(Material.SANDSTONE))) {
+                Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.SANDSTONE), player);
+                Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.RED_SANDSTONE), player);
+                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+            }
+
+            if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(player) == null)
+                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+
+            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+            Main.getInstance().placedBlocks.put(player.getUniqueId(), new ArrayList<>());
+            player.setGameMode(GameMode.SURVIVAL);
+            if (!Main.getInstance().getConfigManager().getModes().isEmpty())
+                fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
+
+        }
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
         if (islandPlayer != null) {
             player.sendMessage(Main.getInstance().getConfigManager().getIslandOccupiedMessage(player, island));
@@ -53,7 +84,7 @@ public class fastbuilder implements CommandExecutor {
             player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
-        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+        if (Main.getInstance().getConfigManager().isLobbyToggled())
             player.getInventory().setItem(8, new LobbyItem());
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         if (Main.getInstance().getConfigManager().npcsToggled()) {
@@ -89,6 +120,36 @@ public class fastbuilder implements CommandExecutor {
     }
 
     public static void teleportPlayerToIsland(Player player, String mode, String island) {
+        if (!Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+            player.getInventory().clear();
+            player.getInventory().setHeldItemSlot(0);
+
+            Main.getInstance().scoreboardManager.createScoreboard(player);
+
+            for (Hologram h : Hologram.all) {
+                h.spawnFor(player);
+                h.addListener(player);
+            }
+
+            if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) == 0)
+                Main.getInstance().getConfigManager().setCoinsOfPlayer(player, 0);
+
+            if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, new ItemStack(Material.SANDSTONE))) {
+                Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.SANDSTONE), player);
+                Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.RED_SANDSTONE), player);
+                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+            }
+
+            if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(player) == null)
+                Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+
+            Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+            Main.getInstance().placedBlocks.put(player.getUniqueId(), new ArrayList<>());
+            player.setGameMode(GameMode.SURVIVAL);
+            if (!Main.getInstance().getConfigManager().getModes().isEmpty())
+                fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
+
+        }
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
         if (islandPlayer != null) {
             player.sendMessage(Main.getInstance().getConfigManager().getIslandOccupiedMessage(player, island));
@@ -116,7 +177,7 @@ public class fastbuilder implements CommandExecutor {
             player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
         player.getInventory().setItem(6, new ReplayItem());
         player.getInventory().setItem(7, new SettingsItem());
-        if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+        if (Main.getInstance().getConfigManager().isLobbyToggled())
             player.getInventory().setItem(8, new LobbyItem());
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         Location baseLocationA = location.clone();
@@ -242,8 +303,10 @@ public class fastbuilder implements CommandExecutor {
             sender.sendMessage(Main.getInstance().PREFIX + "§fhttps://builtbybit.com/resources/fastbuilder.62493/.");
             if (sender.hasPermission("fastbuilder.admin")) {
                 sender.sendMessage(Main.getInstance().PREFIX + "List of commands:");
-                if (sender instanceof Player)
+                if (sender instanceof Player) {
                     sender.sendMessage("§7/fb join <mode> <island_number> - To join a mode.");
+                    sender.sendMessage("§7/fb quit - To quit the fb.");
+                }
                 sender.sendMessage("§7/fb addmode <name> <isInclined(true | false)> - To add a mode.");
                 sender.sendMessage("§7/fb removemode <mode> - To remove a mode.");
                 if (sender instanceof Player) {

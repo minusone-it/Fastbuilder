@@ -37,9 +37,17 @@ replays:
   restart_replay:
     material: INK_SACK:14
     name: "&6Restart &7(Right-Click to use)"
-# Ender Eye Item to go to lobby (only supports bungee)
+
+# Ender Eye Item to go to lobby
 leave-item-toggled: false
+# If using a bungee system, enable this option, then put the server name below in "backend-server".
+# Otherwise, you can put the commands to execute when going to lobby if you are working in a single-server system.
+bungee: true
 backend-server: lobby
+# DO NOT PUT THE / BEFORE THE COMMANDS! (if you need WorldEdit in commands, you can put a slash)
+commands:
+  - "fb quit"
+  -  "lobby"
 
 # Change Page item
 change-page:

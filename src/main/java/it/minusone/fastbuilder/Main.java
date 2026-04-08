@@ -211,6 +211,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new onPlayerSneak(), this);
         Bukkit.getPluginManager().registerEvents(new onItemDrop(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new onChatEvent(), this);
         protocolManager.addPacketListener(new onPlayerBlockPlacePacket());
         protocolManager.addPacketListener(new onPlayerClickEntity());
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");

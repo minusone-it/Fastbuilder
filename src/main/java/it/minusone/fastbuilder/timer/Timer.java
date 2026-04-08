@@ -447,7 +447,7 @@ public class Timer {
                     player.getInventory().setItem(4, new IslandSelectorItem());
                     player.getInventory().setItem(6, new ReplayItem());
                     player.getInventory().setItem(7, new SettingsItem());
-                    if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                    if (Main.getInstance().getConfigManager().isLobbyToggled())
                         player.getInventory().setItem(8, new LobbyItem());
                 }
             }, 40L);
@@ -460,7 +460,7 @@ public class Timer {
         return false;
     }
 
-    private DecimalFormat getFormat() {
+    public static DecimalFormat getFormat() {
         return new DecimalFormat("0.000");
     }
 }

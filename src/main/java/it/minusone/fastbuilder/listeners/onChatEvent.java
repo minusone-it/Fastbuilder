@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 public class onChatEvent implements Listener {
     public void onChatEvent(PlayerChatEvent event) {
         if (Main.getInstance().getConfigManager().messageContainsPlaceholder(event.getMessage()))
-            Main.getInstance().getConfigManager().getMessagePlaceholderReplaced(event);
+            event.setMessage(Main.getInstance().getConfigManager().getMessagePlaceholderReplaced(event));
 
     }
 }

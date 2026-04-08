@@ -70,7 +70,7 @@ public class onPlayerInteract implements Listener {
                         event.getPlayer().getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
                     event.getPlayer().getInventory().setItem(6, new ReplayItem());
                     event.getPlayer().getInventory().setItem(7, new SettingsItem());
-                    if (Main.getInstance().getConfigManager().isBungeeModeEnabled())
+                    if (Main.getInstance().getConfigManager().isLobbyToggled())
                         event.getPlayer().getInventory().setItem(8, new LobbyItem());
                 }
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase(Main.getInstance().getConfigManager().getStopReplayItem().getItemMeta().getDisplayName())) {
@@ -96,6 +96,7 @@ public class onPlayerInteract implements Listener {
                 if (replay.getCurrentTick() >= 0)
                     replay.lastTick();
             } else if (event.getItem() != null && event.getItem().getItemMeta().getDisplayName() != null && event.getItem().getItemMeta().getDisplayName().contains("Leave")) {
+
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("Connect");
                 out.writeUTF(Main.getInstance().getConfigManager().getBackendServer());

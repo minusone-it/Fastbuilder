@@ -1,6 +1,7 @@
 package it.minusone.fastbuilder.config;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.timer.Timer;
 import it.minusone.fastbuilder.utils.b;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -435,14 +436,15 @@ public class ConfigManager {
         for (String key : section.getKeys(false)) {
             if (!(key.equalsIgnoreCase("enabled"))) {
                 if (idx == i) {
-                    String message = messagesConfig.getString("placeholders." + key + ".message");
-                    message.replace("%mode%", Main.getInstance().getModeOfPlayer(player))
-                            .replace("%pb%", Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player)))
-                    )
+                    return messagesConfig.getString("placeholders." + key + ".message")
+                            .replace("%mode%", Main.getInstance().getModeOfPlayer(player))
+                            .replace("%pb%", Timer.getFormat().format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player))))
+                            .replace("%coins%", String.valueOf(Main.getInstance().getConfigManager().getCoinsOfPlayer(player)));
                 }
             }
             i++;
         }
+        return null;
     }
 
     // -------- GUIS CONFIG (guis.yml) --------
@@ -656,8 +658,16 @@ public class ConfigManager {
 
     // -------- ITEMS CONFIG (items.yml) --------
 
-    public boolean isBungeeModeEnabled() {
+    public boolean isLobbyToggled() {
         return itemsConfig.getBoolean("leave-item-toggled");
+    }
+
+    public boolean isBungeeToggled() {
+        return itemsConfig.getBoolean("bungee");
+    }
+
+    public List<String> commandsToExecute() {
+        return itemsConfig.getStringList("commands");
     }
 
     public String getLobbyItemName() {
