@@ -17,7 +17,7 @@ public class onBlockPlaceBreak implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE)
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer()))
             return;
 
         Player player = event.getPlayer();
@@ -48,17 +48,19 @@ public class onBlockPlaceBreak implements Listener {
 
     @EventHandler
     public void onBlockBreakEvent(BlockBreakEvent event) {
-        List<Location> playerBlocks = new ArrayList<>();
-        if (Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()) != null)
-            playerBlocks.addAll(Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()));
+        if (Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer())) {
+            List<Location> playerBlocks = new ArrayList<>();
+            if (Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()) != null)
+                playerBlocks.addAll(Main.getInstance().placedBlocks.get(event.getPlayer().getUniqueId()));
 
-        if (Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()) != null)
-            playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()));
+            if (Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()) != null)
+                playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(event.getPlayer().getUniqueId()));
 
-        if (playerBlocks.contains(event.getBlock().getLocation()))
-            event.setCancelled(false);
+            if (playerBlocks.contains(event.getBlock().getLocation()))
+                event.setCancelled(false);
 
-        else if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
-            event.setCancelled(true);
+            else if (event.getPlayer().getGameMode() != GameMode.CREATIVE)
+                event.setCancelled(true);
+        }
     }
 }

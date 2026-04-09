@@ -60,7 +60,8 @@ public class onPlayerBlockPlacePacket extends PacketAdapter {
             event.getPlayer().sendBlockChange(new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getLocation(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getType(), new Location(event.getPlayer().getWorld(), x, y, z).getBlock().getData());
             return;
         }
-        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId()))
+
+        if (Main.currentPlayerReplay.containsKey(event.getPlayer().getUniqueId()) && Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer()))
             event.setCancelled(true);
     }
 

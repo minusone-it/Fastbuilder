@@ -29,7 +29,33 @@ public class fastbuilder implements CommandExecutor {
     private final ConfigManager configManager = Main.getInstance().getConfigManager();
 
     public static void teleportPlayerToIslandB(Player player, String mode, String island) {
-        if (!Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+        player.getInventory().clear();
+        player.getInventory().setHeldItemSlot(0);
+
+        Main.getInstance().scoreboardManager.createScoreboard(player);
+
+        for (Hologram h : Hologram.all) {
+            h.spawnFor(player);
+            h.addListener(player);
+        }
+
+        if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) == 0)
+            Main.getInstance().getConfigManager().setCoinsOfPlayer(player, 0);
+
+        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, new ItemStack(Material.SANDSTONE))) {
+            Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.SANDSTONE), player);
+            Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.RED_SANDSTONE), player);
+            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+        }
+
+        if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(player) == null)
+            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+
+        Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+        Main.getInstance().placedBlocks.put(player.getUniqueId(), new ArrayList<>());
+        player.setGameMode(GameMode.SURVIVAL);
+        if (!Main.getInstance().getConfigManager().getModes().isEmpty())
+            fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
             player.getInventory().clear();
             player.getInventory().setHeldItemSlot(0);
 
@@ -58,7 +84,6 @@ public class fastbuilder implements CommandExecutor {
             if (!Main.getInstance().getConfigManager().getModes().isEmpty())
                 fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
 
-        }
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
         if (islandPlayer != null) {
             player.sendMessage(Main.getInstance().getConfigManager().getIslandOccupiedMessage(player, island));
@@ -120,7 +145,33 @@ public class fastbuilder implements CommandExecutor {
     }
 
     public static void teleportPlayerToIsland(Player player, String mode, String island) {
-        if (!Main.getInstance().mapWherePlayerIn.containsKey(player)) {
+        player.getInventory().clear();
+        player.getInventory().setHeldItemSlot(0);
+
+        Main.getInstance().scoreboardManager.createScoreboard(player);
+
+        for (Hologram h : Hologram.all) {
+            h.spawnFor(player);
+            h.addListener(player);
+        }
+
+        if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) == 0)
+            Main.getInstance().getConfigManager().setCoinsOfPlayer(player, 0);
+
+        if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, new ItemStack(Material.SANDSTONE))) {
+            Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.SANDSTONE), player);
+            Main.getInstance().getConfigManager().addBlockToPlayer(new ItemStack(Material.RED_SANDSTONE), player);
+            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+        }
+
+        if (Main.getInstance().getConfigManager().getCurrentPlayerBlock(player) == null)
+            Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, new ItemStack(Material.SANDSTONE));
+
+        Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+        Main.getInstance().placedBlocks.put(player.getUniqueId(), new ArrayList<>());
+        player.setGameMode(GameMode.SURVIVAL);
+        if (!Main.getInstance().getConfigManager().getModes().isEmpty())
+            fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
             player.getInventory().clear();
             player.getInventory().setHeldItemSlot(0);
 
@@ -149,7 +200,7 @@ public class fastbuilder implements CommandExecutor {
             if (!Main.getInstance().getConfigManager().getModes().isEmpty())
                 fastbuilder.teleportPlayerToIsland(player, Main.getInstance().getConfigManager().getModes().get(0), fastbuilder.findClosestIslandInMode(Main.getInstance().getConfigManager().getModes().get(0)));
 
-        }
+
         Player islandPlayer = Main.getInstance().getPlayerInMode(mode + "-" + island);
         if (islandPlayer != null) {
             player.sendMessage(Main.getInstance().getConfigManager().getIslandOccupiedMessage(player, island));
@@ -350,6 +401,7 @@ public class fastbuilder implements CommandExecutor {
             case "addisland":
             case "watchreplay":
             case "seereplays":
+            case "quit":
                 if (!sender.hasPermission("fastbuilder.admin")) {
                     sender.sendMessage(Main.getInstance().PREFIX + ChatColor.RED + "You do not have permission to use this command.");
                     return true;
@@ -423,6 +475,29 @@ public class fastbuilder implements CommandExecutor {
         }
         Player player = (Player) sender; 
         switch (args[0].toLowerCase()) {
+            case "quit":
+                List<Location> playerBlocks = new ArrayList<>();
+                if (Main.getInstance().placedBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedBlocks.get(player.getUniqueId()));
+                if (Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()) != null)
+                    playerBlocks.addAll(Main.getInstance().placedPracticeBlocks.get(player.getUniqueId()));
+                for (Location blockLocation : playerBlocks)
+                    blockLocation.getBlock().setType(Material.AIR);
+                Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                Main.getInstance().replays.remove(player.getUniqueId());
+                Main.getInstance().placedPracticeBlocks.remove(player.getUniqueId());
+                Main.getInstance().removePlayerFromLeaderboard(player, Main.getInstance().mapWherePlayerIn.get(player).split("-")[0]);
+                Main.getInstance().scoreboardManager.removeScoreboard(player);
+                Main.getInstance().mapWherePlayerIn.remove(player);
+                Main.getInstance().timer.stopTimer(player, false);
+                if (Main.getInstance().stats.get(player) != null) {
+                    Main.getInstance().stats.get(player).despawn();
+                    Main.getInstance().stats.get(player).delete();
+                    Main.getInstance().stats.remove(player);
+                }
+                Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
+                for (Player p : Bukkit.getOnlinePlayers())
+                    Main.getInstance().scoreboardManager.updateScoreboard(p);
             case "seereplays":
                 if (args.length < 4) {
                     player.sendMessage(Main.getInstance().getConfigManager().getUsageMessage(CommandType.SEEREPLAYS));

@@ -22,90 +22,91 @@ public class onPlayerMove implements Listener {
 
     @EventHandler
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
-            String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
-            String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
-            if (!Main.getInstance().getConfigManager().isModeInclined(mode)) {
-                if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4 || player.getLocation().getX() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getX() >= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getZ() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
-                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
-                    if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
-                        player.getInventory().clear();
-                        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
-                        block.setAmount(64);
-                        player.getInventory().setItem(0, block);
-                        player.getInventory().setItem(1, block);
-                        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-                            ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
-                            ItemMeta meta = item.getItemMeta();
-                            meta.setDisplayName("§rPractice Blocks");
-                            item.setItemMeta(meta);
-                            player.getInventory().setItem(3, item);
-                        }
-                        player.getInventory().setItem(4, new IslandSelectorItem());
-                        if (Main.getInstance().getConfigManager().isBedItemEnabled())
-                            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
-                        player.getInventory().setItem(6, new ReplayItem());
-                        player.getInventory().setItem(7, new SettingsItem());
-                        if (Main.getInstance().getConfigManager().isLobbyToggled())
-                            player.getInventory().setItem(8, new LobbyItem());
-                        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
-                        if (playerBlocks != null) {
-                            for (Location blockLocation : playerBlocks) {
-                                blockLocation.getBlock().setType(Material.AIR);
+        if (Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer())) {
+            Player player = event.getPlayer();
+            if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+                String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
+                String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
+                if (!Main.getInstance().getConfigManager().isModeInclined(mode)) {
+                    if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4 || player.getLocation().getX() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() - Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getX() >= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getX() + Main.getInstance().getConfigManager().getMaxDistance() || player.getLocation().getZ() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getZ() - Main.getInstance().getConfigManager().getMaxDistance()) {
+                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
+                        if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
+                            player.getInventory().clear();
+                            ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+                            block.setAmount(64);
+                            player.getInventory().setItem(0, block);
+                            player.getInventory().setItem(1, block);
+                            player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+                            if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
+                                ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
+                                ItemMeta meta = item.getItemMeta();
+                                meta.setDisplayName("§rPractice Blocks");
+                                item.setItemMeta(meta);
+                                player.getInventory().setItem(3, item);
                             }
-                            Main.getInstance().getConfigManager().addAttempt(player);
-                            Main.getInstance().placedBlocks.remove(player.getUniqueId());
-                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
-                                Main.getInstance().stats.get(player).setName(
-                                        i,
-                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
-                                );
+                            player.getInventory().setItem(4, new IslandSelectorItem());
+                            if (Main.getInstance().getConfigManager().isBedItemEnabled())
+                                player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
+                            player.getInventory().setItem(6, new ReplayItem());
+                            player.getInventory().setItem(7, new SettingsItem());
+                            if (Main.getInstance().getConfigManager().isLobbyToggled())
+                                player.getInventory().setItem(8, new LobbyItem());
+                            List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                            if (playerBlocks != null) {
+                                for (Location blockLocation : playerBlocks) {
+                                    blockLocation.getBlock().setType(Material.AIR);
+                                }
+                                Main.getInstance().getConfigManager().addAttempt(player);
+                                Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                                for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                    Main.getInstance().stats.get(player).setName(
+                                            i,
+                                            Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                    );
+                                }
                             }
+                            Main.getInstance().timer.stopTimer(player, false);
+                            Main.getInstance().timer.setAlreadyTeleported(player, true);
                         }
-                        Main.getInstance().timer.stopTimer(player, false);
-                        Main.getInstance().timer.setAlreadyTeleported(player, true);
+                    }
+                } else {
+                    if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) {
+                        player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
+                        if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
+                            player.getInventory().clear();
+                            ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
+                            block.setAmount(64);
+                            player.getInventory().setItem(0, block);
+                            player.getInventory().setItem(1, block);
+                            player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
+                            if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
+                                player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
+                            player.getInventory().setItem(4, new IslandSelectorItem());
+                            if (Main.getInstance().getConfigManager().isBedItemEnabled())
+                                player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
+                            player.getInventory().setItem(6, new ReplayItem());
+                            player.getInventory().setItem(7, new SettingsItem());
+                            if (Main.getInstance().getConfigManager().isLobbyToggled())
+                                player.getInventory().setItem(8, new LobbyItem());
+                            List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
+                            if (playerBlocks != null) {
+                                for (Location blockLocation : playerBlocks) {
+                                    blockLocation.getBlock().setType(Material.AIR);
+                                }
+                                Main.getInstance().getConfigManager().addAttempt(player);
+                                Main.getInstance().placedBlocks.remove(player.getUniqueId());
+                                for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
+                                    Main.getInstance().stats.get(player).setName(
+                                            i,
+                                            Main.getInstance().getConfigManager().getHoloLines(player)[i]
+                                    );
+                                }
+                            }
+                            Main.getInstance().timer.stopTimer(player, false);
+                            Main.getInstance().timer.setAlreadyTeleported(player, true);
+                        }
                     }
                 }
-            } else {
-                if (player.getLocation().getY() <= Main.getInstance().getConfigManager().getSpawnLocation(mode, island).getY() - 4) {
-                    player.teleport(Main.getInstance().getConfigManager().getSpawnLocation(mode, island));
-                    if (!Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
-                        player.getInventory().clear();
-                        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
-                        block.setAmount(64);
-                        player.getInventory().setItem(0, block);
-                        player.getInventory().setItem(1, block);
-                        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-                        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId()))
-                            player.getInventory().setItem(3, new ItemStack(Material.STAINED_CLAY, 64));
-                        player.getInventory().setItem(4, new IslandSelectorItem());
-                        if (Main.getInstance().getConfigManager().isBedItemEnabled())
-                            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
-                        player.getInventory().setItem(6, new ReplayItem());
-                        player.getInventory().setItem(7, new SettingsItem());
-                        if (Main.getInstance().getConfigManager().isLobbyToggled())
-                            player.getInventory().setItem(8, new LobbyItem());
-                        List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
-                        if (playerBlocks != null) {
-                            for (Location blockLocation : playerBlocks) {
-                                blockLocation.getBlock().setType(Material.AIR);
-                            }
-                            Main.getInstance().getConfigManager().addAttempt(player);
-                            Main.getInstance().placedBlocks.remove(player.getUniqueId());
-                            for (int i = 0; i < Main.getInstance().getConfigManager().getHoloLines(player).length; i++) {
-                                Main.getInstance().stats.get(player).setName(
-                                        i,
-                                        Main.getInstance().getConfigManager().getHoloLines(player)[i]
-                                );
-                            }
-                        }
-                        Main.getInstance().timer.stopTimer(player, false);
-                        Main.getInstance().timer.setAlreadyTeleported(player, true);
-                    }
-                }
-            }
                 if (Main.getInstance().getConfigManager().isJumpPlateEnabled() && Main.getInstance().getConfigManager().modesWithJumpPlate().contains(Main.getInstance().mapWherePlayerIn.get(player).split("-")[0])) {
                     List<Location> locs = new ArrayList<>();
                     for (Location loc : Main.plateAboveLocations) {
@@ -141,6 +142,7 @@ public class onPlayerMove implements Listener {
                         }
                     }
                 }
+            }
         }
     }
 }

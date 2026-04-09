@@ -666,7 +666,7 @@ public class ConfigManager {
         return itemsConfig.getBoolean("bungee");
     }
 
-    public List<String> commandsToExecute() {
+    public List<String> getCommandsToExecute() {
         return itemsConfig.getStringList("commands");
     }
 

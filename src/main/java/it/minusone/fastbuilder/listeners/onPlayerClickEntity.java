@@ -21,28 +21,30 @@ public class onPlayerClickEntity extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
-        PacketPlayInUseEntity packet = (PacketPlayInUseEntity) event.getPacket().getHandle();
-        Player player = event.getPlayer();
-        if (packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT ||
-                packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK) {
-            Field field;
-            int entityId;
-            try {
-                field = packet.getClass().getDeclaredField("a");
-                field.setAccessible(true);
-                entityId = (int) field.get(packet);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if (Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer())) {
+            PacketPlayInUseEntity packet = (PacketPlayInUseEntity) event.getPacket().getHandle();
+            Player player = event.getPlayer();
+            if (packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT ||
+                    packet.a() == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK) {
+                Field field;
+                int entityId;
+                try {
+                    field = packet.getClass().getDeclaredField("a");
+                    field.setAccessible(true);
+                    entityId = (int) field.get(packet);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
 
-            if (NPCManager.getNPC(player) != null) {
-                if (entityId == NPCManager.getNPC(player).getNpc().getId()
-                        && !Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
-                    player.openInventory(new ModeChangerGUI(player).getInventory());
-                } else if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
-                    if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId()
-                            && player.getItemInHand().getType() == Material.AIR) {
-                        onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                if (NPCManager.getNPC(player) != null) {
+                    if (entityId == NPCManager.getNPC(player).getNpc().getId()
+                            && !Main.currentPlayerReplay.containsKey(player.getUniqueId())) {
+                        player.openInventory(new ModeChangerGUI(player).getInventory());
+                    } else if (NPCManager.getReplayNPC(player) != null && NPCManager.getReplayNPC(player).entityPlayer != null) {
+                        if (entityId == NPCManager.getReplayNPC(player).entityPlayer.getId()
+                                && player.getItemInHand().getType() == Material.AIR) {
+                            onPlayerSneak.spectateEntity(player, NPCManager.getReplayNPC(player).entityPlayer.getBukkitEntity());
+                        }
                     }
                 }
             }
