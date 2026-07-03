@@ -179,7 +179,7 @@ public class Timer {
     }
 
     public String getTimeFormatted(Player player) {
-        return new DecimalFormat("0.000").format(getTime(player)).replace(",", ".");
+        return new DecimalFormat("0.000").format((getTime(player)) + 0.050).replace(",", ".");
     }
 
     public boolean isPlayerInTimer(Player player) {
@@ -204,7 +204,7 @@ public class Timer {
 
     public boolean scoreTime(Player player, boolean practiceBlocks) {
         String timeFormatted = getTimeFormatted(player);
-        double time = getTime(player);
+        double time = getTime(player) + 0.050;
         List<Location> playerBlocks = Main.getInstance().placedBlocks.get(player.getUniqueId());
 
         if (timeFormatted.equalsIgnoreCase("0.000") || timeFormatted.equalsIgnoreCase("-0.050")) {

@@ -888,6 +888,10 @@ public class ConfigManager {
         return config.getBoolean("holos");
     }
 
+    public boolean instaBedBreak() {
+        return config.getBoolean("insta-bed-break");
+    }
+
     // UTILS
 
     public List<String> getLoreFormatted(List<String> lore, int price, Player player, ItemStack item) {

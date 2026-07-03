@@ -44,6 +44,7 @@ it\minusone\fastbuilder\replay\recordable\entity\ArmorRecordable.class
 it\minusone\fastbuilder\replay\Replay.class
 it\minusone\fastbuilder\replay\recordable\entity\SneakRecordable.class
 it\minusone\fastbuilder\replay\ReplayManager.class
+it\minusone\fastbuilder\listeners\onPlayerBlockBreakPacket.class
 it\minusone\fastbuilder\gui\SettingsGUI.class
 it\minusone\fastbuilder\utils\bukkit\events\packet\PlayInEvent.class
 it\minusone\fastbuilder\items\ReplayItem.class

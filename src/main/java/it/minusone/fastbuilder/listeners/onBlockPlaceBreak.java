@@ -17,7 +17,7 @@ public class onBlockPlaceBreak implements Listener {
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || !Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer()))
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || !Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer()) || Main.getInstance().getConfigManager().instaBedBreak())
             return;
 
         Player player = event.getPlayer();

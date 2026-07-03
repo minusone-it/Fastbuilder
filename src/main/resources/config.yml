@@ -46,6 +46,12 @@ holo:
 # Mode Changer NPC's name
 npc-name: "&eMode Changer"
 
+# Enable the players to have a different block in the 2nd slot (still coming)
+different-second-slot: false
+
+# Makes clicking the bed instantly breaking the bed
+insta-bed-break: false
+
 # Scoreboard Lines.
 # Placeholders:
 # %time% - Current time;
