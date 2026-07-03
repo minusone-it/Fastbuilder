@@ -21,6 +21,7 @@ C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\li
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onInventoryClick.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onItemDrop.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onPlateEvent.java
+C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onPlayerBlockBreakPacket.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onPlayerBlockPlacePacket.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onPlayerClickEntity.java
 C:\Users\leoco\IdeaProjects\Fastbuilder\src\main\java\it\minusone\fastbuilder\listeners\onPlayerInteract.java

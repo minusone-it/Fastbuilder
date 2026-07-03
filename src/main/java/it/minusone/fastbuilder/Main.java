@@ -146,7 +146,7 @@ public final class Main extends JavaPlugin {
     }
 
     private boolean checkLicense() {
-        /*try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
+        try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -171,7 +171,7 @@ public final class Main extends JavaPlugin {
             printlnColor(PREFIX + "§cError occurred: " + e.getClass().getSimpleName());
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
-        }*/
+        }
         return true;
     }
 
