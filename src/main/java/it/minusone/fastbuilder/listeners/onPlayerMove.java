@@ -24,7 +24,8 @@ public class onPlayerMove implements Listener {
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
         if (Main.getInstance().mapWherePlayerIn.containsKey(event.getPlayer())) {
             Player player = event.getPlayer();
-            if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            if (event.getPlayer().getGameMode() == GameMode.CREATIVE || event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+                return;
                 String mode = Main.getInstance().mapWherePlayerIn.get(player).split("-")[0];
                 String island = Main.getInstance().mapWherePlayerIn.get(player).split("-")[1];
                 if (!Main.getInstance().getConfigManager().isModeInclined(mode)) {
@@ -141,7 +142,7 @@ public class onPlayerMove implements Listener {
                             }
                         }
                     }
-                }
+
             }
         }
     }

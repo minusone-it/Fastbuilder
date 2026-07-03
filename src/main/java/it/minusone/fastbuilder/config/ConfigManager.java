@@ -391,18 +391,17 @@ public class ConfigManager {
     }
 
     public int getPlaceholdersSize() {
-        int size = 1;
+        int size = 0;
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
-        for (String key : section.getKeys(false)) {
-            if (!(key.equalsIgnoreCase("enabled")))
-                size++;
+        for (String ignored : section.getKeys(false)) {
+            size++;
         }
         return size;
     }
 
     public String getPlaceholder(int idx) {
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
-        int i = 1;
+        int i = 0;
         for (String key : section.getKeys(false)) {
             if (idx == i && !(key.equalsIgnoreCase("enabled")))
                 return messagesConfig.getString("placeholders." + key + ".placeholder");
@@ -420,7 +419,7 @@ public class ConfigManager {
     }
 
     public String getMessagePlaceholderReplaced(PlayerChatEvent event) {
-        int i = 1;
+        int i = 0;
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
         for (String key : section.getKeys(false)) {
             if (!(key.equalsIgnoreCase("enabled")) && event.getMessage().contains(messagesConfig.getString("placeholders." + key + ".placeholder")))
@@ -431,7 +430,7 @@ public class ConfigManager {
     }
 
     public String getMessageConfigReplaced(int idx, Player player) {
-        int i = 1;
+        int i = 0;
         ConfigurationSection section = messagesConfig.getConfigurationSection("placeholders");
         for (String key : section.getKeys(false)) {
             if (!(key.equalsIgnoreCase("enabled"))) {
@@ -439,7 +438,8 @@ public class ConfigManager {
                     return messagesConfig.getString("placeholders." + key + ".message")
                             .replace("%mode%", Main.getInstance().getModeOfPlayer(player))
                             .replace("%pb%", Timer.getFormat().format(Main.getInstance().getConfigManager().getPB(player.getUniqueId(), Main.getInstance().getModeOfPlayer(player))))
-                            .replace("%coins%", String.valueOf(Main.getInstance().getConfigManager().getCoinsOfPlayer(player)));
+                            .replace("%coins%", String.valueOf(Main.getInstance().getConfigManager().getCoinsOfPlayer(player)))
+                            .replace("&", "§") + "§r";
                 }
             }
             i++;
@@ -779,6 +779,15 @@ public class ConfigManager {
         stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.started_replay.material").split(":")[1]));
         ItemMeta meta = stopReplay.getItemMeta();
         meta.setDisplayName(itemsConfig.getString("replays.started_replay.name").replace("&", "§"));
+        stopReplay.setItemMeta(meta);
+        return stopReplay;
+    }
+
+    public ItemStack getRestartReplayItem() {
+        ItemStack stopReplay = new ItemStack(Material.getMaterial(itemsConfig.getString("replays.restart_replay.material").split(":")[0]));
+        stopReplay.setDurability(Short.parseShort(itemsConfig.getString("replays.restart_replay.material").split(":")[1]));
+        ItemMeta meta = stopReplay.getItemMeta();
+        meta.setDisplayName(itemsConfig.getString("replays.restart_replay.name").replace("&", "§"));
         stopReplay.setItemMeta(meta);
         return stopReplay;
     }

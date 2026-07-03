@@ -21,14 +21,22 @@ public class ModeChangerGUI implements InventoryHolder {
         this.addItems();
     }
 
+    public ModeChangerGUI(Player requestedPlayer, int page)
+    {
+        c.pagesOfModeChanger.put(requestedPlayer, page);
+        ModeChangerGUI.page = c.pagesOfModeChanger.get(requestedPlayer);
+        this.inventory = Bukkit.createInventory(this, Main.getInstance().getConfigManager().getModeChangerGuiMaxSlots(), Main.getInstance().getConfigManager().getModeChangerGuiName().replace("%page%", String.valueOf(ModeChangerGUI.page + 1)));
+        this.addItems();
+    }
+
     public static boolean handleNavigation(Player player, ItemStack clickedItem) {
             if (clickedItem.getItemMeta().getDisplayName().contains(Main.getInstance().getConfigManager().previousPage().getItemMeta().getDisplayName())) {
                 c.pagesOfModeChanger.put(player, page - 1);
-                player.openInventory(new ModeChangerGUI(player).getInventory());
+                player.openInventory(new ModeChangerGUI(player, page - 1).getInventory());
                 return true;
             } else if (clickedItem.getItemMeta().getDisplayName().contains(Main.getInstance().getConfigManager().nextPage().getItemMeta().getDisplayName())) {
                 c.pagesOfModeChanger.put(player, page + 1);
-                player.openInventory(new ModeChangerGUI(player).getInventory());
+                player.openInventory(new ModeChangerGUI(player, page + 1).getInventory());
                 return true;
             }
             return false;

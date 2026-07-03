@@ -11,7 +11,6 @@ it\minusone\fastbuilder\scoreboard\helpers\Scoreboard.class
 it\minusone\fastbuilder\timer\Timer$2.class
 it\minusone\fastbuilder\listeners\onPlayerBlockPlacePacket.class
 it\minusone\fastbuilder\replay\recordable\entity\DamageRecordable.class
-it\minusone\fastbuilder\timer\Timer$5.class
 it\minusone\fastbuilder\replay\recordable\entity\ItemHeldRecordable.class
 it\minusone\fastbuilder\timer\Timer.class
 it\minusone\fastbuilder\Main$Entry.class
@@ -78,9 +77,9 @@ it\minusone\fastbuilder\utils\a.class
 it\minusone\fastbuilder\gui\ModeChangerGUI.class
 it\minusone\fastbuilder\command\stats.class
 it\minusone\fastbuilder\replay\recordable\entity\EntityAddRecordable.class
+it\minusone\fastbuilder\listeners\onPlateEvent.class
 it\minusone\fastbuilder\utils\bukkit\CubingLibPlayer.class
 it\minusone\fastbuilder\listeners\onItemDrop.class
-it\minusone\fastbuilder\timer\Timer$4.class
 it\minusone\fastbuilder\gui\IslandSelectorGUI.class
 it\minusone\fastbuilder\replay\data\SaveRecordable.class
 it\minusone\fastbuilder\replay\recordable\world\BlockRecordable.class
@@ -91,5 +90,4 @@ it\minusone\fastbuilder\replay\entity\EntityInfo.class
 it\minusone\fastbuilder\utils\bukkit\handler\PacketPlayOutHandler.class
 it\minusone\fastbuilder\Main$1.class
 it\minusone\fastbuilder\replay\ReplayMain.class
-it\minusone\fastbuilder\timer\Timer$3.class
 it\minusone\fastbuilder\utils\b.class

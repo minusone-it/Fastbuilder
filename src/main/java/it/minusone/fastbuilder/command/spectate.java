@@ -9,10 +9,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class spectate implements CommandExecutor {
-    public static HashMap<Player, String> playersSpectating = new HashMap<>();
+    public static List<Player> playersSpectating = new ArrayList<>();
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -20,8 +21,9 @@ public class spectate implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (args.length < 1 && playersSpectating.containsKey(player)) {
-
+        if (args.length < 1 && playersSpectating.contains(player)) {
+            player.setGameMode(GameMode.SURVIVAL);
+            playersSpectating.remove(player);
             return true;
         }
         if (args.length < 1) {
@@ -33,8 +35,12 @@ public class spectate implements CommandExecutor {
             player.sendMessage(Main.getInstance().PREFIX + "§cPlayer does not exist.");
             return true;
         }
+        for (Player player2 : Bukkit.getOnlinePlayers()) {
+            player2.hidePlayer(player);
+        }
         player.setGameMode(GameMode.SPECTATOR);
         player.teleport(player1);
+        playersSpectating.add(player);
         player.sendMessage(Main.getInstance().PREFIX + "Retype /spectate to exit spectate mode.");
         return true;
     }

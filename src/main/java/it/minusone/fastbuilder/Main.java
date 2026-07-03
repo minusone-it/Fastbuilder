@@ -187,9 +187,9 @@ public final class Main extends JavaPlugin {
                 printlnColor(PREFIX + "§cCouldn't find LuckPerms.");
         }
 
-        this.timer = new Timer();
         this.scoreboardManager = new ScoreboardManager(this);
         this.protocolManager = ProtocolLibrary.getProtocolManager();
+        this.timer = new Timer();
 
         ReplayMain.getApi().initialize(this);
         loadListeners();
@@ -256,6 +256,7 @@ public final class Main extends JavaPlugin {
                 e.printStackTrace();
             }
         }, 0L, 1L);
+        Bukkit.getScheduler().runTaskTimer(this, new onPlateEvent(), 0L, 1L);
     }
 
     public ConfigManager getConfigManager() {

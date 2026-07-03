@@ -1,5 +1,6 @@
 package it.minusone.fastbuilder.replay;
 
+import it.minusone.fastbuilder.Main;
 import it.minusone.fastbuilder.replay.entity.EntityInfo;
 import it.minusone.fastbuilder.replay.enums.PlaybackState;
 import it.minusone.fastbuilder.replay.event.PlaybackEndEvent;
@@ -132,6 +133,8 @@ public class ReplayPlayback {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (currentTick >= replay.getLength()) {
                 pause();
+                for (Player p : listeners)
+                    p.getInventory().setItem(4, Main.getInstance().getConfigManager().getRestartReplayItem());
                 return;
             }
             nextTick();

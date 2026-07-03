@@ -21,7 +21,7 @@ public class onPlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent e) {
-        if (!Main.getInstance().getConfigManager().isBungeeToggled()) {
+        if (Main.getInstance().getConfigManager().isBungeeToggled()) {
             e.getPlayer().getInventory().clear();
             e.getPlayer().getInventory().setHeldItemSlot(0);
 

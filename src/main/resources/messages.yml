@@ -55,4 +55,4 @@ placeholders:
     message: "&d&l%pb% %mode%"
   coins:
     placeholder: "[coins]"
-    message: "&6&l%coins%"
+    message: "&6&l%coins% coins"

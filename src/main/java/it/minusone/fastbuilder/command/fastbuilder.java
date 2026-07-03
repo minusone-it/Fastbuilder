@@ -438,6 +438,14 @@ public class fastbuilder implements CommandExecutor {
                 Main.getInstance().playersInPracticeMode.put(player.getUniqueId(), false);
                 for (Player p : Bukkit.getOnlinePlayers())
                     Main.getInstance().scoreboardManager.updateScoreboard(p);
+                player.getInventory().clear();
+                player.getInventory().setHeldItemSlot(0);
+
+                Main.getInstance().scoreboardManager.createScoreboard(player);
+
+                for (Hologram h : Hologram.all) {
+                    h.removeListener(player);
+                }
                 break;
             case "seereplays":
                 if (args.length < 4) {
@@ -445,7 +453,7 @@ public class fastbuilder implements CommandExecutor {
                     return true;
                 }
                 UUID targetUUID = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
-                player.openInventory(new ReplayGUI(player, targetUUID, Integer.parseInt(args[3]), args[2]).getInventory());
+                player.openInventory(new ReplayGUI(player, targetUUID, Integer.parseInt(args[3]) - 1, args[2]).getInventory());
                 break;
             case "watchreplay":
                 if (args.length < 4) {
