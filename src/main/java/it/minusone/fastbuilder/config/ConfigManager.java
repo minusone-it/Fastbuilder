@@ -1,6 +1,10 @@
 package it.minusone.fastbuilder.config;
 
 import it.minusone.fastbuilder.Main;
+import it.minusone.fastbuilder.items.IslandSelectorItem;
+import it.minusone.fastbuilder.items.LobbyItem;
+import it.minusone.fastbuilder.items.ReplayItem;
+import it.minusone.fastbuilder.items.SettingsItem;
 import it.minusone.fastbuilder.timer.Timer;
 import it.minusone.fastbuilder.utils.b;
 import org.bukkit.*;
@@ -27,12 +31,14 @@ public class ConfigManager {
     private final File messagesFile;
     private final File guisFile;
     private final File itemsFile;
+    private final File hotbarFile;
     private FileConfiguration config;
     private FileConfiguration playersConfig;
     private FileConfiguration arenasConfig;
     private FileConfiguration messagesConfig;
     private FileConfiguration guisConfig;
     private FileConfiguration itemsConfig;
+    private FileConfiguration hotbarConfig;
 
     public ConfigManager(Main plugin) {
         this.plugin = plugin;
@@ -46,18 +52,21 @@ public class ConfigManager {
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         guisFile = new File(plugin.getDataFolder(), "guis.yml");
         itemsFile = new File(plugin.getDataFolder(), "items.yml");
+        hotbarFile = new File(plugin.getDataFolder(), "hotbar.yml");
 
         if (!playersFile.exists()) plugin.saveResource("players.yml", false);
         if (!arenasFile.exists()) plugin.saveResource("arenas.yml", false);
         if (!messagesFile.exists()) plugin.saveResource("messages.yml", false);
         if (!guisFile.exists()) plugin.saveResource("guis.yml", false);
         if (!itemsFile.exists()) plugin.saveResource("items.yml", false);
+        if (!hotbarFile.exists()) plugin.saveResource("hotbar.yml", false);
 
         playersConfig = YamlConfiguration.loadConfiguration(playersFile);
         arenasConfig = YamlConfiguration.loadConfiguration(arenasFile);
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
         guisConfig = YamlConfiguration.loadConfiguration(guisFile);
         itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
+        hotbarConfig = YamlConfiguration.loadConfiguration(hotbarFile);
     }
 
     // Save methods
@@ -85,6 +94,33 @@ public class ConfigManager {
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
         guisConfig = YamlConfiguration.loadConfiguration(guisFile);
         itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
+    }
+
+    // -------- HOTBAR (hotbar.yml) -------
+
+    public ItemStack getItemStackForHotbar(String index, Player player) {
+        switch (hotbarConfig.getString(index)) {
+            case "block":
+                return getCurrentPlayerBlock(player);
+            case "pickaxe":
+                return getCurrentPickaxe(player);
+            case "air":
+                return new ItemStack(Material.AIR);
+            case "island_selector":
+                return new IslandSelectorItem();
+            case "bed":
+                return bedItem();
+            case "replay":
+                return new ReplayItem();
+            case "settings":
+                return new SettingsItem();
+            case "leave":
+                return new LobbyItem();
+        }
+    }
+
+    public void setHotbar(Player player) {
+        player.getInventory().setItem(0, getItemStackForHotbar());
     }
 
     // -------- ARENAS (arenas.yml) --------

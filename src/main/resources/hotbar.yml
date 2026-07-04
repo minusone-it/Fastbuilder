@@ -1,0 +1,20 @@
+# Hotbar Configuration
+# Available items (customizable in items.yml):
+# Block - block
+# Pickaxe - break
+# Island Selector - island_selector
+# Respawn Bed - bed
+# Replays - replay
+# Settings - settings
+# Leave Item - leave
+# Nothing - air
+
+1: block
+2: pickaxe
+3: air
+4: air
+5: island_selector
+6: bed
+7: replay
+8: settings
+9: leave
