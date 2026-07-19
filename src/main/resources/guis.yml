@@ -51,12 +51,14 @@ settings-gui-slots:
     name: "&eBlock Selector"
     material: SANDSTONE:0
     gui: "block_selector"
+    command: ""
     lore:
       - ""
   14:
     name: "&cReset Stats"
     material: DIAMOND_PICKAXE:0
     gui: "reset_stats"
+    command: ""
     lore:
       - "&7Reset Stats on all modes!"
       - "&ePrice: %price%"
@@ -64,6 +66,7 @@ settings-gui-slots:
     name: "&aPractice Mode"
     material: STAINED_CLAY:0
     gui: "practice_mode"
+    command: ""
     lore:
       - "%practice_mode_enabled%"
 

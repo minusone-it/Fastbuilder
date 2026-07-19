@@ -35,23 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Timer {
 
-    /**
-     * Conta i pacchetti di movimento ricevuti per ogni giocatore.
-     *
-     * Il client Minecraft 1.8 manda ESATTAMENTE uno di questi quattro pacchetti
-     * per ogni tick, a seconda di cosa è cambiato in quel frame:
-     *
-     *   FLYING        → solo flag onGround  (giocatore fermo, nessun input)
-     *   POSITION      → posizione cambiata
-     *   LOOK          → rotazione cambiata
-     *   POSITION_LOOK → posizione + rotazione cambiate
-     *
-     * Ascoltando tutti e quattro otteniamo un evento per tick esatto,
-     * indipendentemente dal server scheduler (risolve i salti su Paper).
-     *
-     * ConcurrentHashMap perché ProtocolLib chiama onPacketReceiving dal thread
-     * Netty del giocatore, non dal main thread di Bukkit.
-     */
     private final ConcurrentHashMap<UUID, Integer> playerTicks = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Boolean> alreadyTeleported = new ConcurrentHashMap<>();
 
@@ -61,26 +44,19 @@ public class Timer {
         pm.addPacketListener(new PacketAdapter(
                 Main.getInstance(),
                 ListenerPriority.MONITOR,
-                PacketType.Play.Client.FLYING,        // fermo
-                PacketType.Play.Client.POSITION,      // si muove
-                PacketType.Play.Client.LOOK,          // gira la testa
-                PacketType.Play.Client.POSITION_LOOK  // muove + gira
+                PacketType.Play.Client.FLYING,
+                PacketType.Play.Client.POSITION,
+                PacketType.Play.Client.LOOK,
+                PacketType.Play.Client.POSITION_LOOK
         ) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 final UUID uuid = event.getPlayer().getUniqueId();
 
-                // compute() è atomico su ConcurrentHashMap:
-                // se la chiave non esiste (timer non attivo) restituisce null e
-                // non fa nulla; altrimenti incrementa di 1.
                 Integer newTicks = playerTicks.compute(uuid, (k, v) -> v == null ? null : v + 1);
 
-                // null → timer non attivo per questo giocatore, ignoriamo
                 if (newTicks == null) return;
 
-                // Aggiornamento scoreboard e action bar dal thread Netty.
-                // sendPacket() è thread-safe; getConfigManager() legge dati
-                // immutabili o volatili quindi va bene fuori dal main thread.
                 Player player = event.getPlayer();
                 String timeFormatted = getTimeFormatted(player);
                 double bestTime = Main.getInstance().getConfigManager()
@@ -103,16 +79,9 @@ public class Timer {
         });
     }
 
-    // -------------------------------------------------------------------------
-    // API pubblica
-    // -------------------------------------------------------------------------
-
     public void startTimer(Player player) {
         UUID uuid = player.getUniqueId();
         setAlreadyTeleported(player, false);
-
-        // Mettere 0 (e non rimuovere + rimettere) è atomico su ConcurrentHashMap.
-        // Il prossimo FLYING/POSITION/LOOK/POSITION_LOOK lo porterà a 1.
         playerTicks.put(uuid, 0);
 
         Replay replay = new Replay(
@@ -130,9 +99,6 @@ public class Timer {
 
     public void stopTimer(Player player, boolean saveReplay) {
         UUID uuid = player.getUniqueId();
-
-        // Rimuovendo l'UUID il listener lo ignorerà automaticamente
-        // senza dover cancellare task o de-registrare listener.
         playerTicks.remove(uuid);
 
         Replay replay = Main.getInstance().replays.get(uuid);
@@ -166,14 +132,6 @@ public class Timer {
         setAlreadyTeleported(player, false);
     }
 
-    // -------------------------------------------------------------------------
-    // Tempo
-    // -------------------------------------------------------------------------
-
-    /**
-     * Ogni tick client = 0.05 s (il client 1.8 gira fisso a 20 fps).
-     * Il +0.15 è mantenuto per compatibilità con i PB già salvati.
-     */
     public double getTime(Player player) {
         return playerTicks.getOrDefault(player.getUniqueId(), 0) * 0.05 - 0.05;
     }
@@ -322,10 +280,6 @@ public class Timer {
 
         return true;
     }
-
-    // -------------------------------------------------------------------------
-    // Utilità statiche
-    // -------------------------------------------------------------------------
 
     public static void sendTitle(Player player, String title, String subtitle,
                                  int fadeIn, int stay, int fadeOut) {

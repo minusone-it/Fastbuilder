@@ -18,7 +18,7 @@ public class onPlayerBlockBreakPacket extends PacketAdapter {
 
     @Override
     public void onPacketReceiving(PacketEvent event) {
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || Main.getInstance().getIslandOfPlayer(event.getPlayer()) != null)
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE || Main.getInstance().getIslandOfPlayer(event.getPlayer()) == null)
             return;
         PacketPlayInBlockDig packet = (PacketPlayInBlockDig) event.getPacket().getHandle();
         BlockPosition position = packet.a();

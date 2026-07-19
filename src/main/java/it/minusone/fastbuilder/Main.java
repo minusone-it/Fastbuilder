@@ -108,10 +108,10 @@ public final class Main extends JavaPlugin {
         long startTime = System.currentTimeMillis();
         configManager = new ConfigManager(this);
 
-        if (!checkLicense()) return;
+        if (!aAb()) return;
 
         if (Bukkit.getPluginManager().getPlugin("Fastbuilder").isEnabled()) {
-            initializePlugin();
+            aAd();
 
             printlnColor(PREFIX + "Took " + (System.currentTimeMillis() - startTime) + "ms to start the plugin!");
         }
@@ -145,7 +145,7 @@ public final class Main extends JavaPlugin {
         return this.mapWherePlayerIn.get(player).split("-")[1];
     }
 
-    private boolean checkLicense() {
+    private boolean aAb() {
         try (Socket socket = new Socket("minusone-services.ddns.net", 5000);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -175,7 +175,7 @@ public final class Main extends JavaPlugin {
         return true;
     }
 
-    private void initializePlugin() {
+    private void aAd() {
         try {
             RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {

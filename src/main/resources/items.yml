@@ -1,3 +1,10 @@
+# Pickaxe / Block Breaker
+pickaxe:
+  name: "&ePickaxe"
+  material: DIAMOND_PICKAXE:0
+  # Or else, put a command to execute to use your plugin (ex. create on your plugin a commands to give the player a pickaxe wanted by your plugin maybe selected in a gui)
+  command:
+
 # Leave Fastbuilder item's name
 leave-item: "&cLeave &7(Right-Click to use)"
 
@@ -17,6 +24,10 @@ islandselector-item-material: NETHER_STAR:0
 settings-item: "&2Settings &7(Right-Click to use)"
 
 settings-item-material: EMERALD:0
+
+practice_block:
+  name: "&fPractice Blocks"
+  material: STAINED_CLAY:0
 
 replays:
   cancel:

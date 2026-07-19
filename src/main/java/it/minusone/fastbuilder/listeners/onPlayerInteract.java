@@ -146,7 +146,7 @@ public class onPlayerInteract implements Listener {
                                     );
                                 }
                             } catch (Exception e) {
-
+                                System.out.println("An error occoured while trying to save in the config! ID: 1");
                             }
                         }
                     } else

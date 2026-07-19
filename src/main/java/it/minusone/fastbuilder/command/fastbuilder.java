@@ -62,25 +62,7 @@ public class fastbuilder implements CommandExecutor {
         leaveModeB(player);
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
-        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
-        block.setAmount(64);
-        player.getInventory().setItem(0, block);
-        player.getInventory().setItem(1, block);
-        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-        if (Main.getInstance().playersInPracticeMode.get(player.getUniqueId())) {
-            ItemStack item = new ItemStack(Material.STAINED_CLAY, 64);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName("§rPractice Blocks");
-            item.setItemMeta(meta);
-            player.getInventory().setItem(3, item);
-        }
-        player.getInventory().setItem(4, new IslandSelectorItem());
-        if (Main.getInstance().getConfigManager().isBedItemEnabled())
-            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
-        player.getInventory().setItem(6, new ReplayItem());
-        player.getInventory().setItem(7, new SettingsItem());
-        if (Main.getInstance().getConfigManager().isLobbyToggled())
-            player.getInventory().setItem(8, new LobbyItem());
+        Main.getInstance().getConfigManager().setHotbar(player);
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         if (Main.getInstance().getConfigManager().npcsToggled()) {
             Location baseLocationA = location.clone();
@@ -158,18 +140,7 @@ public class fastbuilder implements CommandExecutor {
         Location location = Main.getInstance().getConfigManager().getSpawnLocation(mode, island);
         player.teleport(location);
         player.sendMessage(Main.getInstance().getConfigManager().getJoinMessage());
-        ItemStack block = Main.getInstance().getConfigManager().getCurrentPlayerBlock(player);
-        block.setAmount(64);
-        player.getInventory().setItem(0, block);
-        player.getInventory().setItem(1, block);
-        player.getInventory().setItem(2, new ItemStack(Material.DIAMOND_PICKAXE));
-        player.getInventory().setItem(4, new IslandSelectorItem());
-        if (Main.getInstance().getConfigManager().isBedItemEnabled())
-            player.getInventory().setItem(5, Main.getInstance().getConfigManager().bedItem());
-        player.getInventory().setItem(6, new ReplayItem());
-        player.getInventory().setItem(7, new SettingsItem());
-        if (Main.getInstance().getConfigManager().isLobbyToggled())
-            player.getInventory().setItem(8, new LobbyItem());
+        Main.getInstance().getConfigManager().setHotbar(player);
         Main.getInstance().mapWherePlayerIn.put(player, mode + "-" + island);
         Location baseLocationA = location.clone();
         Location offsetA = Main.getInstance().getConfigManager().getNPCOffset(mode);

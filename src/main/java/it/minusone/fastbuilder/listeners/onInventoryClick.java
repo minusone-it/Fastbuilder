@@ -109,24 +109,16 @@ public class onInventoryClick implements Listener {
                             if (Main.getInstance().getConfigManager().getCoinsOfPlayer(player) > cost) {
                                 if (!Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
                                     player.closeInventory();
-                                    short damageValue = clickedItem.getDurability();
                                     Main.getInstance().getConfigManager().setCoinsOfPlayer(player, Main.getInstance().getConfigManager().getCoinsOfPlayer(player) - cost);
                                     Main.getInstance().getConfigManager().addBlockToPlayer(clickedItem, player);
                                     Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
-                                    ItemStack block = new ItemStack(clickedItem.getType());
-                                    block.setDurability(damageValue);
-                                    player.getInventory().setItem(0, block);
-                                    player.getInventory().setItem(1, block);
+                                    Main.getInstance().getConfigManager().setHotbar(player);
                                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "You successfully bought the block.");
                                 } else {
                                     if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
                                         Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
                                         player.closeInventory();
-                                        short damageValue = clickedItem.getDurability();
-                                        ItemStack block = new ItemStack(clickedItem.getType());
-                                        block.setDurability(damageValue);
-                                        player.getInventory().setItem(0, block);
-                                        player.getInventory().setItem(1, block);
+                                        Main.getInstance().getConfigManager().setHotbar(player);
                                         player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + clickedItem.getItemMeta().getDisplayName() + ChatColor.GREEN + " as your current block.");
                                     }
                                 }
@@ -134,11 +126,7 @@ public class onInventoryClick implements Listener {
                                 if (Main.getInstance().getConfigManager().hasPlayerGotBlock(player, clickedItem)) {
                                     Main.getInstance().getConfigManager().setCurrentPlayerBlock(player, clickedItem);
                                     player.closeInventory();
-                                    short damageValue = clickedItem.getDurability();
-                                    ItemStack block = new ItemStack(Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")), 64);
-                                    block.setDurability(damageValue);
-                                    player.getInventory().setItem(0, block);
-                                    player.getInventory().setItem(1, block);
+                                    Main.getInstance().getConfigManager().setHotbar(player);
                                     player.sendMessage(Main.getInstance().PREFIX + ChatColor.GREEN + "Set " + Material.getMaterial(clickedItem.getItemMeta().getDisplayName().replace(ChatColor.YELLOW + "", "")) + " as your current block.");
                                 } else {
                                     player.closeInventory();

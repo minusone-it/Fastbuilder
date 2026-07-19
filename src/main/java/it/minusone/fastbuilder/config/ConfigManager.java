@@ -100,12 +100,15 @@ public class ConfigManager {
 
     public ItemStack getItemStackForHotbar(String index, Player player) {
         switch (hotbarConfig.getString(index)) {
-            case "block":
-                return getCurrentPlayerBlock(player);
+            case "blocks":
+                ItemStack block = getCurrentPlayerBlock(player);
+                block.setAmount(64);
+                return block;
             case "pickaxe":
-                return getCurrentPickaxe(player);
-            case "air":
-                return new ItemStack(Material.AIR);
+                getCurrentPickaxe(player, Integer.parseInt(index));
+                return null;
+            case "practice_blocks":
+
             case "island_selector":
                 return new IslandSelectorItem();
             case "bed":
@@ -116,11 +119,39 @@ public class ConfigManager {
                 return new SettingsItem();
             case "leave":
                 return new LobbyItem();
+            default: return new ItemStack(Material.AIR);
         }
     }
 
     public void setHotbar(Player player) {
-        player.getInventory().setItem(0, getItemStackForHotbar());
+        player.getInventory().clear();
+        if (getItemStackForHotbar("1", player) != null)
+            player.getInventory().setItem(0, getItemStackForHotbar("1", player));
+        else getItemStackForHotbar("1", player);
+        if (getItemStackForHotbar("2", player) != null)
+            player.getInventory().setItem(1, getItemStackForHotbar("2", player));
+        else getItemStackForHotbar("2", player);
+        if (getItemStackForHotbar("3", player) != null)
+            player.getInventory().setItem(2, getItemStackForHotbar("3", player));
+        else getItemStackForHotbar("3", player);
+        if (getItemStackForHotbar("4", player) != null)
+            player.getInventory().setItem(3, getItemStackForHotbar("4", player));
+        else getItemStackForHotbar("4", player);
+        if (getItemStackForHotbar("5", player) != null)
+            player.getInventory().setItem(4, getItemStackForHotbar("5", player));
+        else getItemStackForHotbar("5", player);
+        if (getItemStackForHotbar("6", player) != null)
+            player.getInventory().setItem(5, getItemStackForHotbar("6", player));
+        else getItemStackForHotbar("6", player);
+        if (getItemStackForHotbar("7", player) != null)
+            player.getInventory().setItem(6, getItemStackForHotbar("7", player));
+        else getItemStackForHotbar("7", player);
+        if (getItemStackForHotbar("8", player) != null)
+            player.getInventory().setItem(7, getItemStackForHotbar("8", player));
+        else getItemStackForHotbar("8", player);
+        if (getItemStackForHotbar("9", player) != null)
+            player.getInventory().setItem(8, getItemStackForHotbar("9", player));
+        else getItemStackForHotbar("9", player);
     }
 
     // -------- ARENAS (arenas.yml) --------
@@ -865,6 +896,18 @@ public class ConfigManager {
 
     public boolean isBedItemEnabled() {
         return itemsConfig.getBoolean("reset_item.enabled");
+    }
+
+    public void getCurrentPickaxe(Player player, int idx) {
+        if (config.getString("pickaxe.command") != null) {
+            player.performCommand(config.getString("pickaxe.command"));
+        } else {
+            ItemStack item = new ItemStack(Material.getMaterial(itemsConfig.getString("pickaxe.material")));
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(itemsConfig.getString("pickaxe.name").replace("§", "&"));
+            item.setItemMeta(meta);
+            player.getInventory().setItem(idx, item);
+        }
     }
 
     // -------- DEFAULT CONFIG (config.yml) --------

@@ -9,9 +9,9 @@
 # Leave Item - leave
 # Nothing - air
 
-1: block
+1: blocks
 2: pickaxe
-3: air
+3: practice_blocks
 4: air
 5: island_selector
 6: bed
